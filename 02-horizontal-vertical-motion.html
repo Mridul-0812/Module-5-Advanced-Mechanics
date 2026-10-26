@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>02. Motion Independence (ax = 0 vs ay = -g) - HSC Physics Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax Configuration MUST be defined BEFORE loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        /* Specific Styles for Lesson 02 Interactive Components & Graphical Visualisations */
+        .simulation-container {
+            background: rgba(10, 14, 26, 0.85);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.6);
+        }
+
+        .sim-canvas-wrapper {
+            position: relative;
+            width: 100%;
+            max-width: 720px;
+            display: flex;
+            justify-content: center;
+        }
+
+        #galileoCanvas {
+            background: #050811;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            max-width: 100%;
+            height: auto;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .sim-control-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-card label {
+            font-size: 0.88rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .sim-btn-group {
+            display: flex;
+            gap: 0.75rem;
+            width: 100%;
+            margin-top: 1rem;
+            justify-content: center;
+        }
+
+        .sim-btn {
+            background: rgba(0, 240, 255, 0.12);
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            color: #fff;
+            padding: 0.6rem 1.4rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition-smooth);
+        }
+
+        .sim-btn:hover {
+            background: rgba(0, 240, 255, 0.3);
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.4);
+        }
+
+        .sim-btn.reset {
+            background: rgba(255, 85, 116, 0.12);
+            border-color: rgba(255, 85, 116, 0.3);
+            color: #ff5574;
+        }
+
+        .sim-btn.reset:hover {
+            background: rgba(255, 85, 116, 0.3);
+            box-shadow: 0 0 12px rgba(255, 85, 116, 0.4);
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            margin-top: 1.25rem;
+        }
+
+        .metric-box {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.18);
+            padding: 0.85rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .metric-box.purple {
+            background: rgba(176, 38, 255, 0.04);
+            border-color: rgba(176, 38, 255, 0.18);
+        }
+
+        .metric-box .metric-value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 0.2rem;
+        }
+
+        .metric-box .metric-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .graph-comparison-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .graph-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.25rem;
+            text-align: center;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .graph-card h4 {
+            color: var(--accent-cyan);
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .graph-card.purple h4 {
+            color: var(--accent-purple);
+        }
+
+        .equation-box-callout {
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-left: 4px solid var(--accent-cyan);
+            padding: 1.25rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.5rem 0;
+        }
+
+        .equation-box-callout.purple {
+            background: rgba(176, 38, 255, 0.05);
+            border-color: rgba(176, 38, 255, 0.25);
+            border-left-color: var(--accent-purple);
+        }
+
+        .table-custom {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.95rem;
+        }
+
+        .table-custom th, .table-custom td {
+            padding: 0.85rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .table-custom th {
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--accent-cyan);
+            font-weight: 600;
+        }
+
+        .table-custom tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .concept-highlight-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .concept-highlight-card h3 {
+            margin-bottom: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation Component -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html" class="active">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>02. Motion Independence ($a_x = 0$ vs $a_y = -g$)</h1>
+            <p class="subtitle">Phase 1: Projectile Motion — Inquiry Question 1</p>
+        </header>
+
+        <!-- 1. NESA Learning Plan & Inquiry Question -->
+        <section class="content-section" id="syllabus-alignment">
+            <h2>1. NESA Syllabus Alignment & Learning Intentions</h2>
+            <p><strong>Inquiry Question 1:</strong> <em>How can models that are used to explain projectile motion be used to analyse and make predictions?</em></p>
+            
+            <p><strong>NESA Stage 6 Syllabus Focus Points:</strong></p>
+            <ul class="feature-list">
+                <li><strong>Galileo’s Analysis of Projectile Motion:</strong> Describe the independence of horizontal and vertical motion components for a projectile operating under a uniform gravitational field.</li>
+                <li><strong>Horizontal Axis Behaviour ($a_x = 0\text{ m s}^{-2}$):</strong> Explain why a projectile experiences zero horizontal acceleration in the absence of air resistance, maintaining constant horizontal velocity ($v_x = u_x$).</li>
+                <li><strong>Vertical Axis Behaviour ($a_y = -9.80\text{ m s}^{-2}$):</strong> Explain why a projectile experiences uniform vertical acceleration under Earth's local gravitational field $g$, altering vertical velocity uniformly over time.</li>
+                <li><strong>Graphical Analysis of 2D Motion:</strong> Construct and interpret $s-t$, $v-t$, and $a-t$ graphs for both orthogonal components of projectile trajectories.</li>
+            </ul>
+
+            <div class="equation-box-callout">
+                <p><strong>Fundamental NESA Axiom for Projectile Motion:</strong></p>
+                $$\mathbf{a} = \begin{pmatrix} a_x \\ a_y \end{pmatrix} = \begin{pmatrix} 0 \\ -g \end{pmatrix} = \begin{pmatrix} 0 \\ -9.80\text{ m s}^{-2} \end{pmatrix}$$
+                <p style="font-size: 0.9rem; color: var(--text-secondary); margin-top: 0.5rem;">Where the horizontal acceleration is zero and vertical acceleration is uniformly downward (taking upwards as positive $y$).</p>
+            </div>
+        </section>
+
+        <!-- 2. Deep Dive Content -->
+        <section class="content-section" id="deep-dive-content">
+            <h2>2. Deep-Dive: Galileo's Principle of Independence</h2>
+            
+            <p>Prior to the early 17th century, Aristotelian mechanics posited that an object required a continuous forward force to maintain horizontal movement, and that horizontal forward force would "prevent" an object from falling vertically until the forward impulse was exhausted. Galileo Galilei overturned this flawed dogma by establishing the <strong>Principle of Independence of Perpendicular Motions</strong>.</p>
+
+            <div class="concept-highlight-card">
+                <h3>The Independence Axiom</h3>
+                <p><em>Any vector motion in two-dimensional space can be resolved into two mutually perpendicular (orthogonal) component motions that operate completely independently of each other. The time parameter ($t$) is the sole scalar quantity that unites both independent dimensional equations.</em></p>
+            </div>
+
+            <p>This means that introducing a horizontal velocity $u_x$ to an object dropped from a cliff does <strong>not</strong> alter the time it takes to reach the ground below. The vertical motion is governed exclusively by vertical forces, and the horizontal motion is governed exclusively by horizontal forces.</p>
+
+            <h3>Why is Horizontal Acceleration Zero ($a_x = 0\text{ m s}^{-2}$)?</h3>
+            <p>In the standard NESA Stage 6 HSC Physics model, we operate under the foundational assumption of <strong>zero air resistance</strong> (no atmospheric drag or buoyant fluid forces). Applying Newton's First and Second Laws of Motion to the horizontal axis:</p>
+
+            $$\sum F_x = F_{\text{drag}, x} = 0\text{ N}$$
+
+            $$\sum F_x = m a_x \implies 0 = m a_x \implies a_x = 0\text{ m s}^{-2}$$
+
+            <p>Because there is zero net horizontal force, there is zero horizontal acceleration. Therefore, according to Newton's First Law (Inertia), the horizontal component of velocity remains constant at all times throughout the flight:</p>
+
+            $$v_x(t) = u_x = u \cos\theta = \text{constant}$$
+
+            <p>The horizontal displacement $s_x$ accumulates linearly with respect to time:</p>
+
+            $$s_x = u_x t = (u \cos\theta) t$$
+
+            <h3>Why is Vertical Acceleration Uniform ($a_y = -9.80\text{ m s}^{-2}$)?</h3>
+            <p>Near the surface of the Earth, the planet exerts an attractive radial gravitational force directed toward its centre of mass. For small projectile displacement ranges relative to the Earth's radius ($r_E \approx 6371\text{ km}$), the gravitational field strength is treated as uniform and constant.</p>
+
+            <p>Applying Newton's Second Law of Motion to the vertical axis (defining upwards as positive $y$):</p>
+
+            $$\sum F_y = -F_g = -mg$$
+
+            $$\sum F_y = m a_y \implies -mg = m a_y \implies a_y = -g = -9.80\text{ m s}^{-2}$$
+
+            <p>Because the mass $m$ cancels out, <strong>all projectiles—regardless of mass, shape, or horizontal speed—experience the exact same downward vertical acceleration</strong> under gravity in a vacuum.</p>
+
+            <p>The vertical velocity $v_y$ changes at a constant rate of $-9.80\text{ m s}^{-1}$ every second:</p>
+
+            $$v_y(t) = u_y + a_y t = u \sin\theta - g t$$
+
+            <p>The vertical displacement $s_y$ varies quadratically with time:</p>
+
+            $$s_y(t) = u_y t + \frac{1}{2} a_y t^2 = (u \sin\theta) t - \frac{1}{2} g t^2$$
+
+            <!-- Comparison Table -->
+            <h3>Summary Comparison: Horizontal vs Vertical Axis Parameters</h3>
+            <table class="table-custom">
+                <thead>
+                    <tr>
+                        <th>Physical Parameter</th>
+                        <th>Horizontal Axis ($x$-axis)</th>
+                        <th>Vertical Axis ($y$-axis)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Net Force ($\sum F$)</strong></td>
+                        <td>$\sum F_x = 0\text{ N}$ (No drag)</td>
+                        <td>$\sum F_y = -mg$ (Downward weight)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Acceleration ($a$)</strong></td>
+                        <td>$a_x = 0\text{ m s}^{-2}$ (Uniform motion)</td>
+                        <td>$a_y = -9.80\text{ m s}^{-2}$ (Uniform acceleration)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Velocity Equation ($v$)</strong></td>
+                        <td>$v_x = u_x$ (Constant over time)</td>
+                        <td>$v_y = u_y - gt$ (Decreases, zero at apex, increases down)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Displacement Equation ($s$)</strong></td>
+                        <td>$s_x = u_x t$ (Linear relationship)</td>
+                        <td>$s_y = u_y t - \frac{1}{2}gt^2$ (Parabolic relationship)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Graph Profile ($s-t$)</strong></td>
+                        <td>Straight line passing through origin</td>
+                        <td>Parabola (concave downwards)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Graph Profile ($v-t$)</strong></td>
+                        <td>Horizontal line ($v_x = u_x$)</td>
+                        <td>Diagonal line with slope $= -9.80\text{ m s}^{-2}$</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- Graphical Kinematic Analysis -->
+            <h3>3. Graphical Kinematics Comparison</h3>
+            <p>Understanding the graphical representations of $a-t$, $v-t$, and $s-t$ for both axes is heavily tested in NESA HSC examinations. Below is the structural comparison of these kinematic curves for a projectile launched at speed $u$ and angle $\theta > 0^\circ$ from ground level:</p>
+
+            <div class="graph-comparison-container">
+                <!-- Horizontal Graphs Card -->
+                <div class="graph-card">
+                    <h4>Horizontal Component Motion ($x$-axis)</h4>
+                    <svg width="280" height="260" viewBox="0 0 280 260" style="max-width: 100%; height: auto;">
+                        <!-- Axes for s_x vs t -->
+                        <line x1="40" y1="70" x2="260" y2="70" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <line x1="40" y1="10" x2="40" y2="70" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <line x1="40" y1="70" x2="240" y2="20" stroke="#00f0ff" stroke-width="2.5" />
+                        <text x="10" y="40" fill="#00f0ff" font-size="11" font-weight="bold">sₓ</text>
+                        <text x="250" y="85" fill="#a0aec0" font-size="11">t</text>
+                        <text x="100" y="60" fill="#00f0ff" font-size="10">Linear (Slope = uₓ)</text>
+
+                        <!-- Axes for v_x vs t -->
+                        <line x1="40" y1="150" x2="260" y2="150" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <line x1="40" y1="90" x2="40" y2="150" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <line x1="40" y1="115" x2="240" y2="115" stroke="#00f0ff" stroke-width="2.5" />
+                        <text x="10" y="120" fill="#00f0ff" font-size="11" font-weight="bold">vₓ</text>
+                        <text x="250" y="165" fill="#a0aec0" font-size="11">t</text>
+                        <text x="100" y="105" fill="#00f0ff" font-size="10">Constant (vₓ = uₓ)</text>
+
+                        <!-- Axes for a_x vs t -->
+                        <line x1="40" y1="230" x2="260" y2="230" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <line x1="40" y1="170" x2="40" y2="230" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <line x1="40" y1="230" x2="240" y2="230" stroke="#00f0ff" stroke-width="3" />
+                        <text x="10" y="200" fill="#00f0ff" font-size="11" font-weight="bold">aₓ</text>
+                        <text x="250" y="245" fill="#a0aec0" font-size="11">t</text>
+                        <text x="100" y="220" fill="#00f0ff" font-size="10">aₓ = 0 m/s²</text>
+                    </svg>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">Figure 2.1: Horizontal motion displays zero acceleration, constant velocity, and linear displacement growth.</p>
+                </div>
+
+                <!-- Vertical Graphs Card -->
+                <div class="graph-card purple">
+                    <h4>Vertical Component Motion ($y$-axis)</h4>
+                    <svg width="280" height="260" viewBox="0 0 280 260" style="max-width: 100%; height: auto;">
+                        <!-- Axes for s_y vs t -->
+                        <line x1="40" y1="70" x2="260" y2="70" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <line x1="40" y1="10" x2="40" y2="70" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <!-- Parabola -->
+                        <path d="M 40 70 Q 140 10 240 70" fill="none" stroke="#b026ff" stroke-width="2.5" />
+                        <text x="10" y="40" fill="#b026ff" font-size="11" font-weight="bold">s_y</text>
+                        <text x="250" y="85" fill="#a0aec0" font-size="11">t</text>
+                        <text x="110" y="25" fill="#b026ff" font-size="10">Parabolic (Apex at max h)</text>
+
+                        <!-- Axes for v_y vs t -->
+                        <line x1="40" y1="120" x2="260" y2="120" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <line x1="40" y1="90" x2="40" y2="150" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <line x1="40" y1="95" x2="240" y2="145" stroke="#b026ff" stroke-width="2.5" />
+                        <text x="10" y="105" fill="#b026ff" font-size="11" font-weight="bold">v_y</text>
+                        <text x="250" y="135" fill="#a0aec0" font-size="11">t</text>
+                        <text x="110" y="110" fill="#b026ff" font-size="10">Slope = -9.80 m/s²</text>
+
+                        <!-- Axes for a_y vs t -->
+                        <line x1="40" y1="200" x2="260" y2="200" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <line x1="40" y1="170" x2="40" y2="230" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" />
+                        <line x1="40" y1="220" x2="240" y2="220" stroke="#b026ff" stroke-width="2.5" />
+                        <text x="10" y="225" fill="#b026ff" font-size="11" font-weight="bold">a_y</text>
+                        <text x="250" y="205" fill="#a0aec0" font-size="11">t</text>
+                        <text x="110" y="235" fill="#b026ff" font-size="10">a_y = -9.80 m/s²</text>
+                    </svg>
+                    <p style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem;">Figure 2.2: Vertical motion displays constant negative acceleration, linear velocity decay, and parabolic displacement.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Interactivity: Galileo's Dual-Ball Experiment Simulator -->
+        <section class="content-section" id="interactive-simulator">
+            <h2>3. Interactive Visualiser: Galileo's Dual-Ball Experiment</h2>
+            <p>To directly verify motion independence, consider Galileo's famous thought experiment: <strong>Ball A</strong> is dropped vertically from rest ($u_x = 0$), while <strong>Ball B</strong> is launched horizontally ($u_x > 0$) from the exact same initial height $h$.</p>
+
+            <p>Use the controls below to trigger the simulation. Watch how both balls remain perfectly level at every horizontal strobe marker line, striking the ground at the exact same instant regardless of Ball B's horizontal launch speed!</p>
+
+            <div class="simulation-container">
+                <div class="sim-canvas-wrapper">
+                    <canvas id="galileoCanvas" width="680" height="380"></canvas>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="sim-control-card">
+                        <label for="heightSlider">Cliff Height ($h$): <span id="heightVal">45.0 m</span></label>
+                        <input type="range" id="heightSlider" min="20" max="80" value="45" step="1">
+                    </div>
+                    <div class="sim-control-card">
+                        <label for="speedHorizSlider">Ball B Speed ($u_x$): <span id="speedHorizVal">25.0 m/s</span></label>
+                        <input type="range" id="speedHorizSlider" min="10" max="50" value="25" step="1">
+                    </div>
+                </div>
+
+                <div class="sim-btn-group">
+                    <button class="sim-btn" id="startBtn" onclick="runSimulation()">Release Balls</button>
+                    <button class="sim-btn reset" id="resetBtn" onclick="resetSimulation()">Reset</button>
+                </div>
+
+                <div class="metrics-grid">
+                    <div class="metric-box">
+                        <div class="metric-label">Time Elapsed ($t$)</div>
+                        <div class="metric-value" id="timeVal">0.00 s</div>
+                    </div>
+                    <div class="metric-box purple">
+                        <div class="metric-label">Vertical Fall ($s_y$)</div>
+                        <div class="metric-value" id="syVal">0.00 m</div>
+                    </div>
+                    <div class="metric-box">
+                        <div class="metric-label">Ball A Vertical Speed ($v_y$)</div>
+                        <div class="metric-value" id="vyAVal">0.00 m/s</div>
+                    </div>
+                    <div class="metric-box purple">
+                        <div class="metric-label">Ball B Horizontal Range ($s_x$)</div>
+                        <div class="metric-value" id="sxBVal">0.00 m</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Four Worked Solutions -->
+        <section class="content-section" id="worked-solutions-section">
+            <h2>4. Step-by-Step Worked Solutions</h2>
+
+            <!-- Easy Solution -->
+            <div class="practise-question" style="margin-bottom: 2rem;">
+                <div class="question-header">
+                    <h4>Worked Example 1: Simultaneous Impact Verification (Easy)</h4>
+                    <span class="marks-allocated">[Easy]</span>
+                </div>
+                <div class="question-body">
+                    <p>A steel sphere is dropped vertically from rest from a height of $35.0\text{ m}$ above the ground. At the exact same instant, a second identical sphere is projected horizontally from the same height with a horizontal speed of $18.0\text{ m s}^{-1}$.</p>
+                    <p>Calculate the time taken for both spheres to hit the ground, and state the horizontal distance travelled by the second sphere. (Assume $g = 9.80\text{ m s}^{-2}$).</p>
+
+                    <div class="worked-solution" style="margin-top: 1.5rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px;">
+                        <h5 style="color: var(--accent-cyan);">Solution:</h5>
+                        <p><strong>Step 1: Determine vertical flight time for dropped sphere (Sphere A)</strong></p>
+                        <p>Taking downwards as positive $y$ direction: $u_y = 0\text{ m s}^{-1}$, $s_y = 35.0\text{ m}$, $a_y = +9.80\text{ m s}^{-2}$.</p>
+                        $$s_y = u_y t + \frac{1}{2}a_y t^2$$
+                        $$35.0 = (0)t + \frac{1}{2}(9.80)t^2$$
+                        $$35.0 = 4.90 t^2 \implies t^2 = \frac{35.0}{4.90} = 7.1428$$
+                        $$t = \sqrt{7.1428} = 2.6726\text{ s} \approx 2.67\text{ s}$$
+
+                        <p><strong>Step 2: Apply Galileo's Principle to Sphere B</strong></p>
+                        <p>Because vertical motion is independent of horizontal speed ($u_x = 18.0\text{ m s}^{-1}$), Sphere B has an identical initial vertical velocity component ($u_y = 0\text{ m s}^{-1}$) and falls through the same vertical height ($35.0\text{ m}$).</p>
+                        <p>Therefore, Sphere B hits the ground at the exact same instant: $t_B = 2.67\text{ s}$.</p>
+
+                        <p><strong>Step 3: Calculate horizontal range of Sphere B ($s_x$)</strong></p>
+                        $$s_x = u_x \times t = 18.0 \times 2.6726 = 48.11\text{ m} \approx 48.1\text{ m}$$
+
+                        <p><strong>Final Answer:</strong><br>
+                        Both spheres reach the ground simultaneously at $t = 2.67\text{ s}$.<br>
+                        Sphere B travels a horizontal distance $s_x = 48.1\text{ m}$ (both to 3 sig. figs.).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Medium Solution -->
+            <div class="practise-question" style="margin-bottom: 2rem;">
+                <div class="question-header">
+                    <h4>Worked Example 2: Component Velocity Evolution (Medium)</h4>
+                    <span class="marks-allocated">[Medium]</span>
+                </div>
+                <div class="question-body">
+                    <p>A projectile is launched from ground level with an initial velocity of $30.0\text{ m s}^{-1}$ at an angle of $40.0^\circ$ above the horizontal. Calculate:</p>
+                    <ol style="margin-left: 1.5rem; color: var(--text-secondary);">
+                        <li>The velocity vector components ($v_x$ and $v_y$) at time $t = 1.50\text{ s}$.</li>
+                        <li>The velocity vector components ($v_x$ and $v_y$) at time $t = 3.00\text{ s}$.</li>
+                    </ol>
+
+                    <div class="worked-solution" style="margin-top: 1.5rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px;">
+                        <h5 style="color: var(--accent-cyan);">Solution:</h5>
+                        <p><strong>Step 1: Resolve initial velocity components</strong></p>
+                        $$u_x = u \cos\theta = 30.0 \cos(40.0^\circ) = 30.0 \times 0.76604 = 22.98\text{ m s}^{-1}$$
+                        $$u_y = u \sin\theta = 30.0 \sin(40.0^\circ) = 30.0 \times 0.64279 = 19.28\text{ m s}^{-1}$$
+
+                        <p><strong>Step 2: Calculate components at $t = 1.50\text{ s}$</strong></p>
+                        <p>Taking upwards as positive ($a_y = -9.80\text{ m s}^{-2}$):</p>
+                        $$v_x(1.50) = u_x = 22.98\text{ m s}^{-1}\quad (\text{Since } a_x = 0)$$
+                        $$v_y(1.50) = u_y + a_y t = 19.28 + (-9.80 \times 1.50) = 19.28 - 14.70 = +4.58\text{ m s}^{-1}$$
+                        <p><em>(Positive sign indicates the projectile is still ascending).</em></p>
+
+                        <p><strong>Step 3: Calculate components at $t = 3.00\text{ s}$</strong></p>
+                        $$v_x(3.00) = u_x = 22.98\text{ m s}^{-1}$$
+                        $$v_y(3.00) = u_y + a_y t = 19.28 + (-9.80 \times 3.00) = 19.28 - 29.40 = -10.12\text{ m s}^{-1}$$
+                        <p><em>(Negative sign indicates the projectile is now descending downwards).</em></p>
+
+                        <p><strong>Final Answer:</strong><br>
+                        At $t = 1.50\text{ s}$: $v_x = 23.0\text{ m s}^{-1}$, $v_y = +4.58\text{ m s}^{-1}$ (ascending).<br>
+                        At $t = 3.00\text{ s}$: $v_x = 23.0\text{ m s}^{-1}$, $v_y = -10.1\text{ m s}^{-1}$ (descending) [to 3 sig. figs.].</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Hard Solution -->
+            <div class="practise-question" style="margin-bottom: 2rem;">
+                <div class="question-header">
+                    <h4>Worked Example 3: Kinematic Graph Reconstruction (Hard)</h4>
+                    <span class="marks-allocated">[Hard]</span>
+                </div>
+                <div class="question-body">
+                    <p>A projectile's flight is monitored using radar, producing a vertical velocity-time equation given by $v_y(t) = 24.5 - 9.80 t$ (where $v_y$ is in $\text{m s}^{-1}$ and $t$ is in seconds). The total flight time to return to launch altitude is $5.00\text{ s}$, and the total horizontal range is $130\text{ m}$.</p>
+                    <p>Reconstruct the initial launch speed $u$, the launch angle $\theta$, and the maximum altitude reached $s_{y,\text{max}}$.</p>
+
+                    <div class="worked-solution" style="margin-top: 1.5rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px;">
+                        <h5 style="color: var(--accent-cyan);">Solution:</h5>
+                        <p><strong>Step 1: Extract initial vertical velocity ($u_y$)</strong></p>
+                        <p>At $t = 0\text{ s}$: $v_y(0) = u_y = 24.5\text{ m s}^{-1}$.</p>
+
+                        <p><strong>Step 2: Determine constant horizontal velocity ($u_x$)</strong></p>
+                        <p>Since horizontal velocity is constant ($a_x = 0$):</p>
+                        $$s_x = u_x \times t_{\text{total}} \implies 130 = u_x \times 5.00 \implies u_x = \frac{130}{5.00} = 26.0\text{ m s}^{-1}$$
+
+                        <p><strong>Step 3: Reconstruct total initial launch speed $u$ and angle $\theta$</strong></p>
+                        $$u = \sqrt{u_x^2 + u_y^2} = \sqrt{(26.0)^2 + (24.5)^2} = \sqrt{676 + 600.25} = \sqrt{1276.25} = 35.72\text{ m s}^{-1}$$
+                        $$\theta = \tan^{-1}\left(\frac{u_y}{u_x}\right) = \tan^{-1}\left(\frac{24.5}{26.0}\right) = \tan^{-1}(0.9423) = 43.30^\circ$$
+
+                        <p><strong>Step 4: Calculate peak altitude ($s_{y,\text{max}}$)</strong></p>
+                        <p>Apex occurs when vertical velocity $v_y = 0\text{ m s}^{-1}$ ($t = 2.50\text{ s}$):</p>
+                        $$v_y^2 = u_y^2 + 2a_y s_y \implies 0^2 = (24.5)^2 + 2(-9.80) s_{y,\text{max}}$$
+                        $$19.6 s_{y,\text{max}} = 600.25 \implies s_{y,\text{max}} = \frac{600.25}{19.6} = 30.625\text{ m}$$
+
+                        <p><strong>Final Answer:</strong><br>
+                        Initial speed $u = 35.7\text{ m s}^{-1}$, launch angle $\theta = 43.3^\circ$ above horizontal, maximum altitude $s_{y,\text{max}} = 30.6\text{ m}$ (to 3 sig. figs.).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Extension Solution -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4: Breakdown of Independence under Fluid Drag (Extension)</h4>
+                    <span class="marks-allocated">[Extension]</span>
+                </div>
+                <div class="question-body">
+                    <p>In real-world atmospheric conditions, a projectile experiences quadratic air resistance forces given by $\mathbf{F}_d = -k v \mathbf{v}$, where $k$ is an atmospheric drag constant. Qualitatively and quantitatively evaluate how fluid drag invalidates Galileo's principle of independent perpendicular motions.</p>
+
+                    <div class="worked-solution" style="margin-top: 1.5rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px;">
+                        <h5 style="color: var(--accent-cyan);">Analytical Evaluation:</h5>
+                        <p><strong>1. Resolving the Drag Force Components:</strong></p>
+                        <p>The total drag force acts directly opposite to the instantaneous velocity vector $\mathbf{v}$. The magnitude of instantaneous velocity is $v = \sqrt{v_x^2 + v_y^2}$.</p>
+                        <p>Resolving drag along the orthogonal axes gives:</p>
+                        $$F_{d, x} = -k v v_x = -k \left(\sqrt{v_x^2 + v_y^2}\right) v_x$$
+                        $$F_{d, y} = -mg - k v v_y = -mg - k \left(\sqrt{v_x^2 + v_y^2}\right) v_y$$
+
+                        <p><strong>2. Mathematical Proof of Coupling (Dependence):</strong></p>
+                        <p>Applying Newton's Second Law to determine horizontal acceleration:</p>
+                        $$a_x = \frac{F_{d,x}}{m} = -\frac{k}{m} \left(\sqrt{v_x^2 + v_y^2}\right) v_x$$
+
+                        <p>Notice that the horizontal acceleration $a_x$ is now a direct function of the vertical velocity component $v_y$! Similarly, vertical acceleration $a_y$ depends explicitly on $v_x$.</p>
+
+                        <p><strong>Conclusion:</strong> In a medium with air resistance, horizontal and vertical motions are no longer independent—they become <em>coupled differential equations</em>. Zero horizontal acceleration ($a_x = 0$) is strictly valid <strong>only</strong> in a vacuum model where drag is assumed negligible.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- 5. Four Practice Questions with NESA Marking Guidelines -->
+        <section class="content-section" id="practice-questions-section">
+            <h2>5. Interactive Practice Questions & NESA Marking Criteria</h2>
+            <p>Attempt these four exam-style questions to test your mastery of motion independence. Log your marks using the self-assessment drop-down menus.</p>
+
+            <!-- Question 1: Easy -->
+            <div class="practise-question" id="question-02-e">
+                <div class="question-header">
+                    <h4>Question 1: The Fired vs Dropped Bullet Paradox (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A rifle barrel is aligned perfectly horizontal $1.50\text{ m}$ above flat, level ground. A bullet is fired from the rifle with an initial muzzle velocity of $400\text{ m s}^{-1}$. At the exact same instant, a second identical bullet is dropped from rest from the height of the barrel opening.</p>
+                    <p>Ignoring air resistance, justify which bullet strikes the ground first, and calculate the time taken to hit the ground. ($g = 9.80\text{ m s}^{-2}$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-02-e')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-02-e')">Reveal Solution & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-02-e" style="display: none;">
+                    <p><strong>Hint:</strong> Recall Galileo's Principle of Independence! Does horizontal muzzle speed alter the initial vertical velocity $u_y$ or vertical acceleration $a_y$?</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-02-e" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>Both bullets strike the ground at the exact same instant. Because horizontal and vertical motions are independent, the fired bullet's large horizontal speed ($400\text{ m s}^{-1}$) has zero effect on its vertical acceleration ($a_y = -9.80\text{ m s}^{-2}$) or initial vertical speed ($u_y = 0\text{ m s}^{-1}$).</p>
+                        
+                        <p><strong>Calculation:</strong></p>
+                        $$s_y = u_y t + \frac{1}{2}a_y t^2 \implies 1.50 = 0 + \frac{1}{2}(9.80)t^2$$
+                        $$4.90 t^2 = 1.50 \implies t^2 = 0.30612 \implies t = 0.5532\text{ s} \approx 0.553\text{ s}$$
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> States correctly that both bullets hit the ground simultaneously based on Galileo's motion independence principle.</li>
+                            <li><strong>2 Marks:</strong> Calculates the correct impact time of $0.553\text{ s}$ with correct SI units.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-02-e">Assign yourself a mark:</label>
+                        <select id="mark-selector-02-e" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('02-e')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-02-e"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 2: Medium -->
+            <div class="practise-question" id="question-02-m">
+                <div class="question-header">
+                    <h4>Question 2: Graphical $v_y-t$ Trajectory Analysis (Medium)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A ball is kicked off a roof. Its vertical velocity profile is plotted as a linear equation: $v_y(t) = +12.0 - 9.80 t$ (where upwards is positive). The total time until the ball strikes the ground below is $t = 3.20\text{ s}$.</p>
+                    <p>Determine the height of the roof relative to the ground ($h$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-02-m')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-02-m')">Reveal Solution & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-02-m" style="display: none;">
+                    <p><strong>Hint:</strong> Identify $u_y = +12.0\text{ m s}^{-1}$ from the equation intercept. Use $s_y = u_y t + \frac{1}{2}a_y t^2$ at $t = 3.20\text{ s}$. The magnitude of negative $s_y$ gives the roof height!</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-02-m" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>From the equation $v_y(t) = +12.0 - 9.80 t$, the initial vertical velocity is $u_y = +12.0\text{ m s}^{-1}$, and vertical acceleration is $a_y = -9.80\text{ m s}^{-2}$.</p>
+
+                        <p>Calculate vertical displacement $s_y$ at landing time $t = 3.20\text{ s}$:</p>
+                        $$s_y = u_y t + \frac{1}{2}a_y t^2 = (12.0)(3.20) + \frac{1}{2}(-9.80)(3.20)^2$$
+                        $$s_y = 38.4 - 4.90(10.24) = 38.4 - 50.176 = -11.776\text{ m}$$
+
+                        <p>The negative sign indicates a net displacement $11.8\text{ m}$ below the launch point.</p>
+                        <p>Therefore, the height of the roof is $h = 11.8\text{ m}$ (to 3 sig. figs.).</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies $u_y = +12.0\text{ m s}^{-1}$ and $a_y = -9.80\text{ m s}^{-2}$ correctly from the graph equation.</li>
+                            <li><strong>2 Marks:</strong> Substitutes values correctly into the displacement kinematic equation.</li>
+                            <li><strong>3 Marks:</strong> Obtains final roof height $11.8\text{ m}$ with correct SI units and significant figures.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-02-m">Assign yourself a mark:</label>
+                        <select id="mark-selector-02-m" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('02-m')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-02-m"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 3: Hard -->
+            <div class="practise-question" id="question-02-h">
+                <div class="question-header">
+                    <h4>Question 3: Two-Dimensional Barrier Clearance (Hard)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A stunt motorcycle leaps off a horizontal platform at speed $u_x$ to clear a canyon $22.0\text{ m}$ wide. The landing ledge on the opposite side of the canyon sits $12.0\text{ m}$ lower than the takeoff platform.</p>
+                    <p>Calculate the minimum horizontal launch speed $u_x$ required to ensure the motorcycle successfully lands on the opposite ledge. ($g = 9.80\text{ m s}^{-2}$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-02-h')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-02-h')">Reveal Solution & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-02-h" style="display: none;">
+                    <p><strong>Hint:</strong> Step 1: Use vertical motion ($s_y = -12.0\text{ m}$, $u_y = 0$) to solve for total fall time $t$. Step 2: Use horizontal range equation ($s_x = u_x t$) to solve for $u_x$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-02-h" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Isolate vertical flight time ($t$)</strong></p>
+                        <p>Take downwards as positive: $s_y = 12.0\text{ m}$, $u_y = 0\text{ m s}^{-1}$, $a_y = +9.80\text{ m s}^{-2}$.</p>
+                        $$s_y = u_y t + \frac{1}{2}a_y t^2 \implies 12.0 = 0 + 4.90 t^2$$
+                        $$t^2 = \frac{12.0}{4.90} = 2.4489 \implies t = 1.5649\text{ s}$$
+
+                        <p><strong>Step 2: Calculate minimum horizontal speed ($u_x$)</strong></p>
+                        <p>The motorcycle must cover $s_x = 22.0\text{ m}$ horizontally within $t = 1.5649\text{ s}$:</p>
+                        $$s_x = u_x \times t \implies 22.0 = u_x \times 1.5649$$
+                        $$u_x = \frac{22.0}{1.5649} = 14.058\text{ m s}^{-1} \approx 14.1\text{ m s}^{-1}$$
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly sets up vertical equation with $u_y = 0\text{ m s}^{-1}$.</li>
+                            <li><strong>2 Marks:</strong> Calculates correct fall time $t = 1.565\text{ s}$.</li>
+                            <li><strong>3 Marks:</strong> Applies horizontal distance relation $s_x = u_x t$.</li>
+                            <li><strong>4 Marks:</strong> Obtains correct minimum horizontal speed $14.1\text{ m s}^{-1}$ with correct SI units and significant figures.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-02-h">Assign yourself a mark:</label>
+                        <select id="mark-selector-02-h" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('02-h')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-02-h"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Question 4: Extension -->
+            <div class="practise-question" id="question-02-ext">
+                <div class="question-header">
+                    <h4>Question 4: Synoptic Model Evaluation & Validity (Extension)</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Assess the validity of assuming $a_x = 0\text{ m s}^{-2}$ and $a_y = -9.80\text{ m s}^{-2}$ when modeling the trajectory of a fast-moving cricket ball ($v = 40\text{ m s}^{-1}$) thrown across an oval. In your response:</p>
+                    <ol style="margin-left: 1.5rem; color: var(--text-secondary);">
+                        <li>Explain the theoretical assumptions required for this idealised model.</li>
+                        <li>Analyse how real-world environmental factors cause actual trajectory deviations from the theoretical parabola.</li>
+                    </ol>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-02-ext')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-02-ext')">Reveal Solution & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-02-ext" style="display: none;">
+                    <p><strong>Hint:</strong> Address atmospheric drag ($F_d \propto v^2$), Magnus force (spin lift/drift), and the asymmetry of real trajectories compared to true symmetrical parabolas!</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-02-ext" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Theoretical Assumptions:</strong><br>
+                        The standard NESA model assumes zero atmospheric fluid friction ($F_{\text{drag}} = 0$) and a uniform gravitational field ($g = 9.80\text{ m s}^{-2}$). This establishes $a_x = 0$ (constant $v_x$) and $a_y = -g$, producing a symmetrical parabolic path.</p>
+
+                        <p><strong>2. Real-World Deviations for a Cricket Ball:</strong><br>
+                        At $40\text{ m s}^{-1}$ ($\approx 144\text{ km/h}$), air resistance cannot be neglected. Atmospheric drag exerts a force opposing motion ($\mathbf{F}_d \propto v^2$), introducing a non-zero horizontal deceleration ($a_x < 0$). This causes horizontal speed to continually decrease ($v_x < u_x$), shortening the horizontal range.</p>
+
+                        <p>Additionally, vertical drag accelerates downward fall during descent, causing the descending path to become steeper than the ascending path. If the ball spins, the Magnus effect creates asymmetric pressure differentials, generating aerodynamic lift or side-drift forces.</p>
+
+                        <p><strong>3. Conclusion / Validity Judgment:</strong><br>
+                        The ideal model provides a reasonable first-order approximation for low-speed, dense objects over short distances, but is <strong>invalid for high-speed projectiles like cricket balls</strong>, where air drag reduces range and creates an asymmetrical, skewed trajectory.</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies theoretical assumptions ($F_{\text{drag}} = 0$, uniform $g$).</li>
+                            <li><strong>2 Marks:</strong> Explains that real air drag introduces horizontal deceleration ($a_x < 0$).</li>
+                            <li><strong>3 Marks:</strong> Details the effect of air drag on vertical motion and trajectory asymmetry.</li>
+                            <li><strong>4 Marks:</strong> Mentions spin/Magnus effect or non-parabolic steep descent profile.</li>
+                            <li><strong>5 Marks:</strong> Provides a comprehensive, well-structured judgment evaluating the model's validity for high-speed sports balls.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-02-ext">Assign yourself a mark:</label>
+                        <select id="mark-selector-02-ext" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('02-ext')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-02-ext"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="03-uvtaxy-kinematics.html" class="btn-next">Proceed to Lesson 3: UVTAXY Kinematics &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine for Interactivity & LocalStorage Persistence -->
+    <script>
+        let animId = null;
+        let isRunning = false;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('02-e');
+            checkIfQuestionAnswered('02-m');
+            checkIfQuestionAnswered('02-h');
+            checkIfQuestionAnswered('02-ext');
+            
+            // Initialise Galileo Dual-Ball Simulation Canvas
+            drawStaticGalileoCanvas();
+
+            // Slider Listeners
+            document.getElementById('heightSlider').addEventListener('input', function() {
+                document.getElementById('heightVal').innerText = parseFloat(this.value).toFixed(1) + " m";
+                resetSimulation();
+            });
+
+            document.getElementById('speedHorizSlider').addEventListener('input', function() {
+                document.getElementById('speedHorizVal').innerText = parseFloat(this.value).toFixed(1) + " m/s";
+                resetSimulation();
+            });
+        });
+
+        /* --- Galileo Dual-Ball Canvas Simulation Engine --- */
+        function drawStaticGalileoCanvas() {
+            const canvas = document.getElementById('galileoCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const h = parseFloat(document.getElementById('heightSlider').value);
+            const ux = parseFloat(document.getElementById('speedHorizSlider').value);
+
+            const cliffX = 100;
+            const groundY = 320;
+            const scaleY = 240 / 80; // Scale height to canvas pixels
+            const scaleX = 500 / 250; // Scale range to canvas pixels
+
+            const cliffY = groundY - (h * scaleY);
+
+            // Draw Background Grid
+            ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+            ctx.lineWidth = 1;
+            for (let y = 40; y <= groundY; y += 30) {
+                ctx.beginPath();
+                ctx.moveTo(30, y);
+                ctx.lineTo(650, y);
+                ctx.stroke();
+            }
+
+            // Draw Cliff
+            ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+            ctx.fillRect(0, cliffY, cliffX, groundY - cliffY + 20);
+            ctx.strokeStyle = "rgba(0, 240, 255, 0.4)";
+            ctx.lineWidth = 2;
+            ctx.strokeRect(0, cliffY, cliffX, groundY - cliffY + 20);
+
+            // Draw Ground Line
+            ctx.strokeStyle = "#00e676";
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(10, groundY);
+            ctx.lineTo(660, groundY);
+            ctx.stroke();
+
+            ctx.fillStyle = "#00e676";
+            ctx.font = "12px sans-serif";
+            ctx.fillText("Ground Level (y = 0)", 540, groundY + 20);
+
+            // Draw Initial Ball Positions
+            // Ball A (Dropped - Cyan)
+            ctx.fillStyle = "#00f0ff";
+            ctx.beginPath();
+            ctx.arc(cliffX - 30, cliffY, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "#fff";
+            ctx.font = "bold 11px sans-serif";
+            ctx.fillText("A (Dropped)", cliffX - 60, cliffY - 15);
+
+            // Ball B (Launched - Purple)
+            ctx.fillStyle = "#b026ff";
+            ctx.beginPath();
+            ctx.arc(cliffX, cliffY, 10, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = "#fff";
+            ctx.fillText("B (ux = " + ux + " m/s)", cliffX + 10, cliffY - 15);
+        }
+
+        function runSimulation() {
+            if (isRunning) return;
+            isRunning = true;
+
+            const canvas = document.getElementById('galileoCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const h = parseFloat(document.getElementById('heightSlider').value);
+            const ux = parseFloat(document.getElementById('speedHorizSlider').value);
+            const g = 9.80;
+
+            const totalTime = Math.sqrt((2 * h) / g);
+
+            let startTime = null;
+            const cliffX = 100;
+            const groundY = 320;
+            const scaleY = 240 / 80;
+            const scaleX = 8.5; // Visual horizontal scaling
+
+            const cliffY = groundY - (h * scaleY);
+
+            const strobePositions = [];
+
+            function animate(timestamp) {
+                if (!startTime) startTime = timestamp;
+                let elapsedRealSec = (timestamp - startTime) / 1000;
+                let simTime = elapsedRealSec * 1.2; // Speed up animation slightly
+
+                if (simTime > totalTime) simTime = totalTime;
+
+                // Physics calculations
+                let sy = 0.5 * g * simTime * simTime;
+                let vy = g * simTime;
+                let sx = ux * simTime;
+
+                let ballAY = cliffY + (sy * scaleY);
+                let ballAX = cliffX - 30;
+
+                let ballBY = cliffY + (sy * scaleY);
+                let ballBX = cliffX + (sx * scaleX);
+
+                // Update Display Readings
+                document.getElementById('timeVal').innerText = simTime.toFixed(2) + " s";
+                document.getElementById('syVal').innerText = sy.toFixed(2) + " m";
+                document.getElementById('vyAVal').innerText = vy.toFixed(2) + " m/s";
+                document.getElementById('sxBVal').innerText = sx.toFixed(2) + " m";
+
+                // Draw Frame
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Redraw Static Elements
+                // Grid
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.05)";
+                ctx.lineWidth = 1;
+                for (let y = 40; y <= groundY; y += 30) {
+                    ctx.beginPath();
+                    ctx.moveTo(30, y);
+                    ctx.lineTo(650, y);
+                    ctx.stroke();
+                }
+
+                // Cliff
+                ctx.fillStyle = "rgba(255, 255, 255, 0.1)";
+                ctx.fillRect(0, cliffY, cliffX, groundY - cliffY + 20);
+                ctx.strokeStyle = "rgba(0, 240, 255, 0.4)";
+                ctx.lineWidth = 2;
+                ctx.strokeRect(0, cliffY, cliffX, groundY - cliffY + 20);
+
+                // Ground
+                ctx.strokeStyle = "#00e676";
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(10, groundY);
+                ctx.lineTo(660, groundY);
+                ctx.stroke();
+
+                // Save Strobe Marker every 0.35s
+                if (strobePositions.length === 0 || simTime - strobePositions[strobePositions.length - 1].t >= 0.35) {
+                    strobePositions.push({ t: simTime, y: ballAY, bx: ballBX });
+                }
+
+                // Draw Horizontal Synchronous Strobe Lines (Proving Level Fall)
+                strobePositions.forEach(pos => {
+                    ctx.strokeStyle = "rgba(255, 255, 255, 0.25)";
+                    ctx.lineWidth = 1;
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath();
+                    ctx.moveTo(ballAX, pos.y);
+                    ctx.lineTo(Math.min(pos.bx + 20, 650), pos.y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Ghost balls
+                    ctx.fillStyle = "rgba(0, 240, 255, 0.25)";
+                    ctx.beginPath();
+                    ctx.arc(ballAX, pos.y, 6, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = "rgba(176, 38, 255, 0.25)";
+                    ctx.beginPath();
+                    ctx.arc(pos.bx, pos.y, 6, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+
+                // Active Ball A (Cyan)
+                ctx.fillStyle = "#00f0ff";
+                ctx.beginPath();
+                ctx.arc(ballAX, ballAY, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowColor = "#00f0ff";
+                ctx.shadowBlur = 10;
+
+                // Active Ball B (Purple)
+                ctx.fillStyle = "#b026ff";
+                ctx.beginPath();
+                ctx.arc(ballBX, ballBY, 10, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.shadowColor = "#b026ff";
+                ctx.shadowBlur = 10;
+                ctx.shadowBlur = 0; // reset
+
+                if (simTime < totalTime) {
+                    animId = requestAnimationFrame(animate);
+                } else {
+                    isRunning = false;
+                }
+            }
+
+            animId = requestAnimationFrame(animate);
+        }
+
+        function resetSimulation() {
+            if (animId) cancelAnimationFrame(animId);
+            isRunning = false;
+            document.getElementById('timeVal').innerText = "0.00 s";
+            document.getElementById('syVal').innerText = "0.00 m";
+            document.getElementById('vyAVal').innerText = "0.00 m/s";
+            document.getElementById('sxBVal').innerText = "0.00 m";
+            drawStaticGalileoCanvas();
+        }
+
+        /* --- Global Interactive Helper Functions --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement) {
+                hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement) {
+                if (solutionElement.style.display === "none") {
+                    solutionElement.style.display = "block";
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        window.MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                            console.error('MathJax error:', err.message);
+                        });
+                    }
+                } else {
+                    solutionElement.style.display = "none";
+                }
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            if (feedbackSpan) {
+                feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+                feedbackSpan.style.color = "#00e676";
+            }
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

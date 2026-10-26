@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>15. Kepler's Three Laws of Planetary Motion - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS Reset & Box Sizing Safeguards */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Responsive Layout & Container Enhancements */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border-radius: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .sim-mode-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-mode {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.65rem 1.3rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mode.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(176, 38, 255, 0.35));
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#keplerCanvas {
+            width: 100%;
+            height: 440px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        /* Callouts and Containers */
+        .concept-highlight-card, 
+        .worked-solution, 
+        .derivation-steps, 
+        .practise-question, 
+        .formula-callout-box, 
+        .misconception-box, 
+        .exam-warning-box, 
+        .extension-note-box,
+        .beginner-box {
+            max-width: 100%;
+            overflow-x: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .beginner-box {
+            background: rgba(0, 230, 118, 0.06);
+            border-left: 4px solid #00e676;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.8rem 0;
+        }
+
+        .beginner-box h4 {
+            color: #69f0ae;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .beginner-box p {
+            color: #e8f5e9;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+            line-height: 1.6;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .vector-diagram-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .formula-callout-box {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.12), rgba(0, 240, 255, 0.12));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            text-align: center;
+        }
+
+        .formula-callout-box h4 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .formula-callout-box p {
+            margin-bottom: 0;
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .misconception-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .misconception-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .misconception-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        /* MathJax Overflow Fixes */
+        .MathJax_Display, .mjx-chtml, .MathJax {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding: 0.3rem 0;
+            margin: 0.5rem 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html" class="active">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>15. Kepler's Three Laws of Planetary Motion</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 4 (Part 3)</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Core Learning Goals</h2>
+            <p><strong>Inquiry Question 4:</strong> <em>How does Kepler's laws of planetary motion describe the movements of natural and artificial satellites?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus (calculus-free), students must achieve absolute conceptual and mathematical fluency in Johannes Kepler's Laws of Planetary Motion:</p>
+            <ul class="feature-list">
+                <li>Describe Kepler's Three Laws qualitatively and quantitatively:
+                    <ol>
+                        <li><strong>1st Law (Law of Ellipses):</strong> Planets move in elliptical orbits with the Sun at one focus.</li>
+                        <li><strong>2nd Law (Law of Equal Areas):</strong> A line segment joining a planet and the Sun sweeps out equal areas during equal intervals of time.</li>
+                        <li><strong>3rd Law (Law of Periods):</strong> The square of the orbital period ($T^2$) is directly proportional to the cube of the semi-major axis ($r^3$):
+                            $$\frac{r^3}{T^2} = k$$
+                        </li>
+                    </ol>
+                </li>
+                <li>Derive Kepler's Third Law for circular orbits by equating centripetal force ($F_c = \frac{m v^2}{r}$) to Newton's universal gravitational force ($F_g = \frac{G M m}{r^2}$).</li>
+                <li>Calculate Kepler's constant $k = \frac{G M}{4\pi^2}$ for different central bodies (e.g. Sun, Earth, Jupiter) and apply ratio calculations ($\frac{r_1^3}{T_1^2} = \frac{r_2^3}{T_2^2}$) across satellite systems.</li>
+            </ul>
+        </section>
+
+        <!-- 2. Beginner-Friendly Intuitive Starter -->
+        <section class="content-section" id="beginner-intro">
+            <h2>Part 1: The Intuitive Idea — How Planets Really Move</h2>
+
+            <div class="beginner-box">
+                <h4>Beginner Bridge: From Perfect Circles to Oval Loops</h4>
+                <p>For thousands of years, ancient astronomers believed that everything in the heavens had to move in "perfect circles" at constant speed. But when Johannes Kepler analysed precise star-and-planet observations in the early 1600s, circles simply did not match the real numbers!</p>
+                <p>Kepler discovered three beautifully simple rules that govern every orbiting body in the universe—from planets orbiting the Sun, to moons orbiting Jupiter, to artificial satellites orbiting Earth.</p>
+            </div>
+
+            <h3>1. Kepler's First Law: The Law of Ellipses</h3>
+            <p><strong>In Simple Terms:</strong> Orbits are not perfect circles; they are slightly flattened ovals called <em>ellipses</em>. The central body (like the Sun) sits at one special off-center point called a <strong>focus</strong> (plural: <em>foci</em>).</p>
+
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">What is an Ellipse?</h4>
+                <p>Think of an ellipse as a circle with two center points (foci) instead of one. If you push the two foci together until they meet in the middle, the ellipse becomes a perfect circle!</p>
+                <ul class="feature-list" style="margin-bottom: 0;">
+                    <li><strong>Semi-Major Axis ($a$ or $r$):</strong> The average distance from the center of the ellipse to its outer edge (half of the longest diameter). For circular orbits, $a$ is simply the radius $r$.</li>
+                    <li><strong>Eccentricity ($e$):</strong> A measure of how "stretched out" the ellipse is. A perfect circle has $e = 0$. Earth's orbit is almost a circle ($e = 0.017$), while a comet has a highly stretched orbit ($e = 0.95$).</li>
+                    <li><strong>Perihelion ($r_p$):</strong> The point of closest approach to the Sun ($r_p = a(1 - e)$).</li>
+                    <li><strong>Aphelion ($r_a$):</strong> The point furthest away from the Sun ($r_a = a(1 + e)$).</li>
+                </ul>
+            </div>
+
+            <!-- Vector Diagram: Ellipse Geometry & Foci -->
+            <div class="vector-diagram-card">
+                <svg width="520" height="260" viewBox="0 0 520 260" style="background: transparent;">
+                    <!-- Elliptical Orbit Path -->
+                    <ellipse cx="260" cy="130" rx="200" ry="110" fill="rgba(0, 240, 255, 0.04)" stroke="#00f0ff" stroke-width="2"/>
+
+                    <!-- Major Axis Line -->
+                    <line x1="60" y1="130" x2="460" y2="130" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-dasharray="4"/>
+                    <text x="260" y="148" fill="#888" font-family="sans-serif" font-size="11" text-anchor="middle">Semi-Major Axis (a)</text>
+
+                    <!-- Foci Points -->
+                    <!-- Focus 1 (Sun) -->
+                    <circle cx="160" cy="130" r="14" fill="#ffd700" stroke="#ffffff" stroke-width="2"/>
+                    <text x="160" y="105" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Focus 1 (Sun)</text>
+
+                    <!-- Focus 2 (Empty) -->
+                    <circle cx="360" cy="130" r="4" fill="rgba(255,255,255,0.5)"/>
+                    <text x="360" y="105" fill="#888" font-family="sans-serif" font-size="11" text-anchor="middle">Focus 2 (Empty)</text>
+
+                    <!-- Perihelion Point -->
+                    <circle cx="60" cy="130" r="6" fill="#00e676"/>
+                    <text x="50" y="165" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="12">Perihelion (Closest)</text>
+
+                    <!-- Aphelion Point -->
+                    <circle cx="460" cy="130" r="6" fill="#b026ff"/>
+                    <text x="410" y="165" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="12">Aphelion (Furthest)</text>
+
+                    <!-- Planet Position -->
+                    <circle cx="220" cy="35" r="8" fill="#ffffff"/>
+                    <text x="210" y="20" fill="#ffffff" font-family="sans-serif" font-size="12" font-weight="bold">Planet</text>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 1: Anatomy of an elliptical orbit. The Sun sits at Focus 1. The average separation distance equals the semi-major axis $a = \frac{r_p + r_a}{2}$.</p>
+            </div>
+
+            <h3>2. Kepler's Second Law: The Law of Equal Areas</h3>
+            <p><strong>In Simple Terms:</strong> A planet speeds up as it gets closer to the Sun (near perihelion) and slows down as it moves further away (near aphelion). An imaginary string connecting the Sun to the planet sweeps out equal areas of space in equal amounts of time.</p>
+
+            <div class="beginner-box">
+                <h4>Why Does the Speed Change? (The Gravity & Energy Explanation)</h4>
+                <p>As a planet travels toward perihelion (closer to the Sun), gravity pulls it forward, speeding it up as gravitational potential energy converts into kinetic energy. As it moves away toward aphelion, gravity pulls backward on it, slowing it down!</p>
+                <p>Mathematically, by conservation of angular momentum ($L = m v r \sin\phi = \text{constant}$):</p>
+                $$v_p r_p = v_a r_a$$
+                <p>Since perihelion distance $r_p$ is smaller than aphelion distance $r_a$, perihelion speed $v_p$ MUST be much faster than aphelion speed $v_a$!</p>
+            </div>
+
+            <h3>3. Kepler's Third Law: The Law of Periods</h3>
+            <p><strong>In Simple Terms:</strong> Planets that are further from the Sun take much longer to complete an orbit than planets close to the Sun. Not only is their orbital path longer, but they also move at a slower average speed!</p>
+
+            <div class="formula-callout-box">
+                <h4>Kepler's Third Law (The $r^3 / T^2$ Ratio)</h4>
+                <p>$$\frac{r^3}{T^2} = k \quad \text{or} \quad T^2 \propto r^3$$</p>
+                <p style="font-size: 1rem; color: #ffffff; margin-top: 0.5rem;">
+                    "The cube of the average orbital radius ($r^3$) divided by the square of the orbital period ($T^2$) is a CONSTANT ($k$) for all objects orbiting the same central body!"
+                </p>
+            </div>
+        </section>
+
+        <!-- 3. Mathematical Derivation of Kepler's 3rd Law for Circular Orbits -->
+        <section class="content-section" id="deep-dive-derivation">
+            <h2>Part 2: Complete Step-by-Step Derivation of Kepler's Third Law</h2>
+
+            <p>In the Stage 6 Physics exam, you are frequently required to derive Kepler's 3rd Law from fundamental mechanics principles ($F_c = F_g$). Here is the complete step-by-step mathematical proof:</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Step-by-Step Proof: $\frac{r^3}{T^2} = \frac{G M}{4\pi^2}$</h4>
+
+                <p><strong>Step 1: State the physical condition for stable orbital motion.</strong></p>
+                <p>For a planet or satellite of mass $m$ in circular orbit of radius $r$ around a central mass $M$, the required centripetal force ($F_c$) is supplied entirely by the universal gravitational attraction force ($F_g$):</p>
+
+                $$F_c = F_g$$
+
+                <p><strong>Step 2: Substitute the fundamental force equations.</strong></p>
+
+                $$\frac{m v^2}{r} = \frac{G M m}{r^2}$$
+
+                <p><strong>Step 3: Cancel the satellite mass $m$ and multiply by $r$ to isolate $v^2$.</strong></p>
+
+                $$v^2 = \frac{G M}{r}$$
+
+                <p><strong>Step 4: Express circular orbital velocity $v$ in terms of period $T$.</strong></p>
+                <p>Since speed equals circumference divided by period ($v = \frac{2\pi r}{T}$), square both sides:</p>
+
+                $$v^2 = \frac{4\pi^2 r^2}{T^2}$$
+
+                <p><strong>Step 5: Equate the two expressions for $v^2$.</strong></p>
+
+                $$\frac{4\pi^2 r^2}{T^2} = \frac{G M}{r}$$
+
+                <p><strong>Step 6: Cross-multiply to group radius terms ($r$) and period terms ($T$).</strong></p>
+
+                $$4\pi^2 r^3 = G M T^2$$
+
+                <p><strong>Step 7: Divide to isolate the Kepler ratio $\frac{r^3}{T^2}$.</strong></p>
+
+                <div class="formula-callout-box">
+                    <h4>Kepler's Constant Equation ($k$)</h4>
+                    <p>$$\frac{r^3}{T^2} = \frac{G M}{4\pi^2} = k$$</p>
+                </div>
+
+                <div class="concept-highlight-card">
+                    <h4 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">CRITICAL EXAM TAKEAWAY: What does Kepler's Constant $k$ depend on?</h4>
+                    <p>Notice that $k = \frac{G M}{4\pi^2}$ contains ONLY constants ($G, \pi$) and the mass of the <strong>central body ($M$)</strong> being orbited!</p>
+                    <ul class="feature-list" style="margin-bottom: 0;">
+                        <li>All 8 planets orbiting the Sun share the EXACT SAME Kepler constant ($k_{\text{Sun}} = \frac{G M_{\text{Sun}}}{4\pi^2} \approx 3.35 \times 10^{18}\text{ m}^3/\text{s}^2$).</li>
+                        <li>All satellites (ISS, Moon, GPS) orbiting Earth share a DIFFERENT Kepler constant ($k_{\text{Earth}} = \frac{G M_E}{4\pi^2} \approx 1.01 \times 10^{13}\text{ m}^3/\text{s}^2$).</li>
+                        <li>You CANNOT use the same $k$ value to compare a planet orbiting the Sun with a moon orbiting Jupiter!</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Advanced Concepts: Ratio Method & Elliptical Geometry -->
+        <section class="content-section" id="advanced-concepts">
+            <h2>Part 3: Advanced Orbital Ratio Analysis & Elliptical Speeds</h2>
+
+            <h3>1. The Two-Body Ratio Method ($\frac{r_1^3}{T_1^2} = \frac{r_2^3}{T_2^2}$)</h3>
+            <p>If two bodies (Body 1 and Body 2) orbit the exact same central mass $M$, their Kepler constants are identical ($k_1 = k_2$):</p>
+
+            $$\frac{r_1^3}{T_1^2} = \frac{r_2^3}{T_2^2} \implies \left(\frac{r_1}{r_2}\right)^3 = \left(\frac{T_1}{T_2}\right)^2$$
+
+            <p>This powerful ratio relation allows you to solve orbital problems without needing Newton's constant $G$ or the mass $M$!</p>
+
+            <h3>2. Conservation of Energy in Elliptical Orbits</h3>
+            <p>In an elliptical orbit, total mechanical energy $E = K + U = -\frac{G M m}{2 a}$ remains strictly constant. At perihelion ($r_p$) and aphelion ($r_a$):</p>
+
+            $$\frac{1}{2} m v_p^2 - \frac{G M m}{r_p} = \frac{1}{2} m v_a^2 - \frac{G M m}{r_a}$$
+
+            <p>Combined with conservation of angular momentum ($v_p r_p = v_a r_a$), we obtain the exact perihelion and aphelion speeds:</p>
+
+            $$v_p = \sqrt{\frac{G M}{a} \left(\frac{1 + e}{1 - e}\right)} \quad \text{and} \quad v_a = \sqrt{\frac{G M}{a} \left(\frac{1 - e}{1 + e}\right)}$$
+        </section>
+
+        <!-- 5. Dynamic Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Dynamic Interactive Workbench: Kepler's Laws & Elliptical Sweeper</h2>
+            <p>Use the interactive visualizer below to explore Kepler's 3 Laws! Adjust orbital eccentricity ($e$) and semi-major axis ($a$) to observe how speed varies between perihelion and aphelion, and verify that equal areas are swept out in equal time intervals ($\Delta A / \Delta t = \text{const}$).</p>
+
+            <div class="sim-container">
+                <div class="sim-mode-selector">
+                    <button id="btn-mode-area" class="btn-mode active" onclick="setKeplerSimMode('area')">2nd Law Area Sweeper ($\Delta A / \Delta t$)</button>
+                    <button id="btn-mode-ratio" class="btn-mode" onclick="setKeplerSimMode('ratio')">3rd Law Ratio Plotter ($r^3$ vs $T^2$)</button>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-eccentricity">Eccentricity ($e$): <span id="disp-ecc" class="sim-value-display">0.50</span></label>
+                        <input type="range" id="sim-eccentricity" min="0.00" max="0.75" value="0.50" step="0.05">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-semimajor">Semi-Major Axis ($a$ in AU): <span id="disp-axis" class="sim-value-display">2.00 AU</span></label>
+                        <input type="range" id="sim-semimajor" min="1.0" max="5.0" value="2.0" step="0.2">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-cmass-k">Central Star Mass ($M / M_{\text{Sun}}$): <span id="disp-cmass-k" class="sim-value-display">1.00 Solar Mass</span></label>
+                        <input type="range" id="sim-cmass-k" min="0.5" max="3.0" value="1.0" step="0.1">
+                    </div>
+                </div>
+
+                <canvas id="keplerCanvas" width="800" height="440"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Perihelion Speed ($v_p$)</div>
+                        <div class="value" id="out-vp">36.5 km/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Aphelion Speed ($v_a$)</div>
+                        <div class="value" id="out-va">12.2 km/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Orbital Period ($T$)</div>
+                        <div class="value" id="out-period">2.83 Earth Years</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Kepler Ratio ($r^3 / T^2$)</div>
+                        <div class="value" id="out-kratio">1.00 AU³/yr²</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Area Swept Rate</div>
+                        <div class="value" id="out-areastatus" style="color: var(--success-green);">CONSTANT (Equal Areas)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): Using Kepler's 3rd Law Ratio for Jupiter</h4>
+                    <span class="marks-allocated">[Basic Kepler Ratio Calculation]</span>
+                </div>
+                <div class="question-body">
+                    <p>Earth orbits the Sun at an average radius $r_E = 1.00\text{ AU}$ with an orbital period $T_E = 1.00\text{ year}$. Jupiter orbits the Sun at an average radius $r_J = 5.20\text{ AU}$.</p>
+                    <p>Calculate Jupiter's orbital period $T_J$ in Earth years using Kepler's Third Law ratio method.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Applying Kepler's Third Law Ratio ($\frac{r_1^3}{T_1^2} = \frac{r_2^3}{T_2^2}$):</strong></p>
+
+                        $$\frac{r_E^3}{T_E^2} = \frac{r_J^3}{T_J^2}$$
+
+                        <p>Substituting values ($r_E = 1.00\text{ AU}, T_E = 1.00\text{ yr}, r_J = 5.20\text{ AU}$):</p>
+
+                        $$\frac{(1.00)^3}{(1.00)^2} = \frac{(5.20)^3}{T_J^2}$$
+                        $$1.00 = \frac{140.608}{T_J^2} \implies T_J^2 = 140.608$$
+
+                        <p>Taking the square root:</p>
+
+                        $$T_J = \sqrt{140.608} = \mathbf{11.86\text{ Earth years}} \approx \mathbf{11.9\text{ years}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Calculating Exoplanet Central Star Mass from $k$</h4>
+                    <span class="marks-allocated">[Kepler Constant & Mass Determination]</span>
+                </div>
+                <div class="question-body">
+                    <p>An exoplanet orbits a distant star at a radius $r = 1.80 \times 10^{11}\text{ m}$ with an orbital period $T = 4.20 \times 10^7\text{ seconds}$ ($\sim 1.33\text{ years}$).</p>
+                    <p>a) Calculate Kepler's constant $k$ for this stellar system in $\text{m}^3/\text{s}^2$.<br>b) Calculate the mass $M_*$ of the central star ($G = 6.674 \times 10^{-11}\text{ N}\cdot\text{m}^2/\text{kg}^2$).</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Calculating Kepler's Constant ($k$):</strong></p>
+
+                        $$k = \frac{r^3}{T^2} = \frac{(1.80 \times 10^{11})^3}{(4.20 \times 10^7)^2} = \frac{5.832 \times 10^{33}}{1.764 \times 10^{15}} = \mathbf{3.306 \times 10^{18}\text{ m}^3/\text{s}^2}$$
+
+                        <p><strong>Part b) Calculating Central Star Mass ($M_*$):</strong></p>
+                        <p>Using $k = \frac{G M_*}{4\pi^2} \implies M_* = \frac{4\pi^2 k}{G}$:</p>
+
+                        $$M_* = \frac{4\pi^2 \times (3.306 \times 10^{18})}{6.674 \times 10^{-11}} = \frac{39.4784 \times 3.306 \times 10^{18}}{6.674 \times 10^{-11}} = \frac{1.3051 \times 10^{20}}{6.674 \times 10^{-11}} = \mathbf{1.955 \times 10^{30}\text{ kg}}$$
+                        <p><em>(Notice this is very close to our Sun's mass of $1.989 \times 10^{30}\text{ kg}$!)</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Elliptical Comet Perihelion vs Aphelion Velocity Analysis</h4>
+                    <span class="marks-allocated">[Kepler 2nd Law & Conservation Dynamics]</span>
+                </div>
+                <div class="question-body">
+                    <p>Halley's Comet has an elliptical orbit around the Sun with perihelion distance $r_p = 8.75 \times 10^{10}\text{ m}$ ($0.585\text{ AU}$) and aphelion distance $r_a = 5.25 \times 10^{12}\text{ m}$ ($35.1\text{ AU}$). Its speed at perihelion is $v_p = 54.6\text{ km/s}$.</p>
+                    <p>a) Calculate Halley's Comet speed at aphelion $v_a$ using Kepler's Second Law.<br>b) Calculate the semi-major axis $a$ and calculate the comet's orbital period $T$ in years ($M_{\text{Sun}} = 1.989 \times 10^{30}\text{ kg}$).</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Aphelion Speed ($v_a$):</strong></p>
+                        <p>By Kepler's Second Law / Conservation of Angular Momentum ($v_p r_p = v_a r_a$):</p>
+
+                        $$v_a = v_p \left(\frac{r_p}{r_a}\right) = 54.6\text{ km/s} \times \left(\frac{8.75 \times 10^{10}\text{ m}}{5.25 \times 10^{12}\text{ m}}\right) = 54.6 \times \left(\frac{1}{60}\right) = \mathbf{0.910\text{ km/s}} \quad (\mathbf{910\text{ m/s}})$$
+
+                        <p><strong>Part b) Semi-Major Axis ($a$) & Orbital Period ($T$):</strong></p>
+
+                        $$a = \frac{r_p + r_a}{2} = \frac{8.75 \times 10^{10} + 5.25 \times 10^{12}}{2} = \frac{5.3375 \times 10^{12}}{2} = \mathbf{2.6688 \times 10^{12}\text{ m}}$$
+
+                        <p>Using Kepler's 3rd Law ($T = \sqrt{\frac{4\pi^2 a^3}{G M_{\text{Sun}}}}$):</p>
+
+                        $$a^3 = (2.6688 \times 10^{12})^3 = 1.8982 \times 10^{37}\text{ m}^3$$
+                        $$T^2 = \frac{4\pi^2 \times (1.8982 \times 10^{37})}{(6.674 \times 10^{-11})(1.989 \times 10^{30})} = \frac{7.4938 \times 10^{38}}{1.3275 \times 10^{20}} = 5.645 \times 10^{18}\text{ s}^2$$
+                        $$T = \sqrt{5.645 \times 10^{18}} = 2.3759 \times 10^9\text{ seconds}$$
+
+                        <p>Converting to Earth years ($\frac{2.3759 \times 10^9}{3.1536 \times 10^7}$):</p>
+                        $$T = \mathbf{75.3\text{ Earth years}} \quad (\text{matches Halley's famous } 75-76\text{ year return cycle!})$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension - JRAHS Style): Modified Kepler Constant for Binary Star System</h4>
+                    <span class="marks-allocated">[Dual Mass Vector Center Derivation]</span>
+                </div>
+                <div class="question-body">
+                    <p>In a binary star system, Star A ($M_1$) and Star B ($M_2$) orbit around their common center of mass at separation distance $d = r_1 + r_2$.</p>
+
+                    <p>a) Show that the modified Kepler 3rd Law for a binary star system is given by:
+                        $$\frac{d^3}{T^2} = \frac{G (M_1 + M_2)}{4\pi^2}$$
+                    </p>
+                    <p>b) Two equal-mass stars ($M_1 = M_2 = M$) orbit with period $T = 3.00\text{ years}$ ($9.46 \times 10^7\text{ s}$) at separation $d = 6.00 \times 10^{11}\text{ m}$. Calculate individual star mass $M$.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Full Band 6 JRAHS Solution:</h5>
+
+                        <p><strong>Part a) Binary System Derivation:</strong></p>
+                        <p>Position of center of mass relative to Star 1: $r_1 = d \left(\frac{M_2}{M_1 + M_2}\right)$.</p>
+
+                        <p>Gravitational attraction provides centripetal force for Star 1's circular orbit of radius $r_1$:</p>
+
+                        $$F_g = F_c \implies \frac{G M_1 M_2}{d^2} = M_1 \omega^2 r_1 = M_1 \left(\frac{2\pi}{T}\right)^2 \left[ d \left(\frac{M_2}{M_1 + M_2}\right) \right]$$
+
+                        <p>Cancelling $M_1$ and $M_2$ from both sides:</p>
+
+                        $$\frac{G}{d^2} = \frac{4\pi^2}{T^2} \frac{d}{M_1 + M_2}$$
+
+                        <p>Cross-multiplying to isolate $\frac{d^3}{T^2}$:</p>
+
+                        $$\mathbf{\frac{d^3}{T^2} = \frac{G (M_1 + M_2)}{4\pi^2}} \quad \text{Q.E.D.}$$
+
+                        <p><strong>Part b) Numerical Mass Calculation ($M_1 = M_2 = M \implies M_1 + M_2 = 2 M$):</strong></p>
+
+                        $$\frac{d^3}{T^2} = \frac{G (2 M)}{4\pi^2} \implies M = \frac{4\pi^2 d^3}{2 G T^2} = \frac{2\pi^2 d^3}{G T^2}$$
+                        $$M = \frac{2\pi^2 \times (6.00 \times 10^{11})^3}{(6.674 \times 10^{-11}) \times (9.46 \times 10^7)^2} = \frac{19.7392 \times 2.16 \times 10^{35}}{(6.674 \times 10^{-11}) \times (8.949 \times 10^{15})}$$
+                        $$M = \frac{4.2637 \times 10^{36}}{5.9726 \times 10^5} = \mathbf{7.14 \times 10^{30}\text{ kg}} \quad (\mathbf{3.59\text{ Solar Masses}})$$
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Four Practice Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Marking Criteria</h2>
+            <p>Attempt the practice questions below and log your marks into the self-assessment tracking system.</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-15-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Ratio Calculation for Exoplanet Orbit</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Exoplanet Alpha orbits a star at distance $r_A = 2.00\text{ AU}$ with a period $T_A = 4.00\text{ years}$. Exoplanet Beta orbits the same star at distance $r_B = 8.00\text{ AU}$.</p>
+                    <p>Calculate the orbital period $T_B$ of Exoplanet Beta in years using Kepler's Third Law ratio.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-15-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-15-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-15-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Use $\frac{r_A^3}{T_A^2} = \frac{r_B^3}{T_B^2} \implies T_B = T_A \times \left(\frac{r_B}{r_A}\right)^{3/2}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-15-easy" style="display: none;">
+                    <div class="worked-solution">
+                        $$\frac{(2.00)^3}{(4.00)^2} = \frac{(8.00)^3}{T_B^2} \implies \frac{8.00}{16.0} = \frac{512}{T_B^2}$$
+                        $$0.500 = \frac{512}{T_B^2} \implies T_B^2 = \frac{512}{0.500} = 1024$$
+                        $$T_B = \sqrt{1024} = \mathbf{32.0\text{ Earth years}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"By Kepler's Third Law ratio $\frac{r_A^3}{T_A^2} = \frac{r_B^3}{T_B^2}$. Substituting values gives $\frac{2^3}{4^2} = \frac{8^3}{T_B^2} \implies 0.5 = \frac{512}{T_B^2}$. Solving for period yields $T_B^2 = 1024 \implies T_B = 32.0\text{ years}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Sets up Kepler's Third Law ratio equation.</li>
+                            <li><strong>2 Marks:</strong> Correctly substitutes distances ($2.00\text{ AU}, 8.00\text{ AU}$) and period ($4.00\text{ years}$).</li>
+                            <li><strong>3 Marks:</strong> Obtains correct period $T_B = 32.0\text{ years}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-15-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-15-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('15-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-15-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-15-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Deriving $\frac{r^3}{T^2} = \frac{GM}{4\pi^2}$ Written Response</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Derive Kepler's Third Law $\frac{r^3}{T^2} = \frac{GM}{4\pi^2}$ for a circular orbit from Newton's Law of Universal Gravitation and centripetal acceleration, defining all terms and explaining why $k$ is constant for a given central body.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-15-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-15-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-15-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Start from $F_c = F_g$, substitute $v = \frac{2\pi r}{T}$, isolate $\frac{r^3}{T^2}$, and note that $G, \pi, M$ are fixed.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-15-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <p>1. Equate centripetal force to gravitational force: $\frac{m v^2}{r} = \frac{G M m}{r^2}$.</p>
+                        <p>2. Cancel $m$ and multiply by $r$: $v^2 = \frac{G M}{r}$.</p>
+                        <p>3. Substitute circular speed $v = \frac{2\pi r}{T}$: $\frac{4\pi^2 r^2}{T^2} = \frac{G M}{r}$.</p>
+                        <p>4. Cross-multiply: $4\pi^2 r^3 = G M T^2 \implies \frac{r^3}{T^2} = \frac{G M}{4\pi^2}$.</p>
+                        <p>5. The term $\frac{GM}{4\pi^2}$ depends only on universal gravitational constant $G$ and central body mass $M$. Thus $k$ is constant for all objects orbiting the same central mass $M$.</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"For a satellite of mass $m$ orbiting central mass $M$ at radius $r$, gravity provides centripetal force: $\frac{m v^2}{r} = \frac{G M m}{r^2} \implies v^2 = \frac{G M}{r}$. Substituting circular velocity $v = \frac{2\pi r}{T}$ gives $\frac{4\pi^2 r^2}{T^2} = \frac{G M}{r}$. Rearranging yields $\frac{r^3}{T^2} = \frac{G M}{4\pi^2}$. Since $G, \pi$, and $M$ are constant for a specific central mass, the ratio $\frac{r^3}{T^2}$ is a constant $k$ for all orbiting bodies in that system."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Equates $F_c = F_g$ with correct formulas.</li>
+                            <li><strong>2 Marks:</strong> Substitutes $v = \frac{2\pi r}{T}$.</li>
+                            <li><strong>3 Marks:</strong> Obtains $\frac{r^3}{T^2} = \frac{GM}{4\pi^2}$.</li>
+                            <li><strong>4 Marks:</strong> Explains clearly why $k$ depends only on central mass $M$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-15-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-15-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('15-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-15-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard -->
+            <div class="practise-question" id="question-15-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard): Elliptical Comet Orbit Analysis & Aphelion Speed</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A newly discovered comet has an elliptical orbit around the Sun ($M_{\text{Sun}} = 1.989 \times 10^{30}\text{ kg}$) with an orbital period $T = 64.0\text{ Earth years}$ ($2.019 \times 10^9\text{ s}$). Its perihelion distance is $r_p = 1.00 \times 10^{11}\text{ m}$ ($0.668\text{ AU}$).</p>
+                    <p>a) Calculate the comet's semi-major axis $a$ in metres.<br>b) Calculate the aphelion distance $r_a$ in metres.<br>c) If the comet's speed at perihelion is $v_p = 48.0\text{ km/s}$, calculate its speed at aphelion $v_a$.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-15-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-15-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-15-hard" style="display: none;">
+                    <p><strong>Hint:</strong> Use $a = \sqrt[3]{\frac{G M T^2}{4\pi^2}}$, then $r_a = 2 a - r_p$, then $v_a = v_p \left(\frac{r_p}{r_a}\right)$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-15-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Part a) Semi-Major Axis ($a$):</strong></p>
+
+                        $$a^3 = \frac{G M_{\text{Sun}} T^2}{4\pi^2} = \frac{(6.674 \times 10^{-11})(1.989 \times 10^{30})(2.019 \times 10^9)^2}{4\pi^2}$$
+                        $$a^3 = \frac{(1.3275 \times 10^{20}) \times (4.076 \times 10^{18})}{39.4784} = 1.3706 \times 10^{37}\text{ m}^3$$
+                        $$a = (1.3706 \times 10^{37})^{1/3} = \mathbf{2.393 \times 10^{12}\text{ m}} \quad (16.0\text{ AU})$$
+
+                        <p><strong>Part b) Aphelion Distance ($r_a$):</strong></p>
+                        <p>Since $a = \frac{r_p + r_a}{2} \implies r_a = 2 a - r_p$:</p>
+
+                        $$r_a = 2(2.393 \times 10^{12}) - 0.100 \times 10^{12} = 4.786 \times 10^{12} - 0.100 \times 10^{12} = \mathbf{4.686 \times 10^{12}\text{ m}}$$
+
+                        <p><strong>Part c) Aphelion Speed ($v_a$):</strong></p>
+
+                        $$v_a = v_p \left(\frac{r_p}{r_a}\right) = 48.0\text{ km/s} \times \left(\frac{1.00 \times 10^{11}\text{ m}}{4.686 \times 10^{12}\text{ m}}\right) = 48.0 \times 0.02134 = \mathbf{1.02\text{ km/s}} \quad (\mathbf{1020\text{ m/s}})$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Using Kepler's Third Law $a = \sqrt[3]{\frac{G M_{\text{Sun}} T^2}{4\pi^2}} = \sqrt[3]{\frac{(6.674 \times 10^{-11})(1.989 \times 10^{30})(2.019 \times 10^9)^2}{4\pi^2}} = 2.39 \times 10^{12}\text{ m}$. Since $a = \frac{r_p + r_a}{2}$, $r_a = 2 a - r_p = 2(2.393 \times 10^{12}) - 1.00 \times 10^{11} = 4.69 \times 10^{12}\text{ m}$. By conservation of angular momentum $v_a = v_p \left(\frac{r_p}{r_a}\right) = 48.0 \left(\frac{1.00 \times 10^{11}}{4.69 \times 10^{12}}\right) = 1.02\text{ km/s}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Calculates period in seconds ($2.019 \times 10^9\text{ s}$).</li>
+                            <li><strong>2 Marks:</strong> Calculates semi-major axis $a = 2.39 \times 10^{12}\text{ m}$.</li>
+                            <li><strong>3 Marks:</strong> Uses geometry $a = (r_p + r_a)/2$ to find aphelion distance $r_a = 4.69 \times 10^{12}\text{ m}$.</li>
+                            <li><strong>4 Marks:</strong> Applies Kepler's 2nd Law $v_p r_p = v_a r_a$.</li>
+                            <li><strong>5 Marks:</strong> Obtains aphelion speed $v_a = 1.02\text{ km/s}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-15-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-15-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('15-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-15-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension (JRAHS Distinction Separator) -->
+            <div class="practise-question" id="question-15-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (JRAHS Extension): Multi-Moon Jovian System Kepler Constant Verification</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>The Galilean moons Io and Ganymede orbit Jupiter ($M_J$). Io orbits at $r_1 = 4.217 \times 10^8\text{ m}$ with period $T_1 = 1.529 \times 10^5\text{ s}$ ($1.769\text{ days}$). Ganymede orbits at $r_2 = 1.070 \times 10^9\text{ m}$.</p>
+                    <p>a) Calculate Kepler's constant $k_{\text{Jupiter}}$ using Io's orbital parameters.<br>b) Predict Ganymede's orbital period $T_2$ in days.<br>c) Calculate Jupiter's mass $M_J$ from $k_{\text{Jupiter}}$ and express it as a fraction of Earth's mass ($M_E = 5.972 \times 10^{24}\text{ kg}$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-15-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-15-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-15-extension" style="display: none;">
+                    <p><strong>Hint:</strong> $k_J = \frac{r_1^3}{T_1^2}$. Then $T_2 = \sqrt{\frac{r_2^3}{k_J}}$. Then $M_J = \frac{4\pi^2 k_J}{G}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-15-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Part a) Kepler's Constant for Jupiter ($k_J$):</strong></p>
+
+                        $$k_J = \frac{r_1^3}{T_1^2} = \frac{(4.217 \times 10^8)^3}{(1.529 \times 10^5)^2} = \frac{7.500 \times 10^{25}}{2.3378 \times 10^{10}} = \mathbf{3.208 \times 10^{15}\text{ m}^3/\text{s}^2}$$
+
+                        <p><strong>Part b) Ganymede's Orbital Period ($T_2$):</strong></p>
+
+                        $$T_2^2 = \frac{r_2^3}{k_J} = \frac{(1.070 \times 10^9)^3}{3.208 \times 10^{15}} = \frac{1.225 \times 10^{27}}{3.208 \times 10^{15}} = 3.8186 \times 10^{11}\text{ s}^2$$
+                        $$T_2 = \sqrt{3.8186 \times 10^{11}} = 6.1794 \times 10^5\text{ seconds}$$
+
+                        <p>Converting to days ($\frac{6.1794 \times 10^5}{86400}$):</p>
+                        $$T_2 = \mathbf{7.152\text{ days}} \quad (\text{matches Ganymede's actual } 7.15\text{-day period!})$$
+
+                        <p><strong>Part c) Jupiter's Mass ($M_J$):</strong></p>
+
+                        $$M_J = \frac{4\pi^2 k_J}{G} = \frac{4\pi^2 \times (3.208 \times 10^{15})}{6.674 \times 10^{-11}} = \frac{1.2665 \times 10^{17}}{6.674 \times 10^{-11}} = \mathbf{1.898 \times 10^{27}\text{ kg}}$$
+
+                        <p>Ratio to Earth mass:</p>
+                        $$\frac{M_J}{M_E} = \frac{1.898 \times 10^{27}}{5.972 \times 10^{24}} = \mathbf{317.8 \text{ Earth Masses}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Kepler's constant for Jupiter is $k_J = \frac{r_1^3}{T_1^2} = \frac{(4.217 \times 10^8)^3}{(1.529 \times 10^5)^2} = 3.208 \times 10^{15}\text{ m}^3/\text{s}^2$. Using $k_J$ for Ganymede gives period $T_2 = \sqrt{\frac{r_2^3}{k_J}} = \sqrt{\frac{(1.070 \times 10^9)^3}{3.208 \times 10^{15}}} = 6.18 \times 10^5\text{ s} = 7.15\text{ days}$. Jupiter's mass is $M_J = \frac{4\pi^2 k_J}{G} = \frac{4\pi^2 (3.208 \times 10^{15})}{6.674 \times 10^{-11}} = 1.90 \times 10^{27}\text{ kg}$, which is $318$ times Earth's mass."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Calculates Jupiter's Kepler constant $k_J = 3.21 \times 10^{15}\text{ m}^3/\text{s}^2$.</li>
+                            <li><strong>2 Marks:</strong> Applies $k_J$ to find Ganymede's period in seconds ($6.18 \times 10^5\text{ s}$).</li>
+                            <li><strong>3 Marks:</strong> Converts Ganymede's period to days ($7.15\text{ days}$).</li>
+                            <li><strong>4 Marks:</strong> Uses $M_J = \frac{4\pi^2 k}{G}$ to set up mass calculation.</li>
+                            <li><strong>5 Marks:</strong> Obtains Jupiter mass $1.90 \times 10^{27}\text{ kg}$.</li>
+                            <li><strong>6 Marks:</strong> Expresses mass correctly as $318 M_E$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-15-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-15-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('15-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-15-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="14-satellite-types-leo-geo.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 14: Satellite Orbits (LEO/GEO)</a>
+                <a href="16-gravitational-potential-energy.html" class="btn-next">Proceed to Lesson 16: Potential Energy Wells &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let keplerSimMode = 'area'; // 'area' or 'ratio'
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('15-easy');
+            checkIfQuestionAnswered('15-medium');
+            checkIfQuestionAnswered('15-hard');
+            checkIfQuestionAnswered('15-extension');
+            
+            initKeplerSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        function setKeplerSimMode(mode) {
+            keplerSimMode = mode;
+            document.getElementById('btn-mode-area').classList.toggle('active', mode === 'area');
+            document.getElementById('btn-mode-ratio').classList.toggle('active', mode === 'ratio');
+        }
+
+        /* --- Interactive Canvas Kepler Simulator Engine --- */
+        function initKeplerSimulator() {
+            const canvas = document.getElementById('keplerCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const inEcc = document.getElementById('sim-eccentricity');
+            const inAxis = document.getElementById('sim-semimajor');
+            const inCmassK = document.getElementById('sim-cmass-k');
+
+            const dispEcc = document.getElementById('disp-ecc');
+            const dispAxis = document.getElementById('disp-axis');
+            const dispCmassK = document.getElementById('disp-cmass-k');
+
+            const outVp = document.getElementById('out-vp');
+            const outVa = document.getElementById('out-va');
+            const outPeriod = document.getElementById('out-period');
+            const outKratio = document.getElementById('out-kratio');
+            const outAreastatus = document.getElementById('out-areastatus');
+
+            let E_anomaly = 0; // eccentric anomaly
+            let lastTime = performance.now();
+
+            function animate(now) {
+                const dt = (now - lastTime) / 1000;
+                lastTime = now;
+
+                const e = parseFloat(inEcc.value);
+                const a = parseFloat(inAxis.value); // AU
+                const M_solar = parseFloat(inCmassK.value); // Solar masses
+
+                dispEcc.innerText = e.toFixed(2);
+                dispAxis.innerText = a.toFixed(2) + ' AU';
+                dispCmassK.innerText = M_solar.toFixed(2) + ' Solar Mass';
+
+                // Orbital Period T = sqrt(a^3 / M) in years
+                const T_yr = Math.sqrt(Math.pow(a, 3) / M_solar);
+                const kRatio = Math.pow(a, 3) / (T_yr * T_yr); // Should always equal M_solar
+
+                // Circular base speed at 1 AU around 1 M_Sun is 29.78 km/s
+                const v_base = 29.78 * Math.sqrt(M_solar / a);
+                const vp = v_base * Math.sqrt((1 + e) / (1 - e));
+                const va = v_base * Math.sqrt((1 - e) / (1 + e));
+
+                outVp.innerText = vp.toFixed(1) + ' km/s';
+                outVa.innerText = va.toFixed(1) + ' km/s';
+                outPeriod.innerText = T_yr.toFixed(2) + ' Earth Years';
+                outKratio.innerText = kRatio.toFixed(2) + ' AU³/yr²';
+                outAreastatus.innerText = "CONSTANT (Equal Areas)";
+
+                // Update orbit eccentric anomaly E using Kepler's Equation
+                const meanMotion = (2 * Math.PI) / T_yr; // rad/year
+                const deltaE = (meanMotion * dt * 0.8) / (1 - e * Math.cos(E_anomaly));
+                E_anomaly += deltaE;
+                if (E_anomaly > 2 * Math.PI) E_anomaly -= 2 * Math.PI;
+
+                // Render Canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Grid
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                if (keplerSimMode === 'area') {
+                    const cX = 400;
+                    const cY = 220;
+
+                    const aPx = a * 45;
+                    const bPx = aPx * Math.sqrt(1 - e * e);
+                    const cPx = aPx * e; // Focus offset from center
+
+                    // Center of ellipse is shifted left by cPx so Sun at Focus 1 stays near center
+                    const ellipseCenterX = cX + cPx;
+                    const sunX = cX;
+                    const sunY = cY;
+
+                    // Draw Ellipse
+                    ctx.strokeStyle = '#00f0ff';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.ellipse(ellipseCenterX, cY, aPx, bPx, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    // Calculate Planet Position in Ellipse
+                    const planetX = ellipseCenterX - aPx * Math.cos(E_anomaly);
+                    const planetY = cY - bPx * Math.sin(E_anomaly);
+
+                    // Swept Sector Triangles (Visualizing 2nd Law)
+                    ctx.fillStyle = 'rgba(0, 240, 255, 0.15)';
+                    ctx.beginPath();
+                    ctx.moveTo(sunX, sunY);
+                    ctx.lineTo(planetX, planetY);
+                    
+                    // Arc back a bit to show swept slice
+                    const prevE = E_anomaly - 0.25;
+                    const prevX = ellipseCenterX - aPx * Math.cos(prevE);
+                    const prevY = cY - bPx * Math.sin(prevE);
+                    ctx.lineTo(prevX, prevY);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Sun at Focus 1
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath(); ctx.arc(sunX, sunY, 12, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#ffffff'; ctx.font = 'bold 11px sans-serif'; ctx.fillText("Sun (Focus 1)", sunX - 30, sunY + 28);
+
+                    // Empty Focus 2
+                    const f2X = ellipseCenterX + cPx;
+                    ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+                    ctx.beginPath(); ctx.arc(f2X, cY, 4, 0, Math.PI * 2); ctx.fill();
+
+                    // Planet Body
+                    ctx.fillStyle = '#00e676';
+                    ctx.beginPath(); ctx.arc(planetX, planetY, 7, 0, Math.PI * 2); ctx.fill();
+
+                    // Tangential Speed Vector Arrow
+                    const vMag = v_base * Math.sqrt(2 / (aPx / Math.hypot(planetX - sunX, planetY - sunY)) - 1);
+                    ctx.strokeStyle = '#ffd700';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath(); ctx.moveTo(planetX, planetY); 
+                    ctx.lineTo(planetX + (planetY - cY) * 0.2, planetY - (planetX - ellipseCenterX) * 0.2); 
+                    ctx.stroke();
+
+                } else {
+                    // Ratio Plotter Mode: r^3 vs T^2 Graph
+                    const originX = 100;
+                    const originY = 360;
+                    const graphW = 620;
+                    const graphH = 280;
+
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(originX, originY); ctx.lineTo(originX + graphW, originY);
+                    ctx.moveTo(originX, originY); ctx.lineTo(originX, originY - graphH);
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#ffffff'; ctx.font = '12px sans-serif';
+                    ctx.fillText("Orbital Radius Cube r³ (AU³)", originX + graphW - 120, originY + 30);
+                    ctx.fillText("Period Squared T² (yr²)", originX - 70, originY - graphH - 10);
+
+                    // Straight Line T^2 = (1/M) * r^3
+                    const maxR3 = 125; // 5^3 AU³
+                    const maxT2 = 125 / M_solar;
+
+                    ctx.strokeStyle = '#00f0ff';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath(); ctx.moveTo(originX, originY);
+                    
+                    const endXpx = originX + graphW;
+                    const endYpx = originY - ( (125 / M_solar) / maxT2 ) * graphH;
+                    ctx.lineTo(endXpx, endYpx);
+                    ctx.stroke();
+
+                    // Planet Point Dot
+                    const curR3 = Math.pow(a, 3);
+                    const curT2 = Math.pow(T_yr, 2);
+
+                    const pXpx = originX + (curR3 / maxR3) * graphW;
+                    const pYpx = originY - (curT2 / maxT2) * graphH;
+
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath(); ctx.arc(pXpx, pYpx, 8, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#ffd700'; ctx.fillText(`(${curR3.toFixed(1)} AU³, ${curT2.toFixed(1)} yr²)`, pXpx + 12, pYpx + 4);
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

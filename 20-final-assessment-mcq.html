@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20. Final Exam (Part 1: MCQs) - HSC Physics Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        .origin-badge {
+            display: inline-block;
+            background: rgba(0, 240, 255, 0.1);
+            color: var(--accent-cyan, #00f0ff);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            margin-bottom: 1rem;
+        }
+
+        .diagram-card {
+            text-align: center;
+            margin: 1.5rem 0;
+            padding: 1.25rem;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+            box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
+        }
+
+        .options-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin: 1.25rem 0;
+            padding: 0;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 0.9rem 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border, rgba(255, 255, 255, 0.1));
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition-smooth, all 0.3s ease);
+            color: var(--text-primary, #ffffff);
+        }
+
+        .option-item:hover {
+            background: rgba(0, 240, 255, 0.05);
+            border-color: var(--accent-cyan, #00f0ff);
+        }
+
+        .option-item input[type="radio"] {
+            margin-right: 14px;
+            accent-color: var(--accent-cyan, #00f0ff);
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .option-item label {
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .option-item.opt-correct {
+            border-color: #00e676 !important;
+            background: rgba(0, 230, 118, 0.15) !important;
+        }
+
+        .option-item.opt-incorrect {
+            border-color: #ff5252 !important;
+            background: rgba(255, 82, 82, 0.15) !important;
+        }
+
+        .interaction-controls {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-top: 1.25rem;
+            flex-wrap: wrap;
+        }
+
+        .mark-feedback {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span> / 20</div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html" class="active">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>20. Final Exam (Part 1: MCQs)</h1>
+            <p class="subtitle">HSC Physics Module 5 Assessment — 20 Multiple Choice Questions</p>
+        </header>
+
+        <!-- Assessment Overview Section -->
+        <section class="content-section" id="exam-overview">
+            <h2>Examination Overview & Instructions</h2>
+            <p>Welcome to Part 1 of the Module 5 Final Assessment. Select your chosen option for each question and click <strong>Check Answer & Solution</strong>. The system will automatically evaluate your response, highlight the correct option, display the worked solution, and update your mark.</p>
+            <ul class="feature-list">
+                <li><strong>Total Marks:</strong> 20 Marks (1 mark per question)</li>
+                <li><strong>Target Time:</strong> 35 Minutes</li>
+                <li><strong>Scoring:</strong> Automated grading upon response check.</li>
+            </ul>
+        </section>
+
+        <!-- Question 1 -->
+        <div class="practise-question" id="question-20-q1">
+            <div class="question-header">
+                <h4>Question 1 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2022 Oakhill College - Q1</span>
+                <p>Consider an object undergoing projectile motion under acceleration due to gravity as shown in the diagram below. Point $Y$ represents the apex of the trajectory.</p>
+                
+                <div class="diagram-card">
+                    <svg width="320" height="150" viewBox="0 0 320 150" style="max-width: 100%; height: auto;">
+                        <line x1="20" y1="130" x2="300" y2="130" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <path d="M 40 130 Q 160 10 280 130" fill="none" stroke="#00f0ff" stroke-width="2.5" stroke-dasharray="4,4"/>
+                        <circle cx="160" cy="70" r="5" fill="#b026ff"/>
+                        <text x="160" y="55" fill="#ffffff" text-anchor="middle" font-weight="bold">Y</text>
+                        <text x="260" y="145" fill="#a0aec0" font-size="12">Ground</text>
+                    </svg>
+                </div>
+
+                <p>Choose the most correct statement:</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q1" value="A"> (A) The velocity at point Y will be zero.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q1" value="B"> (B) The vertical component of the velocity is a constant.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q1" value="C"> (C) The acceleration due to gravity will vary throughout the projectile's trajectory.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q1" value="D"> (D) The initial horizontal velocity on launch will be the same as the final horizontal velocity.</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q1')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q1"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q1" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (D)</h5>
+                    <p><strong>Worked Solution:</strong> In ideal projectile motion (where air resistance is neglected), horizontal acceleration $a_x = 0$. Therefore, the horizontal velocity component remains constant throughout the entire flight ($u_x = v_x$). At the highest point $Y$, $v_y = 0$, but $v_x \neq 0$, so total velocity is non-zero.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Correctly identifies that horizontal velocity is constant due to zero horizontal acceleration.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="practise-question" id="question-20-q2">
+            <div class="question-header">
+                <h4>Question 2 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2022 Oakhill College - Q2</span>
+                <p>An object travels in a circular path of radius $r$ at a constant speed $v$. What happens to the object's acceleration if the speed is doubled and the radius is halved?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q2" value="A"> (A) Acceleration remains the same.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q2" value="B"> (B) Acceleration will be double the original acceleration.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q2" value="C"> (C) Acceleration will be four times the original acceleration.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q2" value="D"> (D) Acceleration will be eight times the original acceleration.</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q2')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q2"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q2" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (D)</h5>
+                    <p><strong>Worked Solution:</strong> Centripetal acceleration is given by $a_c = \frac{v^2}{r}$.<br>
+                    When speed is doubled ($v' = 2v$) and radius is halved ($r' = \frac{r}{2}$):<br>
+                    $$a_c' = \frac{(2v)^2}{(r/2)} = \frac{4v^2}{r/2} = 8 \left(\frac{v^2}{r}\right) = 8 a_c$$</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Correctly applies $a_c = \frac{v^2}{r}$ with proportional scaling.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="practise-question" id="question-20-q3">
+            <div class="question-header">
+                <h4>Question 3 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2022 Oakhill College - Q3</span>
+                <p>A $5\text{ m}$ uniform plank of mass $350\text{ kg}$ rests on the top of a building with $2\text{ m}$ extended over the edge as shown in the figure below.</p>
+                
+                <div class="diagram-card">
+                    <svg width="340" height="150" viewBox="0 0 340 150" style="max-width: 100%; height: auto;">
+                        <rect x="10" y="70" width="180" height="70" fill="rgba(255,255,255,0.1)"/>
+                        <rect x="20" y="60" width="300" height="10" fill="#00f0ff" stroke="#ffffff"/>
+                        <circle cx="230" cy="35" r="8" fill="#b026ff"/>
+                        <line x1="230" y1="43" x2="230" y2="60" stroke="#b026ff" stroke-width="2"/>
+                        <line x1="20" y1="15" x2="320" y2="15" stroke="rgba(255,255,255,0.4)" stroke-dasharray="3"/>
+                        <text x="170" y="10" fill="#ffffff" text-anchor="middle" font-size="12">5 m</text>
+                        <line x1="190" y1="135" x2="320" y2="135" stroke="rgba(255,255,255,0.4)" stroke-dasharray="3"/>
+                        <text x="255" y="130" fill="#00f0ff" text-anchor="middle" font-size="12">2 m</text>
+                    </svg>
+                </div>
+
+                <p>How far can a $95\text{ kg}$ person venture past the edge of the building on the plank before the plank just begins to tip?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q3" value="A"> (A) 2.0 m</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q3" value="B"> (B) 1.8 m</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q3" value="C"> (C) 1.3 m</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q3" value="D"> (D) 1.0 m</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q3')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q3"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q3" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (B)</h5>
+                    <p><strong>Worked Solution:</strong> At the verge of tipping, the pivot point is the edge of the building.<br>
+                    Center of mass of uniform $5\text{ m}$ plank is at $2.5\text{ m}$ from left end ($0.5\text{ m}$ to the left of the edge).<br>
+                    Torque balance around edge: $\tau_{\text{clockwise}} = \tau_{\text{counter-clockwise}}$<br>
+                    $$m_{\text{person}} g x = m_{\text{plank}} g (0.5\text{ m})$$
+                    $$95 \times x = 350 \times 0.5 = 175 \implies x = \frac{175}{95} \approx 1.84\text{ m} \approx 1.8\text{ m}$$</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Solves torque equilibrium around the building edge correctly.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="practise-question" id="question-20-q4">
+            <div class="question-header">
+                <h4>Question 4 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2022 Oakhill College - Q4</span>
+                <p>The planet Caprica has a mass three times that of Earth ($M_C = 3 M_E$). The acceleration due to gravity on Caprica is one-third that on the surface of Earth ($g_C = \frac{1}{3} g_E$). If Earth has a radius of $1$, what is the radius of the planet Caprica?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q4" value="A"> (A) 1</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q4" value="B"> (B) 3</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q4" value="C"> (C) 6</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q4" value="D"> (D) 9</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q4')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q4"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q4" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (B)</h5>
+                    <p><strong>Worked Solution:</strong> $g = \frac{GM}{r^2} \implies r = \sqrt{\frac{GM}{g}}$.<br>
+                    For Caprica: $r_C = \sqrt{\frac{G(3M_E)}{\frac{1}{3} g_E}} = \sqrt{9 \frac{GM_E}{g_E}} = 3 r_E = 3 \times 1 = 3$.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Correctly applies Newton's gravitational field strength relation.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="practise-question" id="question-20-q5">
+            <div class="question-header">
+                <h4>Question 5 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2022 Oakhill College - Q5</span>
+                <p>Two satellites, Icarus and GoldenEye, are in circular orbits around Earth. Their masses are identical and their orbital radii are $R$ and $25R$, respectively. What is the ratio of their orbital periods, $T_I : T_G$?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q5" value="A"> (A) 1 : 5</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q5" value="B"> (B) 1 : 25</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q5" value="C"> (C) 1 : 50</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q5" value="D"> (D) 1 : 125</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q5')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q5"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q5" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (D)</h5>
+                    <p><strong>Worked Solution:</strong> According to Kepler's Third Law: $\frac{r^3}{T^2} = \text{constant} \implies T \propto r^{3/2}$.<br>
+                    $$\frac{T_I}{T_G} = \left(\frac{R_I}{R_G}\right)^{3/2} = \left(\frac{R}{25R}\right)^{3/2} = \left(\frac{1}{25}\right)^{3/2} = \frac{1}{125}$$
+                    Ratio $T_I : T_G = 1 : 125$.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Correctly uses Kepler's Law of Periods proportionality $T \propto r^{3/2}$.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="practise-question" id="question-20-q6">
+            <div class="question-header">
+                <h4>Question 6 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2023 JRAHS - Q1</span>
+                <p>A student wants to investigate the relationship between centripetal force and speed of an object undergoing uniform circular motion. A tennis ball of mass $m$ is tied to a rope of length $L$ attached to a vertical pole and swung in a horizontal circle of radius $r$. Which of the following needs to be controlled to ensure a valid experiment?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q6" value="A"> (A) The mass of the ball only.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q6" value="B"> (B) The length of the rope only.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q6" value="C"> (C) The angular velocity of the ball.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q6" value="D"> (D) The mass of the ball and the length of the rope.</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q6')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q6"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q6" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (D)</h5>
+                    <p><strong>Worked Solution:</strong> Validity requires holding all variables constant except the independent variable (speed) and dependent variable (centripetal force). Since $F_c = \frac{m v^2}{r}$, both mass $m$ and radius/rope length $L$ must be controlled.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Identifies controlled variables required for experimental validity.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 7 -->
+        <div class="practise-question" id="question-20-q7">
+            <div class="question-header">
+                <h4>Question 7 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2023 JRAHS - Q2</span>
+                <p>A ball bearing X of mass $2m$ is projected vertically upwards with speed $u$. A ball bearing Y of mass $m$ is projected at $30^\circ$ to the horizontal with speed $2u$ at the same time. Air resistance is negligible. Both land on the same horizontal plane. Which statement is correct?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q7" value="A"> (A) The horizontal component of Y's velocity is $u$.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q7" value="B"> (B) The maximum height reached by Y is half that reached by X.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q7" value="C"> (C) X and Y reach the ground at the same time.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q7" value="D"> (D) X reaches the ground first.</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q7')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q7"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q7" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (C)</h5>
+                    <p><strong>Worked Solution:</strong> Initial vertical speed of X: $u_{y,X} = u$.<br>
+                    Initial vertical speed of Y: $u_{y,Y} = 2u \sin(30^\circ) = 2u(0.5) = u$.<br>
+                    Since vertical acceleration is $g$ for both, flight time $t = \frac{2u_y}{g}$ depends solely on $u_y$. Since $u_{y,X} = u_{y,Y}$, both reach the ground at the exact same time.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Resolves initial vertical components and deduces equal flight time.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 8 -->
+        <div class="practise-question" id="question-20-q8">
+            <div class="question-header">
+                <h4>Question 8 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2023 JRAHS - Q3</span>
+                <p>The relationship between orbital radius $R$ and period $T$ is $R^3 = \frac{GM T^2}{4\pi^2}$. Which graph correctly represents $R^3$ versus $T^2$ for Planet Y having double the mass of Planet X ($M_Y = 2 M_X$)?</p>
+                
+                <div class="diagram-card">
+                    <svg width="300" height="160" viewBox="0 0 300 160" style="max-width: 100%; height: auto;">
+                        <line x1="40" y1="130" x2="280" y2="130" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <line x1="40" y1="130" x2="40" y2="20" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <line x1="40" y1="130" x2="220" y2="30" stroke="#00f0ff" stroke-width="2.5"/>
+                        <line x1="40" y1="130" x2="260" y2="80" stroke="#b026ff" stroke-width="2.5" stroke-dasharray="4,4"/>
+                        <text x="225" y="25" fill="#00f0ff" font-weight="bold">Planet Y</text>
+                        <text x="265" y="85" fill="#b026ff" font-weight="bold">Planet X</text>
+                        <text x="280" y="145" fill="#a0aec0">T²</text>
+                        <text x="20" y="25" fill="#a0aec0">R³</text>
+                    </svg>
+                </div>
+
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q8" value="A"> (A) Both planets yield curves bending upwards.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q8" value="B"> (B) Planet Y is a straight line with double the gradient of Planet X.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q8" value="C"> (C) Planet X is a straight line with double the gradient of Planet Y.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q8" value="D"> (D) Planet Y is an exponential curve while Planet X is linear.</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q8')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q8"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q8" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (B)</h5>
+                    <p><strong>Worked Solution:</strong> Rearranging $R^3 = \left(\frac{GM}{4\pi^2}\right) T^2$, a plot of $R^3$ ($y$-axis) against $T^2$ ($x$-axis) is a straight line through the origin with gradient $k = \frac{GM}{4\pi^2}$. Doubling central mass $M$ doubles the gradient.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Relates gradient $k = \frac{GM}{4\pi^2}$ to the linear plot comparison correctly.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 9 -->
+        <div class="practise-question" id="question-20-q9">
+            <div class="question-header">
+                <h4>Question 9 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2023 JRAHS - Q6</span>
+                <p>A $22\text{ g}$ piece of plasticine is stuck to a horizontal ceiling fan blade $12\text{ cm}$ from the center. Settings: Low ($100\text{ rpm}$), Medium ($200\text{ rpm}$), High ($300\text{ rpm}$). Coefficient of static friction $\mu_s = 1.5$. On which settings will the plasticine remain attached?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q9" value="A"> (A) None, it falls off on all settings.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q9" value="B"> (B) Low setting only.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q9" value="C"> (C) Low and medium settings only.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q9" value="D"> (D) All three settings.</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q9')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q9"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q9" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (B)</h5>
+                    <p><strong>Worked Solution:</strong> Max static friction force: $f_{s,\max} = \mu_s m g = 1.5 \times 0.022 \times 9.80 = 0.3234\text{ N}$.<br>
+                    Required centripetal force: $F_c = m \omega^2 r$.<br>
+                    • Low ($100\text{ rpm} = 10.47\text{ rad/s}$): $F_c = 0.022 \times (10.47)^2 \times 0.12 = 0.289\text{ N} < 0.3234\text{ N}$ (Attached).<br>
+                    • Medium ($200\text{ rpm} = 20.94\text{ rad/s}$): $F_c = 0.022 \times (20.94)^2 \times 0.12 = 1.157\text{ N} > 0.3234\text{ N}$ (Slips).</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Compares maximum static friction force to centripetal force requirements.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 10 -->
+        <div class="practise-question" id="question-20-q10">
+            <div class="question-header">
+                <h4>Question 10 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2024 ITE - Q1</span>
+                <p>An object weighs $256\text{ N}$ on Earth and $92\text{ N}$ on planet X. What is the magnitude of the acceleration due to gravity on planet X?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q10" value="A"> (A) $3.0 \times 10^{-2}\text{ m s}^{-2}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q10" value="B"> (B) $3.0 \times 10^{-1}\text{ m s}^{-2}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q10" value="C"> (C) $2.8\text{ m s}^{-2}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q10" value="D"> (D) $3.5\text{ m s}^{-2}$</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q10')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q10"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q10" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (D)</h5>
+                    <p><strong>Worked Solution:</strong> Mass of object $m = \frac{W_E}{g_E} = \frac{256}{9.80} = 26.12\text{ kg}$.<br>
+                    Gravity on planet X: $g_X = \frac{W_X}{m} = \frac{92}{26.12} \approx 3.52\text{ m s}^{-2} \approx 3.5\text{ m s}^{-2}$.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Correctly determines mass from Earth weight to find planetary surface acceleration.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 11 -->
+        <div class="practise-question" id="question-20-q11">
+            <div class="question-header">
+                <h4>Question 11 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2024 ITE - Q2</span>
+                <p>Which graph best shows the gravitational potential energy ($U$) of an object in space versus distance $r$ from a source of gravity?</p>
+                
+                <div class="diagram-card">
+                    <svg width="280" height="150" viewBox="0 0 280 150" style="max-width: 100%; height: auto;">
+                        <line x1="30" y1="20" x2="260" y2="20" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <line x1="30" y1="20" x2="30" y2="140" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                        <path d="M 35 130 Q 50 30 250 22" fill="none" stroke="#00f0ff" stroke-width="2.5"/>
+                        <text x="260" y="15" fill="#a0aec0">r</text>
+                        <text x="10" y="30" fill="#a0aec0">0</text>
+                        <text x="10" y="80" fill="#00f0ff">U</text>
+                    </svg>
+                </div>
+
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q11" value="A"> (A) A negative hyperbolic curve approaching zero as $r \to \infty$.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q11" value="B"> (B) A straight line with negative gradient in quadrant 4.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q11" value="C"> (C) A straight line passing through the origin into negative quadrant.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q11" value="D"> (D) A straight line with positive slope starting at $U=0$.</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q11')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q11"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q11" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (A)</h5>
+                    <p><strong>Worked Solution:</strong> Universal gravitational potential energy is $U = -\frac{GMm}{r}$. $U$ is defined as zero at infinity ($r = \infty$) and is negative at all finite distances, yielding a negative hyperbola in quadrant 4.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Identifies the inverse $1/r$ negative relationship for gravitational potential energy.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 12 -->
+        <div class="practise-question" id="question-20-q12">
+            <div class="question-header">
+                <h4>Question 12 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2024 ITE - Q3</span>
+                <p>A student places a basketball in the middle of a car's back seat before the car makes a sharp right-hand turn. Which observation correctly describes the movement of the ball?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q12" value="A"> (A) The ball moves to the right of the car due to centrifugal force.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q12" value="B"> (B) The ball moves to the left of the car seat due to inertia.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q12" value="C"> (C) The ball moves to the left of the car seat due to centripetal force.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q12" value="D"> (D) The ball moves to the right of the car seat due to frictional force.</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q12')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q12"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q12" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (B)</h5>
+                    <p><strong>Worked Solution:</strong> According to Newton's First Law, the ball tends to maintain its original straight-line velocity (inertia). As the car accelerates to the right, the seat moves out from underneath the ball, making it appear to slide to the left relative to the car frame.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Correctly applies Newton's First Law of Motion (Inertia) in a non-inertial reference frame.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 13 -->
+        <div class="practise-question" id="question-20-q13">
+            <div class="question-header">
+                <h4>Question 13 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2024 ITE - Q4</span>
+                <p>Satellites in Low Earth orbits (LEO) are more likely to suffer orbital decay than satellites in geostationary orbits. Which of the following provides the correct reason for the difference?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q13" value="A"> (A) The Low Earth orbit satellite has stronger gravitational force acting on it.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q13" value="B"> (B) The Low Earth orbit satellite is moving faster.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q13" value="C"> (C) The Low Earth orbit satellite is moving through denser air.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q13" value="D"> (D) The Low Earth orbit satellite is moving more slowly.</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q13')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q13"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q13" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (C)</h5>
+                    <p><strong>Worked Solution:</strong> Orbital decay is caused by friction and atmospheric drag dissipating the satellite's total mechanical energy. LEO satellites pass through denser upper-atmospheric gases compared to geostationary orbits where atmosphere is completely negligible.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Identifies atmospheric drag in low altitude orbits as the cause of orbital decay.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 14 -->
+        <div class="practise-question" id="question-20-q14">
+            <div class="question-header">
+                <h4>Question 14 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2024 ITE - Q5</span>
+                <p>Kepler's Law of Periods, summarized in $T^2 = k R^3$, shows the relationship between orbital period and radius of a planet orbiting a star. In which situation would a change in the constant $k$ be needed?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q14" value="A"> (A) For a planet of greater orbital period.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q14" value="B"> (B) For a planet of smaller orbital radius.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q14" value="C"> (C) For an identical planet orbiting a different star.</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q14" value="D"> (D) For a planet of different mass orbiting the same star.</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q14')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q14"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q14" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (C)</h5>
+                    <p><strong>Worked Solution:</strong> Equating centripetal force to gravitational force: $\frac{m v^2}{R} = \frac{GMm}{R^2} \implies \frac{R^3}{T^2} = \frac{GM}{4\pi^2} \implies T^2 = \left(\frac{4\pi^2}{GM}\right) R^3$. Thus, $k = \frac{4\pi^2}{GM_{\text{star}}}$. The constant $k$ depends ONLY on the mass of the central star ($M$). Changing the central star changes $M$, altering $k$.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Recognises that Kepler's constant $k$ depends exclusively on central mass $M$.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 15 -->
+        <div class="practise-question" id="question-20-q15">
+            <div class="question-header">
+                <h4>Question 15 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2022 JRAHS - Task 1 Adapted</span>
+                <p>What is the minimum speed at which a bucket of water of mass $1.5\text{ kg}$ needs to be whirled in a vertical circle of radius $1.2\text{ m}$ without spilling at the top of the path?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q15" value="A"> (A) $3.43\text{ m s}^{-1}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q15" value="B"> (B) $4.85\text{ m s}^{-1}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q15" value="C"> (C) $11.76\text{ m s}^{-1}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q15" value="D"> (D) $2.42\text{ m s}^{-1}$</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q15')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q15"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q15" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (A)</h5>
+                    <p><strong>Worked Solution:</strong> At top of vertical circle, water doesn't fall when normal force $N = 0 \implies F_c = F_g$.<br>
+                    $$\frac{m v^2}{r} = m g \implies v_{\min} = \sqrt{r g} = \sqrt{1.2 \times 9.80} = \sqrt{11.76} \approx 3.43\text{ m s}^{-1}$$</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Solves vertical circular motion threshold condition $v = \sqrt{rg}$ correctly.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 16 -->
+        <div class="practise-question" id="question-20-q16">
+            <div class="question-header">
+                <h4>Question 16 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2023 Knox Grammar - Task 1 Adapted</span>
+                <p>Two satellites R and S orbit the same planet. Satellite R has an orbital radius three times that of satellite S ($r_R = 3 r_S$). What is the ratio of their periods $T_R : T_S$?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q16" value="A"> (A) $3.00 : 1$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q16" value="B"> (B) $9.00 : 1$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q16" value="C"> (C) $5.20 : 1$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q16" value="D"> (D) $2.08 : 1$</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q16')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q16"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q16" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (C)</h5>
+                    <p><strong>Worked Solution:</strong> $\frac{T_R^2}{T_S^2} = \frac{r_R^3}{r_S^3} = (3)^3 = 27 \implies \frac{T_R}{T_S} = \sqrt{27} \approx 5.196 \approx 5.20$.<br>
+                    Ratio $T_R : T_S = 5.20 : 1$.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Calculates orbital period ratio using proportionality $T \propto r^{3/2}$.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 17 -->
+        <div class="practise-question" id="question-20-q17">
+            <div class="question-header">
+                <h4>Question 17 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2024 Oakhill College - Task 1 Adapted</span>
+                <p>A pendulum bob of mass $5.6\text{ g}$ on a $0.8\text{ m}$ light string is held horizontal and released. At the bottom of its swing, the string is severed. What is the initial horizontal velocity of the bob as it begins projectile motion?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q17" value="A"> (A) $2.80\text{ m s}^{-1}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q17" value="B"> (B) $3.96\text{ m s}^{-1}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q17" value="C"> (C) $15.68\text{ m s}^{-1}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q17" value="D"> (D) $7.84\text{ m s}^{-1}$</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q17')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q17"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q17" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (B)</h5>
+                    <p><strong>Worked Solution:</strong> By conservation of mechanical energy: $\Delta U = K \implies m g h = \frac{1}{2} m v^2$.<br>
+                    $$v = \sqrt{2 g h} = \sqrt{2 \times 9.80 \times 0.8} = \sqrt{15.68} \approx 3.96\text{ m s}^{-1}$$</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Applies conservation of energy to determine tangential velocity at bottom of swing.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 18 -->
+        <div class="practise-question" id="question-20-q18">
+            <div class="question-header">
+                <h4>Question 18 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2023 Knox Grammar - Task 1 / 2022 JRAHS</span>
+                <p>A road curve of radius $65\text{ m}$ is banked at an angle of $12^\circ$. What is the recommended design speed ($v$) for a vehicle to safely navigate this curve without relying on friction?</p>
+                
+                <div class="diagram-card">
+                    <svg width="260" height="130" viewBox="0 0 260 130" style="max-width: 100%; height: auto;">
+                        <polygon points="30,110 220,110 220,60" fill="rgba(255,255,255,0.1)" stroke="rgba(255,255,255,0.4)"/>
+                        <rect x="110" y="70" width="30" height="20" fill="#00f0ff" transform="rotate(-15 125 80)"/>
+                        <text x="60" y="105" fill="#a0aec0" font-size="12">θ = 12°</text>
+                    </svg>
+                </div>
+
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q18" value="A"> (A) $7.4\text{ m s}^{-1}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q18" value="B"> (B) $9.8\text{ m s}^{-1}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q18" value="C"> (C) $11.6\text{ m s}^{-1}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q18" value="D"> (D) $14.2\text{ m s}^{-1}$</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q18')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q18"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q18" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (C)</h5>
+                    <p><strong>Worked Solution:</strong> For a banked curve without friction: $v = \sqrt{r g \tan\theta}$.<br>
+                    $$v = \sqrt{65 \times 9.80 \times \tan(12^\circ)} = \sqrt{637 \times 0.21255} = \sqrt{135.4} \approx 11.63\text{ m s}^{-1} \approx 11.6\text{ m s}^{-1}$$</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Calculates ideal banked turn speed using $v = \sqrt{rg\tan\theta}$.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 19 -->
+        <div class="practise-question" id="question-20-q19">
+            <div class="question-header">
+                <h4>Question 19 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2023 Oakhill College - Task 1</span>
+                <p>In a circular motion experiment, a $0.02\text{ kg}$ rubber stopper is rotated horizontally at radius $1.2\text{ m}$ supported by a hanging mass of $0.10\text{ kg}$. What is the period ($T$) of one revolution?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q19" value="A"> (A) $0.98\text{ s}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q19" value="B"> (B) $0.31\text{ s}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q19" value="C"> (C) $1.55\text{ s}$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q19" value="D"> (D) $2.20\text{ s}$</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q19')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q19"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q19" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (A)</h5>
+                    <p><strong>Worked Solution:</strong> Tension $F_c = M_{\text{hanging}} g = 0.10 \times 9.80 = 0.98\text{ N}$.<br>
+                    $$F_c = \frac{4\pi^2 m r}{T^2} \implies T = \sqrt{\frac{4\pi^2 m r}{F_c}} = \sqrt{\frac{4\pi^2 \times 0.02 \times 1.2}{0.98}} = \sqrt{0.967} \approx 0.983\text{ s} \approx 0.98\text{ s}$$</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Equates hanging weight tension to centripetal force to solve for period $T$.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Question 20 -->
+        <div class="practise-question" id="question-20-q20">
+            <div class="question-header">
+                <h4>Question 20 (1 Mark)</h4>
+                <span class="marks-allocated">[1 Mark]</span>
+            </div>
+            <div class="question-body">
+                <span class="origin-badge">2024 ITE - Section I Conceptual</span>
+                <p>A space probe is launched vertically upward from Earth's surface ($R_E$) with an initial launch speed equal to half its escape velocity ($u = \frac{1}{2} v_{\text{esc}}$). Neglecting air resistance, what maximum distance $r$ from the center of Earth will the probe reach?</p>
+                <ul class="options-list">
+                    <li class="option-item"><label><input type="radio" name="20-q20" value="A"> (A) $\frac{5}{4} R_E$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q20" value="B"> (B) $\frac{3}{2} R_E$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q20" value="C"> (C) $\frac{4}{3} R_E$</label></li>
+                    <li class="option-item"><label><input type="radio" name="20-q20" value="D"> (D) $2 R_E$</label></li>
+                </ul>
+            </div>
+
+            <div class="interaction-controls">
+                <button class="btn-reveal" onclick="checkAnswer('20-q20')">Check Answer & Solution</button>
+                <span class="mark-feedback" id="feedback-20-q20"></span>
+            </div>
+
+            <div class="hidden-solution" id="solution-20-q20" style="display: none;">
+                <div class="worked-solution">
+                    <h5>Correct Answer: (C)</h5>
+                    <p><strong>Worked Solution:</strong> $v_{\text{esc}} = \sqrt{\frac{2GM}{R_E}} \implies u^2 = \frac{1}{4} v_{\text{esc}}^2 = \frac{GM}{2 R_E}$.<br>
+                    Total energy $E_i = K_i + U_i = \frac{1}{2} m \left(\frac{GM}{2 R_E}\right) - \frac{GMm}{R_E} = -\frac{3 GMm}{4 R_E}$.<br>
+                    At maximum radial height $r$, $v = 0 \implies E_f = -\frac{GMm}{r}$.<br>
+                    Conservation of energy: $-\frac{GMm}{r} = -\frac{3 GMm}{4 R_E} \implies r = \frac{4}{3} R_E$.</p>
+                </div>
+                <div class="marking-criteria">
+                    <h5>Marking Criteria:</h5>
+                    <ul>
+                        <li><strong>1 Mark:</strong> Applies conservation of total mechanical energy to determine maximum orbital radius $r$.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="21-final-assessment-saq.html" class="btn-next">Proceed to Part 2: SAQs &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine for Automated Evaluation & Persistence -->
+    <script>
+        const correctAnswers = {
+            '20-q1': 'D',
+            '20-q2': 'D',
+            '20-q3': 'B',
+            '20-q4': 'B',
+            '20-q5': 'D',
+            '20-q6': 'D',
+            '20-q7': 'C',
+            '20-q8': 'B',
+            '20-q9': 'B',
+            '20-q10': 'D',
+            '20-q11': 'A',
+            '20-q12': 'B',
+            '20-q13': 'C',
+            '20-q14': 'C',
+            '20-q15': 'A',
+            '20-q16': 'C',
+            '20-q17': 'B',
+            '20-q18': 'C',
+            '20-q19': 'A',
+            '20-q20': 'C'
+        };
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            for (let i = 1; i <= 20; i++) {
+                restoreSavedState('20-q' + i);
+            }
+            
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        function checkAnswer(qId) {
+            const correctOpt = correctAnswers[qId];
+            const selectedRadio = document.querySelector(`input[name="${qId}"]:checked`);
+            const feedbackEl = document.getElementById(`feedback-${qId}`);
+            const solutionEl = document.getElementById(`solution-${qId}`);
+
+            if (!selectedRadio) {
+                feedbackEl.innerHTML = `<span style="color: #ff5252;">Please select an option before checking.</span>`;
+                return;
+            }
+
+            const userOpt = selectedRadio.value;
+            const isCorrect = (userOpt === correctOpt);
+            const score = isCorrect ? 1 : 0;
+
+            const options = document.querySelectorAll(`input[name="${qId}"]`);
+            options.forEach(opt => {
+                const item = opt.closest('.option-item');
+                item.classList.remove('opt-correct', 'opt-incorrect');
+                if (opt.value === correctOpt) {
+                    item.classList.add('opt-correct');
+                } else if (opt.value === userOpt && !isCorrect) {
+                    item.classList.add('opt-incorrect');
+                }
+            });
+
+            if (isCorrect) {
+                feedbackEl.innerHTML = `<span style="color: #00e676;">✓ Correct! (1/1 Mark)</span>`;
+            } else {
+                feedbackEl.innerHTML = `<span style="color: #ff5252;">✗ Incorrect. Correct answer is (${correctOpt}). (0/1 Mark)</span>`;
+            }
+
+            const storageKey = 'physics_mod5_q_' + qId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+            localStorage.setItem(storageKey, score);
+            localStorage.setItem('physics_mod5_opt_' + qId, userOpt);
+
+            updateGlobalScore(previousMark, score);
+
+            if (solutionEl) {
+                solutionEl.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    window.MathJax.typesetPromise([solutionEl]).catch(function(err) {
+                        console.error('MathJax error:', err);
+                    });
+                }
+            }
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function restoreSavedState(qId) {
+            const savedOpt = localStorage.getItem('physics_mod5_opt_' + qId);
+            if (savedOpt) {
+                const radio = document.querySelector(`input[name="${qId}"][value="${savedOpt}"]`);
+                if (radio) {
+                    radio.checked = true;
+                    checkAnswer(qId);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

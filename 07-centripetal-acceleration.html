@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>07. Centripetal Acceleration & Centripetal Force - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS Reset & Box Sizing Safeguards */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Responsive Layout & Container Enhancements */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border-radius: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#centripetalCanvas {
+            width: 100%;
+            height: 420px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        /* Explicit Overflow Fixes to Prevent Text/Math Clipping */
+        .concept-highlight-card, 
+        .worked-solution, 
+        .derivation-steps, 
+        .practise-question, 
+        .formula-callout-box, 
+        .misconception-box, 
+        .exam-warning-box, 
+        .extension-note-box {
+            max-width: 100%;
+            overflow-x: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .vector-diagram-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .formula-callout-box {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.12), rgba(0, 240, 255, 0.12));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            text-align: center;
+        }
+
+        .formula-callout-box h4 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .formula-callout-box p {
+            margin-bottom: 0;
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .misconception-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .misconception-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .misconception-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .btn-snap {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: #ffffff;
+            border: none;
+            padding: 0.65rem 1.2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-snap:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.5);
+        }
+
+        .btn-reset-sim {
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border: 1px solid var(--glass-border);
+            padding: 0.65rem 1.2rem;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.85rem;
+        }
+
+        .btn-reset-sim:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Strict MathJax Formula Containment Rules */
+        .MathJax_Display, .mjx-chtml, .MathJax {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding: 0.3rem 0;
+            margin: 0.5rem 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html" class="active">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>07. Centripetal Acceleration ($a_c$) & Centripetal Force ($F_c$)</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 2</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment & Examination Scope -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & HSC Examination Scope</h2>
+            <p><strong>Inquiry Question 2:</strong> <em>Why do objects move in circles?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus, students must master the following specific outcomes regarding centripetal acceleration and centripetal force dynamics:</p>
+            <ul class="feature-list">
+                <li>Solve quantitative problems involving objects undergoing uniform circular motion to evaluate centripetal acceleration ($a_c$) and centripetal force ($F_c$).</li>
+                <li>Apply Newton's Second Law ($\Sigma \vec{F} = m \vec{a}$) to uniform circular motion to establish and apply the primary centripetal relations:
+                    $$a_c = \frac{v^2}{r} = \omega^2 r = \frac{4\pi^2 r}{T^2}$$
+                    $$F_c = m a_c = \frac{m v^2}{r} = m \omega^2 r = \frac{4\pi^2 m r}{T^2}$$
+                </li>
+                <li>Identify real physical forces (such as tension, normal force, friction, and gravitational attraction) that combine to provide the required net centripetal force across diverse contexts.</li>
+                <li>Evaluate inertial versus non-inertial reference frames to debunk the common "centrifugal force" fallacy using Newton's First Law of Motion (inertia).</li>
+            </ul>
+
+            <div class="extension-note-box">
+                <h4>HSC Exam Scope & Extension Derivation Note</h4>
+                <p><strong>Standard HSC Scope:</strong> On official HSC Physics examinations, NESA provides the formulas $a_c = \frac{v^2}{r}$ and $F_c = \frac{m v^2}{r}$ directly on the NESA Reference Sheet. Standard HSC examination questions test your ability to apply these equations, draw free-body diagrams, decompose vector components (e.g. banked tracks, conical pendulums), and perform multi-step quantitative calculations.</p>
+                <p><strong>High-Achiever / Band 6 Scope:</strong> While standard HSC exam papers do not ask students to reproduce formal vector proofs of $a_c = \frac{v^2}{r}$, mastering the geometric similar-triangles proof below is invaluable for Band 6 candidates. It establishes deep vector calculus reasoning, proving why acceleration points strictly inward toward the centre of curvature.</p>
+            </div>
+        </section>
+
+        <!-- 2. Comprehensive Textbook Deep Dive -->
+        <section class="content-section" id="deep-dive-centripetal">
+            <h2>Deep Dive Part A: Vector Kinematics & Geometric Proof</h2>
+
+            <h3>1. The Physical Nature of Centripetal Acceleration</h3>
+            <p>In everyday language, acceleration implies "speeding up" or "slowing down". However, in vector physics, acceleration is defined as the time rate of change of the <strong>velocity vector</strong>:</p>
+
+            $$\vec{a} = \lim_{\Delta t \to 0} \frac{\Delta \vec{v}}{\Delta t}$$
+
+            <p>Because velocity $\vec{v}$ is a vector containing both magnitude (speed $v$) and direction, motion can accelerate in two fundamental ways:</p>
+            
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.8rem;">Tangential vs Centripetal Acceleration Components</h4>
+                <ul class="feature-list" style="margin-bottom: 0;">
+                    <li><strong>Tangential Acceleration ($a_t$):</strong> Directed parallel/antiparallel to velocity ($\vec{a}_t \parallel \vec{v}$). It changes the **scalar magnitude** (speed $v$). In *uniform* circular motion, scalar speed is constant, so $a_t = 0$.</li>
+                    <li><strong>Centripetal Acceleration ($a_c$):</strong> Directed strictly perpendicular to velocity ($\vec{a}_c \perp \vec{v}$). It changes the **direction** of velocity without altering speed. In uniform circular motion, $a_c$ acts continuously toward the circle's centre.</li>
+                </ul>
+            </div>
+
+            <!-- Vector Diagram: Similar Triangles -->
+            <div class="vector-diagram-card">
+                <svg width="520" height="280" viewBox="0 0 520 280" style="background: transparent;">
+                    <!-- Position Circle Arc -->
+                    <path d="M 60 220 A 180 180 0 0 1 220 60" fill="none" stroke="rgba(0,240,255,0.3)" stroke-width="2" stroke-dasharray="4"/>
+                    <!-- Centre Point O -->
+                    <circle cx="60" cy="220" r="5" fill="#00f0ff"/>
+                    <text x="40" y="240" fill="#00f0ff" font-family="sans-serif" font-size="13">Centre O</text>
+
+                    <!-- Position Vector r1 -->
+                    <line x1="60" y1="220" x2="210" y2="220" stroke="#b026ff" stroke-width="2.5"/>
+                    <polygon points="210,220 200,215 200,225" fill="#b026ff"/>
+                    <text x="130" y="240" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="13">r_1</text>
+
+                    <!-- Position Vector r2 -->
+                    <line x1="60" y1="220" x2="166" y2="114" stroke="#b026ff" stroke-width="2.5"/>
+                    <polygon points="166,114 157,122 165,129" fill="#b026ff"/>
+                    <text x="95" y="150" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="13">r_2</text>
+
+                    <!-- Displacement Vector Delta r -->
+                    <line x1="210" y1="220" x2="166" y2="114" stroke="#00e676" stroke-width="2.5" stroke-dasharray="3"/>
+                    <text x="200" y="165" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="13">Δr ≈ v Δt</text>
+
+                    <!-- Velocity Vector v1 at P1 -->
+                    <line x1="210" y1="220" x2="210" y2="140" stroke="#ffd700" stroke-width="2.5"/>
+                    <polygon points="210,140 205,150 215,150" fill="#ffd700"/>
+                    <text x="220" y="180" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="13">v_1</text>
+
+                    <!-- Velocity Vector v2 at P2 -->
+                    <line x1="166" y1="114" x2="91" y2="39" stroke="#ffd700" stroke-width="2.5"/>
+                    <polygon points="91,39 98,48 105,41" fill="#ffd700"/>
+                    <text x="125" y="65" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="13">v_2</text>
+
+                    <!-- Angle Delta Theta -->
+                    <path d="M 100 220 A 40 40 0 0 1 88 192" fill="none" stroke="#ffd700" stroke-width="2"/>
+                    <text x="105" y="205" fill="#ffd700" font-family="sans-serif" font-size="12">Δθ</text>
+
+                    <!-- Separated Velocity Vector Triangle -->
+                    <g transform="translate(320, 40)">
+                        <text x="30" y="15" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="14">Velocity Vector Triangle</text>
+                        <!-- Vector v1 -->
+                        <line x1="40" y1="180" x2="40" y2="80" stroke="#ffd700" stroke-width="2.5"/>
+                        <polygon points="40,80 35,90 45,90" fill="#ffd700"/>
+                        <text x="15" y="135" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="13">v_1</text>
+
+                        <!-- Vector v2 -->
+                        <line x1="40" y1="180" x2="115" y2="105" stroke="#ffd700" stroke-width="2.5"/>
+                        <polygon points="115,105 106,112 114,120" fill="#ffd700"/>
+                        <text x="90" y="155" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="13">v_2</text>
+
+                        <!-- Delta v Vector (v2 - v1) -->
+                        <line x1="40" y1="80" x2="115" y2="105" stroke="#ef4444" stroke-width="3"/>
+                        <polygon points="115,105 104,99 107,110" fill="#ef4444"/>
+                        <text x="75" y="80" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="14">Δv</text>
+
+                        <!-- Angle Delta Theta -->
+                        <path d="M 40 150 A 30 30 0 0 1 55 135" fill="none" stroke="#ffd700" stroke-width="2"/>
+                        <text x="48" y="165" fill="#ffd700" font-family="sans-serif" font-size="12">Δθ</text>
+                    </g>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 1: Position triangle $\Delta O P_1 P_2$ and velocity vector triangle. Because tangential velocity is always perpendicular to radius, these isosceles triangles are geometrically similar!</p>
+            </div>
+
+            <h3>2. Similar-Triangles Derivation of $a_c = \frac{v^2}{r}$ (Extension Enrichment)</h3>
+            <p>To mathematically derive centripetal acceleration, consider an object moving along a circle of radius $r$ at constant speed $v$. Over a short time interval $\Delta t$, the particle moves from position $\vec{r}_1$ to $\vec{r}_2$, sweeping out angle $\Delta \theta$. Its velocity changes from $\vec{v}_1$ to $\vec{v}_2$.</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Step-by-Step Geometric Proof</h4>
+
+                <p><strong>Step 1: Establishing Triangle Similarity:</strong></p>
+                <p>The position triangle has equal side lengths $|\vec{r}_1| = |\vec{r}_2| = r$ and base chord length $|\Delta \vec{r}|$.</p>
+                <p>The velocity triangle has equal side lengths $|\vec{v}_1| = |\vec{v}_2| = v$ and base length $|\Delta \vec{v}|$.</p>
+                <p>Because $\vec{v}_1 \perp \vec{r}_1$ and $\vec{v}_2 \perp \vec{r}_2$, the subtended vertex angle of both isosceles triangles is identically $\Delta \theta$. By Side-Angle-Side similarity:</p>
+
+                $$\Delta \text{Position Triangle} \sim \Delta \text{Velocity Triangle}$$
+
+                <p><strong>Step 2: Equating Ratios of Corresponding Sides:</strong></p>
+                $$\frac{|\Delta \vec{v}|}{v} = \frac{|\Delta \vec{r}|}{r}$$
+
+                <p><strong>Step 3: Introducing Arc Length & Calculus Limit ($\Delta t \to 0$):</strong></p>
+                <p>For an infinitesimal time step $\Delta t$, the straight displacement chord $|\Delta \vec{r}|$ approaches arc length $\Delta s = v \Delta t$. Substituting $|\Delta \vec{r}| \approx v \Delta t$:</p>
+
+                $$\frac{|\Delta \vec{v}|}{v} = \frac{v \Delta t}{r}$$
+
+                <p>Rearranging to isolate $\frac{|\Delta \vec{v}|}{\Delta t}$:</p>
+
+                $$\frac{|\Delta \vec{v}|}{\Delta t} = \frac{v^2}{r}$$
+
+                <p>Taking the limit as $\Delta t \to 0$ yields the instantaneous magnitude of centripetal acceleration:</p>
+
+                $$a_c = \lim_{\Delta t \to 0} \frac{|\Delta \vec{v}|}{\Delta t} = \mathbf{\frac{v^2}{r}}$$
+
+                <p><strong>Step 4: Proving Direction:</strong></p>
+                <p>In the velocity triangle, as $\Delta \theta \to 0$, the interior base angle approaches $90^\circ$. A vector at $90^\circ$ to the tangential velocity points <strong>radially inward toward the centre of curvature</strong>!</p>
+            </div>
+
+            <h3>3. Rotational Family of Centripetal Acceleration Formulas</h3>
+            <p>Combining $v = \omega r$ and $\omega = \frac{2\pi}{T}$ provides the complete set of centripetal acceleration equations:</p>
+
+            <div class="formula-callout-box">
+                <h4>Complete Centripetal Acceleration Equations</h4>
+                <p>$$a_c = \frac{v^2}{r} = \omega^2 r = \frac{4\pi^2 r}{T^2} = 4\pi^2 f^2 r$$</p>
+            </div>
+        </section>
+
+        <!-- Deep Dive Part B: Centripetal Force Mechanics -->
+        <section class="content-section" id="deep-dive-force">
+            <h2>Deep Dive Part B: Centripetal Force ($F_c$) & Real Physical Force Providers</h2>
+
+            <h3>1. Applying Newton's Second Law</h3>
+            <p>Newton's Second Law ($\Sigma \vec{F} = m \vec{a}$) dictates that any accelerating body requires a non-zero net external force. Multiplying centripetal acceleration $a_c$ by object mass $m$ gives the net radial centripetal force $F_c$:</p>
+
+            <div class="formula-callout-box">
+                <h4>Complete Centripetal Force Equations</h4>
+                <p>$$F_c = m a_c = \frac{m v^2}{r} = m \omega^2 r = \frac{4\pi^2 m r}{T^2}$$</p>
+            </div>
+
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.8rem;">CRITICAL HSC RULE: Centripetal Force is NOT an Independent Force!</h4>
+                <p>In NESA examinations, students lose marks when drawing Free-Body Diagrams (FBDs) by adding an extra arrow labelled "$F_c$".</p>
+                <p><strong>Never draw $F_c$ as a separate force on an FBD!</strong> Centripetal force is not an autonomous force category like gravity or friction. It is the <strong>label given to the net vector resultant of real physical forces acting inward along the radius</strong>:</p>
+
+                $$\Sigma \vec{F}_{\text{radial}} = F_c = \frac{m v^2}{r}$$
+            </div>
+
+            <h3>2. Real Physical Providers of Centripetal Force</h3>
+            <p>Different real physical interactions supply the necessary net radial force depending on the scenario:</p>
+
+            <div class="uvtaxy-table-container">
+                <table class="uvtaxy-grid-table">
+                    <thead>
+                        <tr>
+                            <th>Physical Context</th>
+                            <th>Real Physical Force Provider(s)</th>
+                            <th>Radial Force Balance Equation</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Car Turning on Flat Road</strong></td>
+                            <td>Static friction ($f_s$) between tires and road.</td>
+                            <td>$$f_s = \frac{m v^2}{r} \le \mu_s m g \implies v_{\max} = \sqrt{\mu_s g r}$$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Mass Whirled on String</strong></td>
+                            <td>Inward tension ($T$) in string.</td>
+                            <td>$$T = \frac{m v^2}{r} = m \omega^2 r$$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Satellite Orbiting Earth</strong></td>
+                            <td>Newtonian Universal Gravitational attraction ($F_g$).</td>
+                            <td>$$\frac{G M m}{r^2} = \frac{m v^2}{r} \implies v = \sqrt{\frac{GM}{r}}$$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Car Traversing Banked Curve</strong></td>
+                            <td>Horizontal component of Normal force ($N \sin\theta$).</td>
+                            <td>$$N \sin\theta = \frac{m v^2}{r} \quad \text{and} \quad N \cos\theta = m g$$</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Vertical Coaster Loop (Bottom)</strong></td>
+                            <td>Upward Normal force ($N$) minus downward Weight ($m g$).</td>
+                            <td>$$N - m g = \frac{m v^2}{r} \implies N = m\left(g + \frac{v^2}{r}\right)$$</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>3. Inertial Reference Frames & The "Centrifugal Force" Myth</h3>
+            <p>When a turning car swerves sharply left, passengers feel pushed rightward against the car door. Laypeople describe this as "centrifugal force". In physics, this is a **fictitious force** arising from observing motion in an accelerating reference frame.</p>
+
+            <div class="misconception-box">
+                <h4>Inertia vs Centripetal Force Breakdown</h4>
+                <p>1. <strong>Inertial Frame Analysis (Ground Observer):</strong> By Newton's First Law, your body possesses linear inertia and tries to keep moving in a straight line at constant velocity. As the car turns left underneath you, the right door turns into your straight path and pushes **inward** against you. That inward Normal force is the real centripetal force making you turn!</p>
+                <p>2. <strong>Non-Inertial Frame (Inside Car):</strong> Inside the accelerating car, an occupant perceives an artificial outward push. **Centrifugal force does not exist in inertial frames of reference!**</p>
+            </div>
+        </section>
+
+        <!-- 3. Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Interactive Workbench: Centripetal Force & Vector Laboratory</h2>
+            <p>Experiment with mass $m$, radius $r$, and linear speed $v$ below. Click <strong>"SNAP STRING!"</strong> at any moment to observe Newton's First Law: when centripetal tension vanishes, the mass flies off in a straight line along the instantaneous velocity tangent!</p>
+
+            <div class="sim-container">
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-mass">Mass ($m$): <span id="disp-mass" class="sim-value-display">0.50 kg</span></label>
+                        <input type="range" id="sim-mass" min="0.10" max="2.00" value="0.50" step="0.05">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-radius">Radius ($r$): <span id="disp-radius" class="sim-value-display">2.0 m</span></label>
+                        <input type="range" id="sim-radius" min="0.8" max="4.0" value="2.0" step="0.1">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-speed">Tangential Speed ($v$): <span id="disp-speed" class="sim-value-display">6.0 m/s</span></label>
+                        <input type="range" id="sim-speed" min="2.0" max="15.0" value="6.0" step="0.5">
+                    </div>
+                    <div class="sim-control-group" style="justify-content: flex-end;">
+                        <button id="btn-snap" class="btn-snap" onclick="snapString()">Snap String!</button>
+                        <button id="btn-reset" class="btn-reset-sim" onclick="resetSim()" style="margin-top: 0.4rem;">Reset Orbit</button>
+                    </div>
+                </div>
+
+                <canvas id="centripetalCanvas" width="800" height="420"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Centripetal Accel (a_c)</div>
+                        <div class="value" id="out-ac">18.00 m/s²</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Tension / Force (F_c)</div>
+                        <div class="value" id="out-fc">9.00 N</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Angular Velocity (ω)</div>
+                        <div class="value" id="out-omega">3.00 rad/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Period (T)</div>
+                        <div class="value" id="out-period">2.09 s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">State</div>
+                        <div class="value" id="out-state" style="color: var(--success-green);">Intact Orbit</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): Flat Road Cornering & Static Friction Limit</h4>
+                    <span class="marks-allocated">[Core Friction Application]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $1200\text{ kg}$ sedan traverses a flat, unbanked circular curve of radius $r = 45.0\text{ m}$. The coefficient of static friction between tire rubber and dry asphalt is $\mu_s = 0.650$. Calculate:</p>
+                    <p>a) The maximum static friction force $f_{s,\text{max}}$ available.<br>b) The maximum safe cornering speed $v_{\text{max}}$ in $\text{m/s}$ and $\text{km/h}$ before skidding occurs.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Maximum Static Friction Force ($f_{s,\text{max}}$):</strong></p>
+                        <p>On a flat horizontal road, normal reaction force equals weight ($N = m g$). Static friction supplies centripetal force:</p>
+
+                        $$f_{s,\text{max}} = \mu_s N = \mu_s m g$$
+                        $$f_{s,\text{max}} = 0.650 \times 1200 \times 9.80 = \mathbf{7644\text{ N}}$$
+
+                        <p><strong>Part b) Maximum Safe Cornering Speed ($v_{\text{max}}$):</strong></p>
+                        <p>Equating static friction to centripetal demand:</p>
+
+                        $$\frac{m v_{\text{max}}^2}{r} = f_{s,\text{max}} \implies \frac{m v_{\text{max}}^2}{r} = \mu_s m g$$
+
+                        <p>Dividing both sides by mass $m$ shows speed is mass-independent:</p>
+
+                        $$v_{\text{max}} = \sqrt{\mu_s g r}$$
+                        $$v_{\text{max}} = \sqrt{0.650 \times 9.80 \times 45.0} = \sqrt{286.65} = \mathbf{16.9\text{ m/s}}$$
+
+                        <p>Converting to $\text{km/h}$:</p>
+
+                        $$v_{\text{max}} = 16.93 \times 3.6 = \mathbf{61.0\text{ km/h}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Whirling Stone Vertical String Tension</h4>
+                    <span class="marks-allocated">[Vertical Non-Uniform Dynamics]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $0.500\text{ kg}$ stone tied to a string of length $r = 0.850\text{ m}$ is whirled in a vertical circle. At its lowest point (bottom), the stone's speed is $v = 8.90\text{ m/s}$. Calculate:</p>
+                    <p>a) The required centripetal acceleration $a_c$ at the bottom.<br>b) The string tension force $T_{\text{bottom}}$ at the lowest point.<br>c) The minimum critical speed $v_{\text{top,min}}$ at the highest point needed to keep the string taut ($T_{\text{top}} \ge 0$).</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Centripetal Acceleration ($a_c$):</strong></p>
+
+                        $$a_c = \frac{v^2}{r} = \frac{(8.90)^2}{0.850} = \frac{79.21}{0.850} = \mathbf{93.2\text{ m/s}^2}\quad \text{(directed radially inward)}$$
+
+                        <p><strong>Part b) String Tension at Bottom ($T_{\text{bottom}}$):</strong></p>
+                        <p>At the bottom, upward tension $T$ opposes downward weight $m g$:</p>
+
+                        $$\Sigma F_{\text{radial}} = T_{\text{bottom}} - m g = \frac{m v^2}{r}$$
+                        $$T_{\text{bottom}} = m \left( g + a_c \right) = 0.500 \times (9.80 + 93.188) = \mathbf{51.5\text{ N}}$$
+
+                        <p><strong>Part c) Minimum Critical Speed at Apex ($v_{\text{top,min}}$):</strong></p>
+                        <p>At the top, both tension and weight point downward toward centre:</p>
+
+                        $$T_{\text{top}} + m g = \frac{m v^2}{r}$$
+
+                        <p>Setting boundary condition $T_{\text{top}} = 0$ for tension breakdown threshold:</p>
+
+                        $$m g = \frac{m v_{\text{top,min}}^2}{r} \implies v_{\text{top,min}} = \sqrt{g r} = \sqrt{9.80 \times 0.850} = \mathbf{2.89\text{ m/s}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Conical Pendulum Vector Decomposition</h4>
+                    <span class="marks-allocated">[2D Vector Equilibrium]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $1.20\text{ kg}$ pendulum bob is suspended from a ceiling by a string of length $L = 1.50\text{ m}$. The bob sweeps out a horizontal circle of radius $r = 0.750\text{ m}$ (a conical pendulum). Calculate:</p>
+                    <p>a) The angle $\theta$ the string makes with the vertical.<br>b) The tension $T_{\text{string}}$ in the string.<br>c) The linear tangential speed $v$ of the bob.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Vector Solution:</h5>
+
+                        <p><strong>Part a) String Angle $\theta$:</strong></p>
+
+                        $$\sin\theta = \frac{r}{L} = \frac{0.750}{1.50} = 0.500 \implies \theta = \sin^{-1}(0.500) = \mathbf{30.0^\circ}$$
+
+                        <p><strong>Part b) String Tension ($T_{\text{string}}$):</strong></p>
+                        <p>Vertical equilibrium: $T \cos\theta = m g$:</p>
+
+                        $$T_{\text{string}} = \frac{m g}{\cos(30.0^\circ)} = \frac{1.20 \times 9.80}{0.8660} = \mathbf{13.6\text{ N}}$$
+
+                        <p><strong>Part c) Linear Speed $v$:</strong></p>
+                        <p>Horizontal component provides centripetal force ($T \sin\theta = \frac{m v^2}{r}$):</p>
+
+                        $$\frac{T \sin\theta}{T \cos\theta} = \frac{\frac{m v^2}{r}}{m g} \implies \tan\theta = \frac{v^2}{g r}$$
+                        $$v = \sqrt{g r \tan\theta} = \sqrt{9.80 \times 0.750 \times \tan(30.0^\circ)} = \mathbf{2.06\text{ m/s}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension): Space Station Artificial Gravity Design</h4>
+                    <span class="marks-allocated">[Rotational Engineering Analysis]</span>
+                </div>
+                <div class="question-body">
+                    <p>An engineer designs a rotating torus space station of outer floor radius $R = 150\text{ m}$ to generate artificial Earth-equivalent gravity ($a_c = 1.00g = 9.80\text{ m/s}^2$) for astronauts walking on the outer floor.</p>
+                    <p>a) Calculate the required rotation period $T$ and angular velocity $\omega$.<br>b) Calculate the linear tangential speed $v_{\text{rim}}$ of the outer floor.<br>c) Calculate the centripetal acceleration experienced by the head of a $1.80\text{ m}$ tall astronaut standing upright on the floor, and evaluate the percentage difference in artificial weight across their body.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Engineering Calculations:</h5>
+
+                        <p><strong>Part a) Angular Velocity $\omega$ & Period $T$:</strong></p>
+
+                        $$a_c = \omega^2 R \implies 9.80 = \omega^2 \times 150 \implies \omega = \mathbf{0.2556\text{ rad/s}}$$
+                        $$T = \frac{2\pi}{\omega} = \frac{2\pi}{0.2556} = \mathbf{24.6\text{ s}}$$
+
+                        <p><strong>Part b) Outer Floor Tangential Speed ($v_{\text{rim}}$):</strong></p>
+
+                        $$v_{\text{rim}} = \omega R = 0.2556 \times 150 = \mathbf{38.3\text{ m/s}}$$
+
+                        <p><strong>Part c) Acceleration at Head & Gradient Evaluation:</strong></p>
+                        <p>Astronaut's feet are at $r_{\text{feet}} = 150\text{ m}$, head is at $r_{\text{head}} = 150 - 1.80 = 148.2\text{ m}$.</p>
+
+                        $$a_{\text{head}} = \omega^2 r_{\text{head}} = (0.2556)^2 \times 148.2 = \mathbf{9.682\text{ m/s}^2}$$
+
+                        <p>Percentage difference across height:</p>
+
+                        $$\text{Percentage Diff} = \frac{a_{\text{feet}} - a_{\text{head}}}{a_{\text{feet}}} \times 100\% = \frac{9.80 - 9.682}{9.80} \times 100\% = \mathbf{1.20\%}$$
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Four Practice Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Marking Criteria</h2>
+            <p>Attempt the four practise questions below. Apply NESA rotational equations, check the exemplar answers, and submit your score using the self-assessment drop-down options.</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-07-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Fairground Rotor Ride Wall Friction</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A fairground Rotor ride consists of a vertical hollow cylinder (radius $r = 3.20\text{ m}$) spinning rapidly about its central axis. Riders stand against the inner wall. When spinning at angular velocity $\omega$, the floor drops away, leaving riders pinned to the wall by static friction ($\mu_s = 0.400$). Calculate the minimum angular velocity $\omega_{\text{min}}$ in $\text{rad/s}$ required to prevent riders from sliding down the wall ($g = 9.80\text{ m/s}^2$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-07-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-07-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-07-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Normal force provides centripetal force ($N = m \omega^2 r$). Static friction prevents falling ($f_s = m g \le \mu_s N$). Equate $m g = \mu_s m \omega^2 r$ and solve for $\omega$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-07-easy" style="display: none;">
+                    <div class="worked-solution">
+                        <p>Vertical balance: $f_s = m g$.</p>
+                        <p>Horizontal Normal force: $N = F_c = m \omega^2 r$.</p>
+                        <p>Static friction threshold: $f_s \le \mu_s N \implies m g \le \mu_s (m \omega^2 r)$.</p>
+
+                        $$g = \mu_s \omega^2 r \implies \omega_{\text{min}} = \sqrt{\frac{g}{\mu_s r}} = \sqrt{\frac{9.80}{0.400 \times 3.20}} = \mathbf{2.77\text{ rad/s}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"For vertical balance, weight $m g$ must be supported by static friction $f_s = \mu_s N$. Inward normal force supplies centripetal force $N = m\omega^2 r$. Equating friction to weight gives $m g = \mu_s m \omega^2 r$. Cancelling mass $m$ and rearranging yields $\omega_{\text{min}} = \sqrt{\frac{g}{\mu_s r}} = \sqrt{\frac{9.80}{0.400 \times 3.20}} = 2.77\text{ rad/s}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Equates vertical friction force to weight ($f_s = m g$) and identifies $N = m \omega^2 r$.</li>
+                            <li><strong>2 Marks:</strong> Formulates algebraic equality $g = \mu_s \omega^2 r$.</li>
+                            <li><strong>3 Marks:</strong> Obtains final minimum angular velocity $2.77\text{ rad/s}$ with correct SI units.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-07-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-07-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('07-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-07-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-07-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Roller Coaster Loop Normal Reaction Force</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $650\text{ kg}$ roller coaster car enters a circular vertical loop-the-loop of radius $R = 14.0\text{ m}$. At the lowest point (bottom) of the loop, the car's speed is $v_{\text{bottom}} = 24.0\text{ m/s}$.</p>
+                    <p>a) Construct a free-body force equation at the bottom of the loop.<br>b) Calculate the normal reaction force $N_{\text{bottom}}$ exerted by the track on the car at the lowest point.<br>c) Express this normal force as an apparent $g$-force load ($N / m g$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-07-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-07-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-07-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Normal force acts upward toward the centre and weight acts downward away from centre: $N - m g = \frac{m v^2}{R} \implies N = \frac{m v^2}{R} + m g$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-07-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Free-Body Force Equation:</strong></p>
+
+                        $$\Sigma F_{\text{radial}} = N_{\text{bottom}} - m g = \frac{m v^2}{R}$$
+
+                        <p><strong>b) Normal Force Calculation ($N_{\text{bottom}}$):</strong></p>
+
+                        $$N_{\text{bottom}} = \frac{650 \times (24.0)^2}{14.0} + (650 \times 9.80) = 26742.8 + 6370.0 = \mathbf{33113\text{ N}} \approx \mathbf{33.1\text{ kN}}$$
+
+                        <p><strong>c) Apparent $g$-force Load:</strong></p>
+
+                        $$\text{Apparent Load} = \frac{33113}{6370} = \mathbf{5.20\text{ g's}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"At the bottom of the loop, normal force acts upward toward centre while weight acts downward. Net radial force is $N - m g = \frac{m v^2}{R}$. Solving gives $N = \frac{650 \times 24.0^2}{14.0} + (650 \times 9.80) = 33.1\text{ kN}$. Dividing by weight $m g = 6370\text{ N}$ yields an apparent g-force load of $5.20\text{ g's}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Formulates correct force equation $N - m g = m v^2 / R$.</li>
+                            <li><strong>2 Marks:</strong> Calculates centripetal force component $F_c = 26.7\text{ kN}$.</li>
+                            <li><strong>3 Marks:</strong> Obtains total normal force $33.1\text{ kN}$.</li>
+                            <li><strong>4 Marks:</strong> Calculates correct apparent $g$-force load ($5.20\text{ g's}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-07-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-07-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('07-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-07-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard -->
+            <div class="practise-question" id="question-07-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard): String Breaking Strength & Tangential Fly-Off</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $0.400\text{ kg}$ sphere is whirled in a horizontal circle on a smooth tabletop using a string of length $r = 0.750\text{ m}$. The string has a maximum breaking strength $T_{\text{max}} = 85.0\text{ N}$.</p>
+                    <p>a) Calculate the maximum allowable angular velocity $\omega_{\text{max}}$ in $\text{rad/s}$ before string failure occurs.<br>b) Calculate the linear tangential speed $v_{\text{max}}$ at the instant of snapping.<br>c) Describe the path taken by the sphere immediately after the string snaps, citing Newton's First Law.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-07-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-07-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-07-hard" style="display: none;">
+                    <p><strong>Hint:</strong> Set $T_{\text{max}} = m \omega_{\text{max}}^2 r$. After snapping, zero net horizontal force acts on the sphere, so it travels in a straight line tangent to the circle.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-07-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Maximum Angular Velocity ($\omega_{\text{max}}$):</strong></p>
+
+                        $$T_{\text{max}} = m \omega_{\text{max}}^2 r \implies 85.0 = 0.400 \times \omega_{\text{max}}^2 \times 0.750$$
+                        $$\omega_{\text{max}}^2 = \frac{85.0}{0.300} = 283.33 \implies \omega_{\text{max}} = \mathbf{16.8\text{ rad/s}}$$
+
+                        <p><strong>b) Maximum Linear Speed ($v_{\text{max}}$):</strong></p>
+
+                        $$v_{\text{max}} = \omega_{\text{max}} r = 16.833 \times 0.750 = \mathbf{12.6\text{ m/s}}$$
+
+                        <p><strong>c) Trajectory After Snapping:</strong></p>
+                        <p>The moment the string breaks, centripetal tension vanishes ($\Sigma F_x = 0$). By Newton's First Law, the sphere moves in a straight line at constant velocity $v = 12.6\text{ m/s}$ along a line strictly **tangent** to the circle at the break point.</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Equating breaking tension to centripetal force $T_{\text{max}} = m\omega^2 r$ gives $85.0 = 0.400 \times 0.750 \times \omega^2$, yielding $\omega_{\text{max}} = 16.8\text{ rad/s}$. The maximum linear speed is $v = \omega r = 12.6\text{ m/s}$. When the string snaps, centripetal force drops to zero ($\Sigma F = 0$). By Newton's First Law, the sphere continues in a straight line at constant velocity $12.6\text{ m/s}$ tangent to the circle at the break location."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Equates breaking tension to $m \omega^2 r$.</li>
+                            <li><strong>2 Marks:</strong> Calculates maximum angular velocity $\omega_{\text{max}} = 16.8\text{ rad/s}$.</li>
+                            <li><strong>3 Marks:</strong> Calculates maximum linear speed $v_{\text{max}} = 12.6\text{ m/s}$.</li>
+                            <li><strong>4 Marks:</strong> States straight-line tangential trajectory post-snap.</li>
+                            <li><strong>5 Marks:</strong> Explicitly links post-snap motion to Newton's First Law ($\Sigma F = 0 \implies \text{constant velocity}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-07-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-07-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('07-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-07-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension -->
+            <div class="practise-question" id="question-07-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (Extension): Satellite Orbital Mechanics & Mass Independence</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A weather satellite of mass $m = 1200\text{ kg}$ orbits Earth in a circular path at altitude $h = 700\text{ km}$ above Earth's surface ($R_E = 6371\text{ km}$, $M_E = 5.972 \times 10^{24}\text{ kg}$, $G = 6.674 \times 10^{-11}\text{ N}\cdot\text{m}^2/\text{kg}^2$).</p>
+                    <p>a) Calculate total orbital radius $r$ in metres.<br>b) Calculate centripetal acceleration $a_c$ of the satellite.<br>c) Prove algebraically that orbital acceleration $a_c$ is independent of satellite mass $m$.<br>d) Calculate orbital linear speed $v$ and period $T$ of the satellite.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-07-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-07-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-07-extension" style="display: none;">
+                    <p><strong>Hint:</strong> Equate gravitational force $F_g = \frac{G M_E m}{r^2}$ to centripetal force $F_c = m a_c$. Mass $m$ cancels to leave $a_c = \frac{G M_E}{r^2}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-07-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Total Orbital Radius ($r$):</strong></p>
+
+                        $$r = R_E + h = 6371000 + 700000 = \mathbf{7.071 \times 10^6\text{ m}}$$
+
+                        <p><strong>b) Centripetal Acceleration ($a_c$):</strong></p>
+
+                        $$a_c = \frac{G M_E}{r^2} = \frac{(6.674 \times 10^{-11}) \times (5.972 \times 10^{24})}{(7.071 \times 10^6)^2} = \mathbf{7.97\text{ m/s}^2}$$
+
+                        <p><strong>c) Algebraic Mass Independence Proof:</strong></p>
+
+                        $$F_g = F_c \implies \frac{G M_E m}{r^2} = m a_c \implies a_c = \frac{G M_E}{r^2}$$
+
+                        <p>Because satellite mass $m$ cancels, $a_c$ depends purely on central mass $M_E$ and radius $r$.</p>
+
+                        <p><strong>d) Orbital Speed $v$ & Period $T$:</strong></p>
+
+                        $$v = \sqrt{a_c r} = \sqrt{7.9717 \times 7.071 \times 10^6} = \mathbf{7508\text{ m/s}} \approx \mathbf{7.51\text{ km/s}}$$
+                        $$T = \frac{2\pi r}{v} = \frac{2\pi \times 7.071 \times 10^6}{7508} = \mathbf{5917\text{ s}} \approx \mathbf{98.6\text{ minutes}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Total orbital radius is $r = 6371 + 700 = 7071\text{ km} = 7.071 \times 10^6\text{ m}$. Equating gravitational force to centripetal force gives $\frac{G M_E m}{r^2} = m a_c$. Cancelling satellite mass $m$ yields $a_c = \frac{G M_E}{r^2} = 7.97\text{ m/s}^2$, algebraically proving independence of satellite mass. The orbital speed is $v = \sqrt{a_c r} = 7.51\text{ km/s}$, corresponding to an orbital period $T = \frac{2\pi r}{v} = 5920\text{ s} = 98.6\text{ minutes}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Computes total orbital radius $r = 7.071 \times 10^6\text{ m}$.</li>
+                            <li><strong>2 Marks:</strong> Calculates centripetal acceleration $a_c = 7.97\text{ m/s}^2$.</li>
+                            <li><strong>3 Marks:</strong> Algebraically proves mass independence by cancelling $m$.</li>
+                            <li><strong>4 Marks:</strong> Calculates orbital velocity $v = 7.51\text{ km/s}$.</li>
+                            <li><strong>5 Marks:</strong> Calculates orbital period $T = 5920\text{ s}$.</li>
+                            <li><strong>6 Marks:</strong> Expresses all quantities with correct SI units and 3 significant figures.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-07-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-07-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('07-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-07-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="06-uniform-circular-motion.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 6: Speed & Angular Velocity</a>
+                <a href="08-banked-curves-conical.html" class="btn-next">Proceed to Lesson 8: Banked Curves & Pendulums &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('07-easy');
+            checkIfQuestionAnswered('07-medium');
+            checkIfQuestionAnswered('07-hard');
+            checkIfQuestionAnswered('07-extension');
+            
+            initCentripetalSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        /* --- Interactive Canvas Centripetal Simulator Code --- */
+        let simState = {
+            snapped: false,
+            theta: 0,
+            posX: 0,
+            posY: 0,
+            velX: 0,
+            velY: 0
+        };
+
+        function snapString() {
+            simState.snapped = true;
+            document.getElementById('out-state').innerText = "STRING SNAPPED (Tangential Release!)";
+            document.getElementById('out-state').style.color = "#ef4444";
+            document.getElementById('btn-snap').disabled = true;
+            document.getElementById('btn-snap').style.opacity = "0.5";
+        }
+
+        function resetSim() {
+            simState.snapped = false;
+            simState.theta = 0;
+            document.getElementById('out-state').innerText = "Intact Orbit";
+            document.getElementById('out-state').style.color = "#00e676";
+            document.getElementById('btn-snap').disabled = false;
+            document.getElementById('btn-snap').style.opacity = "1.0";
+        }
+
+        function initCentripetalSimulator() {
+            const canvas = document.getElementById('centripetalCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const inMass = document.getElementById('sim-mass');
+            const inRadius = document.getElementById('sim-radius');
+            const inSpeed = document.getElementById('sim-speed');
+
+            const dispMass = document.getElementById('disp-mass');
+            const dispRadius = document.getElementById('disp-radius');
+            const dispSpeed = document.getElementById('disp-speed');
+
+            const outAc = document.getElementById('out-ac');
+            const outFc = document.getElementById('out-fc');
+            const outOmega = document.getElementById('out-omega');
+            const outPeriod = document.getElementById('out-period');
+
+            let lastTime = performance.now();
+
+            function animate(now) {
+                const dt = (now - lastTime) / 1000;
+                lastTime = now;
+
+                const m = parseFloat(inMass.value);
+                const r = parseFloat(inRadius.value);
+                const v = parseFloat(inSpeed.value);
+
+                dispMass.innerText = m.toFixed(2) + ' kg';
+                dispRadius.innerText = r.toFixed(1) + ' m';
+                dispSpeed.innerText = v.toFixed(1) + ' m/s';
+
+                const ac = (v * v) / r;
+                const fc = m * ac;
+                const omega = v / r;
+                const T = (2 * Math.PI) / omega;
+
+                outAc.innerText = ac.toFixed(2) + ' m/s²';
+                outFc.innerText = (simState.snapped ? '0.00 N (Snapped)' : fc.toFixed(2) + ' N');
+                outOmega.innerText = omega.toFixed(2) + ' rad/s';
+                outPeriod.innerText = T.toFixed(2) + ' s';
+
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const pixelScale = 65; // 65 pixels per metre
+                const rPx = r * pixelScale;
+
+                // Position calculation
+                if (!simState.snapped) {
+                    simState.theta += omega * dt;
+                    if (simState.theta > 2 * Math.PI) simState.theta -= 2 * Math.PI;
+
+                    simState.posX = centerX + rPx * Math.cos(simState.theta);
+                    simState.posY = centerY - rPx * Math.sin(simState.theta);
+
+                    // Tangential velocity vector direction (+90 deg)
+                    const vAngle = simState.theta + Math.PI / 2;
+                    simState.velX = v * Math.cos(-vAngle) * pixelScale;
+                    simState.velY = v * Math.sin(-vAngle) * pixelScale;
+                } else {
+                    // Straight line tangential drift post-snap
+                    simState.posX += (simState.velX / pixelScale) * dt * pixelScale;
+                    simState.posY += (simState.velY / pixelScale) * dt * pixelScale;
+                }
+
+                // Render Canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Grid background
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                // Orbit Circle Path (Ghost path if snapped)
+                ctx.strokeStyle = simState.snapped ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 240, 255, 0.25)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, rPx, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Central Pivot Anchor
+                ctx.fillStyle = '#00f0ff';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw String Line if intact
+                if (!simState.snapped) {
+                    ctx.strokeStyle = '#b026ff';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(simState.posX, simState.posY);
+                    ctx.stroke();
+
+                    // Centripetal Acceleration / Force Vector Arrow (Pointing INWARD to centre)
+                    const fcLen = Math.min(60, fc * 4);
+                    const inAngle = Math.atan2(centerY - simState.posY, centerX - simState.posX);
+                    const fcEndX = simState.posX + fcLen * Math.cos(inAngle);
+                    const fcEndY = simState.posY + fcLen * Math.sin(inAngle);
+
+                    ctx.strokeStyle = '#00f0ff';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(simState.posX, simState.posY);
+                    ctx.lineTo(fcEndX, fcEndY);
+                    ctx.stroke();
+
+                    // Arrowhead for Fc
+                    ctx.fillStyle = '#00f0ff';
+                    ctx.beginPath();
+                    ctx.arc(fcEndX, fcEndY, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Draw Velocity Vector Arrow (Tangential)
+                const vLen = Math.min(70, v * 5);
+                const vAngle = Math.atan2(simState.velY, simState.velX);
+                const vEndX = simState.posX + vLen * Math.cos(vAngle);
+                const vEndY = simState.posY + vLen * Math.sin(vAngle);
+
+                ctx.strokeStyle = '#ffd700';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(simState.posX, simState.posY);
+                ctx.lineTo(vEndX, vEndY);
+                ctx.stroke();
+
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.arc(vEndX, vEndY, 4, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw Mass Ball
+                ctx.fillStyle = simState.snapped ? '#ef4444' : '#00e676';
+                ctx.beginPath();
+                ctx.arc(simState.posX, simState.posY, 8 + m * 3, 0, Math.PI * 2);
+                ctx.fill();
+
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

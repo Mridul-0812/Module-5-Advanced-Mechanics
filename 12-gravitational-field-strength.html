@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>12. Radial Gravitational Field Strength (g) - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS Reset & Box Sizing Safeguards */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Responsive Layout & Container Enhancements */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border-radius: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .sim-mode-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-mode {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.65rem 1.3rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mode.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(176, 38, 255, 0.35));
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#fieldCanvas {
+            width: 100%;
+            height: 440px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        /* Callouts and Containers */
+        .concept-highlight-card, 
+        .worked-solution, 
+        .derivation-steps, 
+        .practise-question, 
+        .formula-callout-box, 
+        .misconception-box, 
+        .exam-warning-box, 
+        .extension-note-box,
+        .beginner-box {
+            max-width: 100%;
+            overflow-x: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .beginner-box {
+            background: rgba(0, 230, 118, 0.06);
+            border-left: 4px solid #00e676;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.8rem 0;
+        }
+
+        .beginner-box h4 {
+            color: #69f0ae;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .beginner-box p {
+            color: #e8f5e9;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+            line-height: 1.6;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .vector-diagram-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .formula-callout-box {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.12), rgba(0, 240, 255, 0.12));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            text-align: center;
+        }
+
+        .formula-callout-box h4 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .formula-callout-box p {
+            margin-bottom: 0;
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .misconception-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .misconception-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .misconception-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        /* MathJax Overflow Fixes */
+        .MathJax_Display, .mjx-chtml, .MathJax {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding: 0.3rem 0;
+            margin: 0.5rem 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html" class="active">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>12. Radial Gravitational Field Strength ($g$)</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 3 (Part 2)</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Core Learning Goals</h2>
+            <p><strong>Inquiry Question 3:</strong> <em>How does the force of gravity determine the motion of celestial objects?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus (calculus-free), students must build a clear intuitive and quantitative understanding of gravitational fields:</p>
+            <ul class="feature-list">
+                <li>Define a gravitational field as a region of space surrounding a mass in which another mass experiences an attractive gravitational force.</li>
+                <li>Define gravitational field strength $g$ as the force per unit mass ($\vec{g} = \frac{\vec{F}_g}{m}$).</li>
+                <li>Derive the radial gravitational field strength formula ($g = \frac{G M}{r^2}$) by combining Newton's Law of Universal Gravitation with Newton's Second Law.</li>
+                <li>Distinguish clearly between uniform gravitational fields (local scale, near Earth's surface) and radial gravitational fields (astronomical scale).</li>
+                <li>Analyse how gravitational field strength varies with planetary mass, radius, density, altitude ($r = R + h$), and interior depth ($r < R$).</li>
+            </ul>
+        </section>
+
+        <!-- 2. Intuitive Starter: What is a Field? -->
+        <section class="content-section" id="beginner-intro">
+            <h2>Part 1: The Intuitive Idea — What is a Gravitational Field?</h2>
+
+            <div class="beginner-box">
+                <h4>Beginner Bridge: Thinking About Invisible "Pull Zones"</h4>
+                <p>When you drop an apple, how does Earth know the apple is there without touching it? How does the Moon "feel" Earth's pull across 384,000 kilometres of empty space?</p>
+                <p>Physics answers this using the idea of a <strong>Field</strong>. Think of a massive body like Earth as creating an invisible "distortion" or "pull zone" in the space around it. Every single point in space has a specific "pull strength". If you place a mass anywhere in that zone, it immediately feels a gravitational force!</p>
+            </div>
+
+            <h3>1. Defining Gravitational Field Strength ($g$)</h3>
+            <p>Imagine taking a small $1\text{ kg}$ mass (we call this a <em>test mass</em>) and placing it at a specific spot in space. The gravitational force felt by that $1\text{ kg}$ object is the <strong>gravitational field strength ($g$)</strong> at that location.</p>
+
+            <p>In simple words:</p>
+            <div class="formula-callout-box">
+                <h4>Gravitational Field Strength Definition</h4>
+                <p>$$g = \frac{F_g}{m}$$</p>
+                <p style="font-size: 1rem; color: #ffffff; margin-top: 0.5rem;">
+                    "Field strength is simply the gravitational force felt per kilogram of mass placed at that point."
+                </p>
+            </div>
+
+            <p><strong>What are the units of $g$?</strong></p>
+            <p>From the definition $g = \frac{F_g}{m}$, the unit is <strong>Newtons per kilogram ($\text{N/kg}$)</strong>.</p>
+            <p>However, recalling Newton's Second Law ($F = m a \implies a = \frac{F}{m}$), the unit of acceleration is <strong>metres per second squared ($\text{m/s}^2$)</strong>. These two units are completely identical!</p>
+
+            $$\mathbf{1\text{ N/kg} = 1\text{ m/s}^2}$$
+
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">Clearing Up a Common Student Doubt: Is $g$ Acceleration or Field Strength?</h4>
+                <p><strong>It is BOTH!</strong></p>
+                <ul class="feature-list" style="margin-bottom: 0;">
+                    <li>When viewed as a <em>field property</em>, $g = 9.80\text{ N/kg}$ means "Earth pulls on every $1\text{ kg}$ of mass with $9.80\text{ N}$ of force".</li>
+                    <li>When an object is allowed to fall freely under that force, $g = 9.80\text{ m/s}^2$ represents its <em>free-fall acceleration</em>.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 3. Deep Dive: Radial Fields & Mathematical Derivation -->
+        <section class="content-section" id="deep-dive-derivation">
+            <h2>Part 2: Step-by-Step Derivation of Radial Field Strength</h2>
+
+            <h3>1. Uniform vs Radial Fields</h3>
+            <p>Before doing the derivation, let's understand two types of field models:</p>
+
+            <div class="uvtaxy-table-container">
+                <table class="uvtaxy-grid-table">
+                    <thead>
+                        <tr>
+                            <th>Field Model</th>
+                            <th>Field Line Pattern</th>
+                            <th>Field Strength Behavior</th>
+                            <th>Where We Use It</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Uniform Field</th>
+                            <td>Parallel, evenly spaced lines pointing straight down</td>
+                            <td>Constant ($g \approx 9.80\text{ N/kg}$) everywhere</td>
+                            <td>Local scale (inside a classroom, throwing a ball)</td>
+                        </tr>
+                        <tr>
+                            <th>Radial Field</th>
+                            <td>Lines pointing inward towards the center like wheel spokes</td>
+                            <td>Gets weaker with distance ($g \propto \frac{1}{r^2}$)</td>
+                            <td>Astronomical scale (satellites, planets, stars, moons)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Vector Diagram: Uniform vs Radial Field -->
+            <div class="vector-diagram-card">
+                <svg width="520" height="240" viewBox="0 0 520 240" style="background: transparent;">
+                    <!-- Left Side: Uniform Field -->
+                    <rect x="30" y="20" width="200" height="200" fill="rgba(255,255,255,0.02)" stroke="var(--glass-border)" rx="10"/>
+                    <text x="75" y="45" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="14">Uniform Field</text>
+                    <line x1="40" y1="200" x2="220" y2="200" stroke="#ffffff" stroke-width="3"/>
+                    <text x="100" y="215" fill="#888" font-family="sans-serif" font-size="11">Ground Level</text>
+                    
+                    <!-- Parallel Lines Down -->
+                    <line x1="70" y1="60" x2="70" y2="180" stroke="#00f0ff" stroke-width="2"/>
+                    <polygon points="70,180 65,170 75,170" fill="#00f0ff"/>
+                    
+                    <line x1="130" y1="60" x2="130" y2="180" stroke="#00f0ff" stroke-width="2"/>
+                    <polygon points="130,180 125,170 135,170" fill="#00f0ff"/>
+                    
+                    <line x1="190" y1="60" x2="190" y2="180" stroke="#00f0ff" stroke-width="2"/>
+                    <polygon points="190,180 185,170 195,170" fill="#00f0ff"/>
+
+                    <!-- Right Side: Radial Field -->
+                    <rect x="290" y="20" width="200" height="200" fill="rgba(255,255,255,0.02)" stroke="var(--glass-border)" rx="10"/>
+                    <text x="340" y="45" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="14">Radial Field</text>
+
+                    <!-- Planet Sphere -->
+                    <circle cx="390" cy="130" r="32" fill="rgba(176, 38, 255, 0.2)" stroke="#b026ff" stroke-width="2"/>
+                    <circle cx="390" cy="130" r="4" fill="#b026ff"/>
+
+                    <!-- Radial Field Lines pointing inward -->
+                    <!-- Top -->
+                    <line x1="390" y1="60" x2="390" y2="92" stroke="#b026ff" stroke-width="2"/>
+                    <polygon points="390,92 385,82 395,82" fill="#b026ff"/>
+                    <!-- Bottom -->
+                    <line x1="390" y1="200" x2="390" y2="168" stroke="#b026ff" stroke-width="2"/>
+                    <polygon points="390,168 385,178 395,178" fill="#b026ff"/>
+                    <!-- Left -->
+                    <line x1="320" y1="130" x2="352" y2="130" stroke="#b026ff" stroke-width="2"/>
+                    <polygon points="352,130 342,125 342,135" fill="#b026ff"/>
+                    <!-- Right -->
+                    <line x1="460" y1="130" x2="428" y2="130" stroke="#b026ff" stroke-width="2"/>
+                    <polygon points="428,130 438,125 438,135" fill="#b026ff"/>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 1: Near Earth's surface, field lines are parallel and uniform. On a planetary scale, field lines radiate inward toward the center of mass.</p>
+            </div>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">2. Deriving $g = \frac{GM}{r^2}$ step-by-step</h4>
+                <p>Let's derive the formula for field strength around a body of mass $M$ (like Earth or a star):</p>
+
+                <p><strong>Step 1: Start with the gravitational force between mass $M$ and a small test mass $m$ at distance $r$:</strong></p>
+                $$F_g = \frac{G M m}{r^2}$$
+
+                <p><strong>Step 2: Use the definition of gravitational field strength ($g = \frac{F_g}{m}$):</strong></p>
+                $$g = \frac{\left( \frac{G M m}{r^2} \right)}{m}$$
+
+                <p><strong>Step 3: Cancel out the small test mass $m$:</strong></p>
+                $$\mathbf{g = \frac{G M}{r^2}}$$
+
+                <div class="formula-callout-box">
+                    <h4>Radial Gravitational Field Strength Formula</h4>
+                    <p>$$g = \frac{G M}{r^2}$$</p>
+                </div>
+
+                <p><strong>Key Insight:</strong> Notice that the test mass $m$ disappeared! This means <em>the gravitational field strength at a point in space depends ONLY on the central mass $M$ creating the field and the distance $r$ from its center</em>. It does NOT depend on what object you place there!</p>
+            </div>
+        </section>
+
+        <!-- 4. Advanced Concepts: Altitudes, Density & Internal Field -->
+        <section class="content-section" id="advanced-concepts">
+            <h2>Part 3: Stepping Up — Altitude, Density & Interior Fields</h2>
+
+            <h3>1. Field Strength Above Surface ($r = R + h$)</h3>
+            <p>When an object (like a satellite or astronaut) is at an altitude $h$ above a planet's surface (where $R$ is planetary radius):</p>
+
+            $$r = R + h \implies g = \frac{G M}{(R + h)^2}$$
+
+            <div class="misconception-box">
+                <h4>Exam Warning: Don't Forget Planet Radius!</h4>
+                <p>If an exam states a satellite is orbiting at altitude $h = 1000\text{ km}$, do NOT put $r = 1000\text{ km}$ into the denominator! You MUST convert $h$ to metres ($1.0 \times 10^6\text{ m}$) and add Earth's radius ($R_E = 6.371 \times 10^6\text{ m}$), giving $r = 7.371 \times 10^6\text{ m}$.</p>
+            </div>
+
+            <h3>2. Surface Field Strength and Density ($\rho$)</h3>
+            <p>We can express surface gravity in terms of a planet's average density ($\rho$) and radius ($R$).</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Deriving $g$ in terms of Planet Density</h4>
+                <p>Assuming a uniform spherical planet of volume $V = \frac{4}{3}\pi R^3$ and mass $M = \rho V = \rho \left(\frac{4}{3}\pi R^3\right)$:</p>
+
+                $$g_{\text{surface}} = \frac{G M}{R^2} = \frac{G \left( \frac{4}{3}\pi \rho R^3 \right)}{R^2}$$
+
+                <p>Cancelling $R^2$ in denominator with $R^3$ in numerator:</p>
+
+                $$\mathbf{g_{\text{surface}} = \frac{4}{3} \pi G \rho R}$$
+
+                <p><strong>Physical Meaning:</strong> If two planets have the same average density $\rho$, the planet with twice the radius will have TWICE the surface gravity!</p>
+            </div>
+
+            <h3>3. Gravity Inside a Planet ($r < R$)</h3>
+            <p>What happens if you travel down a tunnel toward the center of a uniform planet?</p>
+            <ul class="feature-list">
+                <li><strong>Outside the planet ($r \ge R$):</strong> $g(r) \propto \frac{1}{r^2}$ (Inverse-square drop-off).</li>
+                <li><strong>Inside a uniform planet ($r < R$):</strong> By the Shell Theorem, only the sphere of mass beneath you pulls you inward. The mass enclosed scales as $r^3$, so $g(r) \propto r$ (Linear increase from zero at center to maximum at surface).</li>
+                <li><strong>At the exact center ($r = 0$):</strong> $g = 0\text{ N/kg}$ (Weightlessness due to symmetric outward pulls from all surrounding mass!).</li>
+            </ul>
+
+            <!-- Diagram of g vs r profile -->
+            <div class="vector-diagram-card">
+                <svg width="480" height="220" viewBox="0 0 480 220" style="background: transparent;">
+                    <!-- Graph Axes -->
+                    <line x1="50" y1="180" x2="440" y2="180" stroke="#ffffff" stroke-width="2"/>
+                    <line x1="50" y1="180" x2="50" y2="20" stroke="#ffffff" stroke-width="2"/>
+                    <text x="445" y="185" fill="#ffffff" font-family="sans-serif" font-size="12">Distance r</text>
+                    <text x="20" y="25" fill="#ffffff" font-family="sans-serif" font-size="12">g(r)</text>
+
+                    <!-- Surface Radius Marker R -->
+                    <line x1="200" y1="180" x2="200" y2="30" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-dasharray="4"/>
+                    <text x="195" y="198" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="12">r = R</text>
+                    <text x="16" y="40" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="12">g_max</text>
+
+                    <!-- Linear Region inside (0 to R) -->
+                    <line x1="50" y1="180" x2="200" y2="40" stroke="#00e676" stroke-width="3"/>
+                    <text x="90" y="100" fill="#00e676" font-family="sans-serif" font-size="12">Linear: g ∝ r</text>
+
+                    <!-- Inverse Square Curve outside (R to infinity) -->
+                    <path d="M 200 40 Q 260 120 420 165" fill="none" stroke="#b026ff" stroke-width="3"/>
+                    <text x="280" y="90" fill="#b026ff" font-family="sans-serif" font-size="12">Inverse Square: g ∝ 1/r²</text>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 2: Complete profile of gravitational field strength $g(r)$ inside and outside a uniform spherical planet.</p>
+            </div>
+        </section>
+
+        <!-- 5. Dynamic Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Dynamic Interactive Workbench: Gravitational Field Visualizer</h2>
+            <p>Use the simulator below to explore how planetary mass, radius, altitude, and internal depth affect gravitational field strength $g$. Switch modes to view field vectors or graph profiles!</p>
+
+            <div class="sim-container">
+                <div class="sim-mode-selector">
+                    <button id="btn-mode-field" class="btn-mode active" onclick="setFieldSimMode('field')">3D Planetary Field & Vector Map</button>
+                    <button id="btn-mode-profile" class="btn-mode" onclick="setFieldSimMode('profile')">Full g(r) Graph Profile (Interior & Exterior)</button>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-pmass">Planet Mass ($M / M_E$): <span id="disp-pmass" class="sim-value-display">1.00 Earth Mass</span></label>
+                        <input type="range" id="sim-pmass" min="0.1" max="10.0" value="1.0" step="0.1">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-pradius">Planet Radius ($R / R_E$): <span id="disp-pradius" class="sim-value-display">1.00 Earth Radius</span></label>
+                        <input type="range" id="sim-pradius" min="0.3" max="3.0" value="1.0" step="0.1">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-alt">Probe Position ($r / R_E$): <span id="disp-alt" class="sim-value-display">2.00 R_E</span></label>
+                        <input type="range" id="sim-alt" min="0.0" max="5.0" value="2.0" step="0.1">
+                    </div>
+                </div>
+
+                <canvas id="fieldCanvas" width="800" height="440"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Surface g</div>
+                        <div class="value" id="out-gsurf">9.81 N/kg</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">g at Probe Position</div>
+                        <div class="value" id="out-gprobe">2.45 N/kg</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Planet Average Density</div>
+                        <div class="value" id="out-density">5515 kg/m³</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Field Reduction Factor</div>
+                        <div class="value" id="out-factor">25.0 %</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Region State</div>
+                        <div class="value" id="out-state" style="color: var(--accent-cyan);">EXTERIOR RADIAL FIELD</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): Surface Gravity of Mars</h4>
+                    <span class="marks-allocated">[Basic Field Calculation]</span>
+                </div>
+                <div class="question-body">
+                    <p>Mars has a mass $M = 6.42 \times 10^{23}\text{ kg}$ and a mean radius $R = 3.39 \times 10^6\text{ m}$.</p>
+                    <p>a) Calculate the gravitational field strength $g_{\text{Mars}}$ at the Martian surface.<br>b) Calculate the weight of a $120\text{ kg}$ Martian rover on Earth vs on Mars ($G = 6.674 \times 10^{-11}\text{ N}\cdot\text{m}^2/\text{kg}^2$).</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Surface Gravity of Mars ($g_{\text{Mars}}$):</strong></p>
+
+                        $$g = \frac{G M}{R^2} = \frac{(6.674 \times 10^{-11}) \times (6.42 \times 10^{23})}{(3.39 \times 10^6)^2}$$
+                        $$g = \frac{4.2847 \times 10^{13}}{1.1492 \times 10^{13}} = \mathbf{3.73\text{ N/kg}} \quad (\text{or } 3.73\text{ m/s}^2)$$
+
+                        <p><strong>Part b) Weight Comparison ($W = m g$):</strong></p>
+                        <ul class="feature-list">
+                            <li>Weight on Earth: $W_{\text{Earth}} = 120 \times 9.80 = \mathbf{1176\text{ N}}$</li>
+                            <li>Weight on Mars: $W_{\text{Mars}} = 120 \times 3.728 = \mathbf{447\text{ N}}$</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Altitude for Specified Gravitational Field Strength</h4>
+                    <span class="marks-allocated">[Altitude & Distance Algebra]</span>
+                </div>
+                <div class="question-body">
+                    <p>At what altitude $h$ above Earth's surface does the gravitational field strength drop to exactly $g = 2.45\text{ N/kg}$ (which is $\frac{1}{4}$ of its surface value $9.80\text{ N/kg}$)? ($R_E = 6.371 \times 10^6\text{ m}, M_E = 5.972 \times 10^{24}\text{ kg}$).</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Method 1: Proportional Scaling Shortcut</strong></p>
+                        <p>Since $g \propto \frac{1}{r^2}$, for $g$ to drop to $\frac{1}{4}$ of its surface value, the distance $r$ from Earth's center must double:</p>
+
+                        $$r = 2 R_E$$
+                        $$r = R_E + h \implies R_E + h = 2 R_E \implies h = R_E = \mathbf{6.37 \times 10^6\text{ m}} \quad (6370\text{ km})$$
+
+                        <p><strong>Method 2: Direct Formula Calculation</strong></p>
+
+                        $$g = \frac{G M_E}{r^2} \implies r^2 = \frac{G M_E}{g}$$
+                        $$r = \sqrt{\frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})}{2.45}} = \sqrt{\frac{3.9857 \times 10^{14}}{2.45}} = \sqrt{1.6268 \times 10^{14}} = 1.2755 \times 10^7\text{ m}$$
+
+                        <p>Subtracting Earth's radius to find altitude $h$:</p>
+
+                        $$h = r - R_E = 1.2755 \times 10^7 - 0.6371 \times 10^7 = \mathbf{6.38 \times 10^6\text{ m}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Comparing Exoplanet Surface Gravities using Density Ratio</h4>
+                    <span class="marks-allocated">[Density & Proportional Analysis]</span>
+                </div>
+                <div class="question-body">
+                    <p>Exoplanet Kepler-B has an average mass density $1.50$ times that of Earth ($\rho_B = 1.50 \rho_E$) and a radius $2.00$ times that of Earth ($R_B = 2.00 R_E$).</p>
+                    <p>a) Calculate the surface gravitational field strength $g_B$ on Kepler-B.<br>b) Calculate the mass $M_B$ of Kepler-B in terms of Earth mass $M_E$.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Surface Field Strength ($g_B$):</strong></p>
+                        <p>Using the density formula $g = \frac{4}{3}\pi G \rho R$:</p>
+
+                        $$\frac{g_B}{g_E} = \frac{\rho_B}{\rho_E} \times \frac{R_B}{R_E} = 1.50 \times 2.00 = 3.00$$
+                        $$g_B = 3.00 \times g_E = 3.00 \times 9.80 = \mathbf{29.4\text{ N/kg}}$$
+
+                        <p><strong>Part b) Planet Mass ($M_B$):</strong></p>
+
+                        $$M = \rho V = \rho \left( \frac{4}{3}\pi R^3 \right) \implies M \propto \rho R^3$$
+                        $$\frac{M_B}{M_E} = \left(\frac{\rho_B}{\rho_E}\right) \times \left(\frac{R_B}{R_E}\right)^3 = 1.50 \times (2.00)^3 = 1.50 \times 8.00 = \mathbf{12.0 M_E}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension - JRAHS Style): Equatorial vs Polar Apparent Gravity Difference</h4>
+                    <span class="marks-allocated">[Oblateness & Rotation Effect]</span>
+                </div>
+                <div class="question-body">
+                    <p>Earth is an oblate spheroid. Its polar radius is $R_p = 6.357 \times 10^6\text{ m}$ and its equatorial radius is $R_e = 6.378 \times 10^6\text{ m}$. Earth rotates with angular velocity $\omega = 7.292 \times 10^{-5}\text{ rad/s}$.</p>
+                    <p>a) Calculate true gravitational field strength at the poles ($g_{\text{pole}}$) vs equator ($g_{\text{eq}}$) due to shape alone ($M_E = 5.972 \times 10^{24}\text{ kg}$).<br>b) Calculate the centripetal acceleration $a_c = \omega^2 R_e$ at the equator.<br>c) Determine the total effective apparent gravity $g_{\text{apparent}}$ measured by a scale at the equator.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Full Band 6 JRAHS Solution:</h5>
+
+                        <p><strong>Part a) True Gravitational Field Strength at Poles vs Equator:</strong></p>
+
+                        $$g_{\text{pole}} = \frac{G M_E}{R_p^2} = \frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})}{(6.357 \times 10^6)^2} = \mathbf{9.863\text{ N/kg}}$$
+                        $$g_{\text{eq,true}} = \frac{G M_E}{R_e^2} = \frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})}{(6.378 \times 10^6)^2} = \mathbf{9.798\text{ N/kg}}$$
+
+                        <p><strong>Part b) Centripetal Acceleration at Equator ($a_c$):</strong></p>
+
+                        $$a_c = \omega^2 R_e = (7.292 \times 10^{-5})^2 \times (6.378 \times 10^6) = (5.317 \times 10^{-9}) \times (6.378 \times 10^6) = \mathbf{0.0339\text{ m/s}^2}$$
+
+                        <p><strong>Part c) Apparent Surface Gravity ($g_{\text{apparent}}$):</strong></p>
+                        <p>At the equator, part of Earth's gravitational pull is required to provide centripetal acceleration for rotation. The normal force felt by a scale is:</p>
+
+                        $$N = m g_{\text{eq,true}} - m a_c \implies g_{\text{apparent}} = g_{\text{eq,true}} - a_c$$
+                        $$g_{\text{apparent}} = 9.798 - 0.0339 = \mathbf{9.764\text{ N/kg}}$$
+
+                        <p><em>Conclusion: You weigh approximately 1% less at the equator than at the poles due to Earth's bulge and rotation!</em></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Four Practice Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Marking Criteria</h2>
+            <p>Complete the questions below. Question 4 represents a **James Ruse distinction-level separator question**!</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-12-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Lunar Surface Field & Weight</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>The Moon has a mass $M = 7.35 \times 10^{22}\text{ kg}$ and radius $R = 1.74 \times 10^6\text{ m}$.</p>
+                    <p>a) Calculate the lunar gravitational field strength $g_{\text{Moon}}$.<br>b) Calculate the weight of an $85.0\text{ kg}$ astronaut on the Moon.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-12-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-12-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-12-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Use $g = \frac{G M}{R^2}$ and $W = m g$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-12-easy" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Lunar Field Strength ($g_{\text{Moon}}$):</strong></p>
+
+                        $$g = \frac{G M}{R^2} = \frac{(6.674 \times 10^{-11}) \times (7.35 \times 10^{22})}{(1.74 \times 10^6)^2} = \frac{4.905 \times 10^{12}}{3.0276 \times 10^{12}} = \mathbf{1.62\text{ N/kg}}$$
+
+                        <p><strong>b) Astronaut Weight ($W$):</strong></p>
+
+                        $$W = m g = 85.0 \times 1.62 = \mathbf{137.7\text{ N}} \approx \mathbf{138\text{ N}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Lunar surface gravity is $g = \frac{G M}{R^2} = \frac{(6.674 \times 10^{-11})(7.35 \times 10^{22})}{(1.74 \times 10^6)^2} = 1.62\text{ N/kg}$. The astronaut's weight on the Moon is $W = m g = (85.0)(1.62) = 138\text{ N}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly substitutes into $g = \frac{G M}{R^2}$.</li>
+                            <li><strong>2 Marks:</strong> Calculates $g_{\text{Moon}} = 1.62\text{ N/kg}$.</li>
+                            <li><strong>3 Marks:</strong> Obtains final weight $138\text{ N}$ with correct units.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-12-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-12-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('12-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-12-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-12-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Altitude for Specified $g = 5.00\text{ N/kg}$</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the altitude $h$ above Earth's surface where the gravitational field strength is $g = 5.00\text{ N/kg}$. ($M_E = 5.972 \times 10^{24}\text{ kg}, R_E = 6.371 \times 10^6\text{ m}$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-12-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-12-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-12-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Solve $r = \sqrt{\frac{G M_E}{g}}$, then subtract $R_E$ to find $h = r - R_E$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-12-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Step 1: Calculate distance $r$ from Earth's center:</strong></p>
+
+                        $$r = \sqrt{\frac{G M_E}{g}} = \sqrt{\frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})}{5.00}} = \sqrt{7.9714 \times 10^{13}} = \mathbf{8.928 \times 10^6\text{ m}}$$
+
+                        <p><strong>Step 2: Subtract Earth's radius to get altitude $h$:</strong></p>
+
+                        $$h = r - R_E = 8.928 \times 10^6 - 6.371 \times 10^6 = \mathbf{2.56 \times 10^6\text{ m}} \quad (2560\text{ km})$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Rearranging $g = \frac{G M}{r^2}$ for distance gives $r = \sqrt{\frac{G M_E}{g}} = \sqrt{\frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})}{5.00}} = 8.928 \times 10^6\text{ m}$. Subtracting Earth's radius gives altitude $h = r - R_E = 8.928 \times 10^6 - 6.371 \times 10^6 = 2.56 \times 10^6\text{ m}$ ($2560\text{ km}$)."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Rearranges formula to make $r$ the subject.</li>
+                            <li><strong>2 Marks:</strong> Correctly calculates distance from center $r = 8.928 \times 10^6\text{ m}$.</li>
+                            <li><strong>3 Marks:</strong> Recognises $h = r - R_E$.</li>
+                            <li><strong>4 Marks:</strong> Calculates altitude $h = 2.56 \times 10^6\text{ m}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-12-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-12-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('12-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-12-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard -->
+            <div class="practise-question" id="question-12-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard): Planet Density & Surface Gravity Derivation</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>a) Show that for any uniform spherical planet of density $\rho$ and radius $R$, surface gravity is $g = \frac{4}{3}\pi G \rho R$.<br>b) Planet X has double Earth's average density ($\rho_X = 2 \rho_E$) and half Earth's radius ($R_X = 0.5 R_E$). Determine the surface gravity $g_X$ on Planet X in terms of Earth's surface gravity $g_E$.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-12-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-12-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-12-hard" style="display: none;">
+                    <p><strong>Hint:</strong> Substitute $M = \rho \left(\frac{4}{3}\pi R^3\right)$ into $g = \frac{G M}{R^2}$. For part b, multiply factors $(2) \times (0.5)$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-12-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Algebraic Proof:</strong></p>
+
+                        $$M = \rho V = \rho \left( \frac{4}{3}\pi R^3 \right)$$
+                        $$g = \frac{G M}{R^2} = \frac{G \left( \rho \frac{4}{3}\pi R^3 \right)}{R^2} = \mathbf{\frac{4}{3}\pi G \rho R}$$
+
+                        <p><strong>b) Ratio Calculation:</strong></p>
+
+                        $$\frac{g_X}{g_E} = \frac{\rho_X}{\rho_E} \times \frac{R_X}{R_E} = (2.0) \times (0.5) = \mathbf{1.0}$$
+                        $$g_X = 1.0 \times g_E = \mathbf{9.80\text{ N/kg}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Mass of a uniform sphere is $M = \rho V = \frac{4}{3}\pi \rho R^3$. Substituting into surface gravity gives $g = \frac{G M}{R^2} = \frac{G (\frac{4}{3}\pi \rho R^3)}{R^2} = \frac{4}{3}\pi G \rho R$. For Planet X, $\frac{g_X}{g_E} = \left(\frac{\rho_X}{\rho_E}\right)\left(\frac{R_X}{R_E}\right) = (2)(0.5) = 1.0$. Thus $g_X = g_E = 9.80\text{ N/kg}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> States volume formula $V = \frac{4}{3}\pi R^3$.</li>
+                            <li><strong>2 Marks:</strong> Expresses mass in terms of density $M = \frac{4}{3}\pi \rho R^3$.</li>
+                            <li><strong>3 Marks:</strong> Successfully proves $g = \frac{4}{3}\pi G \rho R$.</li>
+                            <li><strong>4 Marks:</strong> Sets up density/radius ratio equation.</li>
+                            <li><strong>5 Marks:</strong> Concludes $g_X = g_E = 9.80\text{ N/kg}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-12-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-12-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('12-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-12-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension (JRAHS Distinction Separator) -->
+            <div class="practise-question" id="question-12-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (JRAHS Extension): Internal Tunnel Gravity Profile Analysis</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A hypothetical tunnel is drilled through a uniform planet of total mass $M$, radius $R$, and surface gravity $g_s = 12.0\text{ N/kg}$.</p>
+                    <p>a) Express the field strength $g(r)$ as a piecewise function for both $r < R$ (interior) and $r \ge R$ (exterior).<br>b) Calculate the field strength at internal depth $d = 0.25 R$ below the surface ($r = 0.75 R$).<br>c) Sketch $g(r)$ vs $r$ from $r = 0$ to $r = 3 R$, labeling peak coordinates.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-12-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-12-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-12-extension" style="display: none;">
+                    <p><strong>Hint:</strong> Inside, $g(r) = g_s \left(\frac{r}{R}\right)$. Outside, $g(r) = g_s \left(\frac{R}{r}\right)^2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-12-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Piecewise Function:</strong></p>
+
+                        $$g(r) = \begin{cases} g_s \left( \frac{r}{R} \right) & \text{for } 0 \le r < R \\ g_s \left( \frac{R}{r} \right)^2 & \text{for } r \ge R \end{cases}$$
+
+                        <p><strong>b) Field Strength at Depth $d = 0.25 R$ ($r = 0.75 R$):</strong></p>
+
+                        $$g(0.75 R) = g_s \left( \frac{0.75 R}{R} \right) = 0.75 \times 12.0 = \mathbf{9.00\text{ N/kg}}$$
+
+                        <p><strong>c) Key Graph Features:</strong></p>
+                        <ul class="feature-list">
+                            <li>At $r = 0$: $g = 0\text{ N/kg}$.</li>
+                            <li>Straight line from $(0, 0)$ to peak $(R, 12.0\text{ N/kg})$.</li>
+                            <li>Inverse-square curve for $r > R$, passing through $(2R, 3.0\text{ N/kg})$ and $(3R, 1.33\text{ N/kg})$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Inside the planet, mass enclosed scales as $r^3$, giving $g(r) = g_s \left(\frac{r}{R}\right)$. Outside, $g(r) = g_s \left(\frac{R}{r}\right)^2$. At radial position $r = 0.75 R$, $g = 12.0 \times 0.75 = 9.00\text{ N/kg}$. The graph is linear from $(0,0)$ to peak $(R, 12.0\text{ N/kg})$, then decays smoothly as $\frac{1}{r^2}$ for $r > R$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly formulates linear interior formula $g \propto r$.</li>
+                            <li><strong>2 Marks:</strong> Formulates inverse square exterior formula $g \propto \frac{1}{r^2}$.</li>
+                            <li><strong>3 Marks:</strong> Correctly states full piecewise function.</li>
+                            <li><strong>4 Marks:</strong> Calculates field at depth $r = 0.75 R$ as $9.00\text{ N/kg}$.</li>
+                            <li><strong>5 Marks:</strong> Identifies peak value occurring at surface $(R, g_s)$.</li>
+                            <li><strong>6 Marks:</strong> Describes complete graph features accurately.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-12-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-12-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('12-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-12-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="11-newtons-law-gravitation.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 11: Inverse Square Law</a>
+                <a href="13-orbital-velocity-period.html" class="btn-next">Proceed to Lesson 13: Orbital Velocity & Period &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let fieldSimMode = 'field'; // 'field' or 'profile'
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('12-easy');
+            checkIfQuestionAnswered('12-medium');
+            checkIfQuestionAnswered('12-hard');
+            checkIfQuestionAnswered('12-extension');
+            
+            initFieldSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        function setFieldSimMode(mode) {
+            fieldSimMode = mode;
+            document.getElementById('btn-mode-field').classList.toggle('active', mode === 'field');
+            document.getElementById('btn-mode-profile').classList.toggle('active', mode === 'profile');
+        }
+
+        /* --- Interactive Canvas Field Simulator Engine --- */
+        function initFieldSimulator() {
+            const canvas = document.getElementById('fieldCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const inPmass = document.getElementById('sim-pmass');
+            const inPradius = document.getElementById('sim-pradius');
+            const inAlt = document.getElementById('sim-alt');
+
+            const dispPmass = document.getElementById('disp-pmass');
+            const dispPradius = document.getElementById('disp-pradius');
+            const dispAlt = document.getElementById('disp-alt');
+
+            const outGsurf = document.getElementById('out-gsurf');
+            const outGprobe = document.getElementById('out-gprobe');
+            const outDensity = document.getElementById('out-density');
+            const outFactor = document.getElementById('out-factor');
+            const outState = document.getElementById('out-state');
+
+            let lastTime = performance.now();
+
+            function animate(now) {
+                const dt = (now - lastTime) / 1000;
+                lastTime = now;
+
+                const massRatio = parseFloat(inPmass.value);
+                const radiusRatio = parseFloat(inPradius.value);
+                const posRatio = parseFloat(inAlt.value);
+
+                dispPmass.innerText = massRatio.toFixed(1) + ' Earth Mass';
+                dispPradius.innerText = radiusRatio.toFixed(1) + ' Earth Radius';
+                dispAlt.innerText = posRatio.toFixed(1) + ' R_E';
+
+                const G = 6.674e-11;
+                const ME = 5.972e24;
+                const RE = 6.371e6;
+
+                const M = massRatio * ME;
+                const R = radiusRatio * RE;
+                const r = posRatio * RE;
+
+                const gSurf = (G * M) / (R * R);
+                
+                let gProbe = 0;
+                if (r >= R) {
+                    gProbe = (G * M) / (r * r);
+                } else {
+                    gProbe = gSurf * (r / R);
+                }
+
+                const V = (4 / 3) * Math.PI * Math.pow(R, 3);
+                const density = M / V;
+                const factor = (gProbe / gSurf) * 100;
+
+                outGsurf.innerText = gSurf.toFixed(2) + ' N/kg';
+                outGprobe.innerText = gProbe.toFixed(2) + ' N/kg';
+                outDensity.innerText = Math.round(density) + ' kg/m³';
+                outFactor.innerText = factor.toFixed(1) + ' %';
+
+                if (posRatio < radiusRatio) {
+                    outState.innerText = "INTERIOR FIELD (Linear Zone)";
+                    outState.style.color = "#00e676";
+                } else if (Math.abs(posRatio - radiusRatio) < 0.05) {
+                    outState.innerText = "SURFACE MAXIMUM g";
+                    outState.style.color = "#ffd700";
+                } else {
+                    outState.innerText = "EXTERIOR RADIAL FIELD";
+                    outState.style.color = "#00f0ff";
+                }
+
+                // Render Canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Grid
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                if (fieldSimMode === 'field') {
+                    const cX = 300;
+                    const cY = 220;
+                    const rPx = radiusRatio * 55;
+
+                    // Planet Circle
+                    ctx.fillStyle = 'rgba(176, 38, 255, 0.18)';
+                    ctx.strokeStyle = '#b026ff';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath(); ctx.arc(cX, cY, rPx, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+                    // Radial Vector Arrows pointing inward
+                    ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+                    ctx.lineWidth = 1.5;
+                    for (let angle = 0; angle < Math.PI * 2; angle += Math.PI / 6) {
+                        const startDist = rPx + 80;
+                        const endDist = rPx + 15;
+                        const sx = cX + startDist * Math.cos(angle);
+                        const sy = cY + startDist * Math.sin(angle);
+                        const ex = cX + endDist * Math.cos(angle);
+                        const ey = cY + endDist * Math.sin(angle);
+
+                        ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey); ctx.stroke();
+                    }
+
+                    // Probe position
+                    const probePx = posRatio * 55;
+                    const px = cX + probePx;
+                    const py = cY;
+
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath(); ctx.arc(px, py, 7, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#ffffff'; ctx.font = '12px sans-serif';
+                    ctx.fillText("Probe", px - 15, py - 12);
+
+                    // Force Arrow on Probe (towards center)
+                    const arrowLen = Math.min(80, gProbe * 4);
+                    ctx.strokeStyle = '#00e676';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px - arrowLen, py); ctx.stroke();
+
+                } else {
+                    // Profile Mode: Graph of g(r)
+                    const originX = 80;
+                    const originY = 360;
+                    const graphW = 660;
+                    const graphH = 280;
+
+                    // Axes
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(originX, originY); ctx.lineTo(originX + graphW, originY);
+                    ctx.moveTo(originX, originY); ctx.lineTo(originX, originY - graphH);
+                    ctx.stroke();
+
+                    ctx.fillStyle = '#ffffff'; ctx.font = '12px sans-serif';
+                    ctx.fillText("Distance r (in R_E)", originX + graphW - 100, originY + 30);
+                    ctx.fillText("Field Strength g (N/kg)", originX - 60, originY - graphH - 10);
+
+                    // Peak Point (Surface R)
+                    const rSurfPx = originX + (radiusRatio / 5.0) * graphW;
+                    const gSurfPx = originY - (gSurf / 25.0) * graphH;
+
+                    // Dashed line at Surface R
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+                    ctx.setLineDash([4, 4]);
+                    ctx.beginPath(); ctx.moveTo(rSurfPx, originY); ctx.lineTo(rSurfPx, gSurfPx); ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Linear part (0 to R)
+                    ctx.strokeStyle = '#00e676';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(originX, originY); ctx.lineTo(rSurfPx, gSurfPx); ctx.stroke();
+
+                    // Curve part (R to 5R)
+                    ctx.strokeStyle = '#b026ff';
+                    ctx.beginPath();
+                    ctx.moveTo(rSurfPx, gSurfPx);
+                    for (let xPx = rSurfPx; xPx <= originX + graphW; xPx += 4) {
+                        const rVal = ((xPx - originX) / graphW) * 5.0 * RE;
+                        const gVal = (G * M) / (rVal * rVal);
+                        const yPx = originY - (gVal / 25.0) * graphH;
+                        ctx.lineTo(xPx, yPx);
+                    }
+                    ctx.stroke();
+
+                    // Current Probe Dot
+                    const probeXpx = originX + (posRatio / 5.0) * graphW;
+                    const probeYpx = originY - (gProbe / 25.0) * graphH;
+
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath(); ctx.arc(probeXpx, probeYpx, 8, 0, Math.PI * 2); ctx.fill();
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

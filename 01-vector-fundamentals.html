@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>01. Vector Fundamentals - HSC Physics Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax Configuration MUST be defined BEFORE loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        /* Specific Styles for Lesson 01 Interactive Components & Diagrams */
+        .vector-canvas-container {
+            background: rgba(10, 14, 26, 0.8);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #vectorCanvas {
+            background: #060911;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            max-width: 100%;
+            height: auto;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.6);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .control-group {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            padding: 1rem;
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .control-group label {
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .control-group input[type="range"] {
+            accent-color: var(--accent-cyan);
+            cursor: pointer;
+        }
+
+        .vector-readouts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .readout-card {
+            background: rgba(0, 240, 255, 0.05);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .readout-card.purple {
+            background: rgba(176, 38, 255, 0.05);
+            border-color: rgba(176, 38, 255, 0.2);
+        }
+
+        .readout-card .value {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 0.2rem;
+        }
+
+        .readout-card .label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .svg-diagram-card {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            text-align: center;
+        }
+
+        .extension-note-box {
+            background: rgba(176, 38, 255, 0.08);
+            border: 1px solid rgba(176, 38, 255, 0.3);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: var(--accent-purple);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .equation-callout {
+            background: rgba(0, 240, 255, 0.06);
+            border: 1px solid rgba(0, 240, 255, 0.25);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Sidebar Navigation Component -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html" class="active">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>01. Vector Fundamentals</h1>
+            <p class="subtitle">Phase 1: Projectile Motion — Inquiry Question 1</p>
+        </header>
+
+        <!-- NESA Syllabus Syllabus Mapping & Learning Plan -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Inquiry Question</h2>
+            <p><strong>Inquiry Question 1:</strong> <em>How can models that are used to explain projectile motion be used to analyse and make predictions?</em></p>
+            <p><strong>Syllabus Outcomes Addressed:</strong></p>
+            <ul class="feature-list">
+                <li><strong>PH12-12:</strong> Analyses qualitative and quantitative data for two-dimensional motion to solve problems and make predictions.</li>
+                <li><strong>PH11/12-1, 2 & 4:</strong> Develops models, processes quantitative vector data, and uses mathematical representations to communicate physical relationships.</li>
+            </ul>
+            <div class="equation-callout">
+                <p><strong>Core NESA Knowledge Point:</strong> Analyse vectors in two dimensions by resolving them into two independent, mutually perpendicular components using right-angled trigonometry:</p>
+                $$u_x = u \cos\theta \quad \text{and} \quad u_y = u \sin\theta$$
+            </div>
+        </section>
+
+        <!-- Preliminary Revision & Foundation -->
+        <section class="content-section" id="prelim-revision">
+            <h2>Preliminary Revision: Scalar vs Vector Quantities</h2>
+            <p>In Year 11 Preliminary Physics (Modules 1 and 2), motion was analyzed primarily along a single straight line. Before extending kinematics into two dimensions, it is essential to re-establish the formal mathematical distinction between scalar and vector quantities.</p>
+            
+            <ul class="feature-list">
+                <li><strong>Scalar Quantities:</strong> Physical quantities described fully by magnitude (size) and an appropriate SI unit, but possessing no direction in space. Examples include time ($t$), mass ($m$), distance ($d$), speed ($v$), work ($W$), and energy ($E$).</li>
+                <li><strong>Vector Quantities:</strong> Physical quantities specified completely by a magnitude, an SI unit, <em>and a spatial direction</em> relative to an established Cartesian coordinate system. Examples include displacement ($\mathbf{s}$ or $\vec{s}$), velocity ($\mathbf{v}$ or $\vec{v}$), acceleration ($\mathbf{a}$ or $\vec{a}$), force ($\mathbf{F}$ or $\vec{F}$), and momentum ($\mathbf{p}$ or $\vec{p}$).</li>
+            </ul>
+
+            <p>In two-dimensional space, a vector cannot be added or subtracted using simple arithmetic. Instead, geometric vector addition (using the head-to-tail method or parallelogram law) or analytical trigonometric decomposition must be employed.</p>
+        </section>
+
+        <!-- Deep Dive Theory: Vector Resolution & Galilean Independence -->
+        <section class="content-section" id="theory-deep-dive">
+            <h2>Deep Dive: Trigonometric Vector Decomposition</h2>
+            <p>When an object is launched into space at an angle $\theta$ relative to the horizontal, its initial velocity vector $\mathbf{u}$ acts simultaneously in two spatial dimensions ($x$ and $y$). To analyze this two-dimensional trajectory using standard one-dimensional kinematic equations, we must decompose the vector into two perpendicular components.</p>
+
+            <h3>1. The Trigonometric Resolution Triangle</h3>
+            <p>Consider an object launched with an initial speed $u$ at an angle $\theta$ above the horizontal. The vector arrow forms the hypotenuse of a right-angled triangle, where:</p>
+            <ul>
+                <li>The horizontal component $u_x$ lies adjacent to the launch angle $\theta$.</li>
+                <li>The vertical component $u_y$ lies opposite to the launch angle $\theta$.</li>
+            </ul>
+
+            <!-- Clean Vector Triangle SVG Diagram -->
+            <div class="svg-diagram-card">
+                <svg width="420" height="240" viewBox="0 0 420 240" style="max-width: 100%; height: auto;">
+                    <defs>
+                        <marker id="arrow-cyan" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#00f0ff" />
+                        </marker>
+                        <marker id="arrow-purple" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#b026ff" />
+                        </marker>
+                        <marker id="arrow-white" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffffff" />
+                        </marker>
+                    </defs>
+
+                    <!-- Grid lines -->
+                    <line x1="40" y1="200" x2="380" y2="200" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+                    <line x1="40" y1="40" x2="40" y2="200" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+
+                    <!-- Vector Components -->
+                    <!-- ux (Horizontal) -->
+                    <line x1="40" y1="200" x2="320" y2="200" stroke="#00f0ff" stroke-width="3" marker-end="url(#arrow-cyan)" />
+                    <text x="170" y="225" fill="#00f0ff" font-family="sans-serif" font-size="16" font-weight="bold">uₓ = u cos θ</text>
+
+                    <!-- uy (Vertical) -->
+                    <line x1="320" y1="200" x2="320" y2="60" stroke="#b026ff" stroke-width="3" marker-end="url(#arrow-purple)" stroke-dasharray="5,5" />
+                    <text x="330" y="130" fill="#b026ff" font-family="sans-serif" font-size="16" font-weight="bold">u_y = u sin θ</text>
+
+                    <!-- Resultant Vector u -->
+                    <line x1="40" y1="200" x2="320" y2="60" stroke="#ffffff" stroke-width="4" marker-end="url(#arrow-white)" />
+                    <text x="160" y="110" fill="#ffffff" font-family="sans-serif" font-size="18" font-weight="bold">Initial Vector (u)</text>
+
+                    <!-- Angle arc -->
+                    <path d="M 90 200 A 50 50 0 0 0 83 174" fill="none" stroke="#00f0ff" stroke-width="2" />
+                    <text x="100" y="190" fill="#00f0ff" font-family="sans-serif" font-size="16" font-weight="bold">θ</text>
+
+                    <!-- Right angle box -->
+                    <polyline points="305,200 305,185 320,185" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="1.5" />
+                </svg>
+                <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 0.5rem;">Figure 1.1: Right-angled trigonometric decomposition of initial launch vector $\mathbf{u}$ into orthogonal components $u_x$ and $u_y$.</p>
+            </div>
+
+            <p>Applying standard right-angled trigonometry ($\text{SOH CAH TOA}$):</p>
+
+            $$\cos\theta = \frac{\text{Adjacent}}{\text{Hypotenuse}} = \frac{u_x}{u} \implies u_x = u \cos\theta$$
+
+            $$\sin\theta = \frac{\text{Opposite}}{\text{Hypotenuse}} = \frac{u_y}{u} \implies u_y = u \sin\theta$$
+
+            <h3>2. Vector Reconstitution (Pythagoras & Tangent Rule)</h3>
+            <p>If the horizontal ($v_x$) and vertical ($v_y$) velocity components at any instant in time are known, the overall resultant magnitude $v$ and direction angle $\theta$ can be reconstituted using the Pythagorean theorem and the inverse tangent function:</p>
+
+            $$v = \sqrt{v_x^2 + v_y^2}$$
+
+            $$\tan\theta = \frac{v_y}{v_x} \implies \theta = \tan^{-1}\left( \frac{v_y}{v_x} \right)$$
+
+            <h3>3. Galileo's Principle of Independence of Perpendicular Motions</h3>
+            <p>In 1638, Italian scientist Galileo Galilei published <em>Two New Sciences</em>, establishing that <strong>perpendicular motion components act completely independently of one another</strong>. A horizontal force cannot alter vertical motion, and a vertical force (such as gravity) cannot alter horizontal motion.</p>
+            
+            <ul class="feature-list">
+                <li><strong>Horizontal Axis ($x$-axis):</strong> Assuming zero air resistance, no horizontal forces act on a projectile ($F_x = 0$). According to Newton's First Law ($F_{net} = ma$), the horizontal acceleration is identically zero ($a_x = 0\text{ m/s}^2$). Consequently, horizontal velocity remains constant throughout the entire trajectory ($v_x = u_x$).</li>
+                <li><strong>Vertical Axis ($y$-axis):</strong> The force of gravity acts continuously in the downward direction ($F_y = -mg$). This causes a uniform vertical acceleration downward ($a_y = -g = -9.80\text{ m/s}^2$). The vertical velocity $v_y$ changes continuously over time ($v_y = u_y + a_y t$).</li>
+            </ul>
+
+            <div class="extension-note-box">
+                <h4>✦ Note for Mathematics Extension 1 (3U) Students</h4>
+                <p>If you study 3U Mathematics, you derive projectile equations using vector calculus integrations ($\ddot{x}(t) = 0 \implies \dot{x}(t) = u\cos\theta$ and $\ddot{y}(t) = -g \implies \dot{y}(t) = -gt + u\sin\theta$).</p>
+                <p><strong>NESA HSC Physics Assessment Boundary:</strong> Calculus is strictly <em>not required or assessed</em> in HSC Physics. You must express all work algebraically using NESA Stage 6 kinematic equations and vector resolution triangles. Ensure you state directional vectors and explicit positive/negative conventions (e.g., taking upwards as positive $y$).</p>
+            </div>
+        </section>
+
+        <!-- Interactive Component: Canvas Vector Decomposer -->
+        <section class="content-section" id="interactive-tool">
+            <h2>Interactive Vector Decomposition Studio</h2>
+            <p>Adjust the launch speed $u$ and launch angle $\theta$ below to visualize real-time vector component resolution. Observe how changing the angle redistributes energy between horizontal range velocity ($u_x$) and vertical altitude velocity ($u_y$).</p>
+
+            <div class="vector-canvas-container">
+                <canvas id="vectorCanvas" width="600" height="300"></canvas>
+
+                <div class="controls-grid">
+                    <div class="control-group">
+                        <label for="speedSlider">Initial Speed ($u$): <span id="speedVal">40.0 m/s</span></label>
+                        <input type="range" id="speedSlider" min="5" max="80" value="40" step="1">
+                    </div>
+                    <div class="control-group">
+                        <label for="angleSlider">Launch Angle ($\theta$): <span id="angleVal">35.0°</span></label>
+                        <input type="range" id="angleSlider" min="0" max="90" value="35" step="0.5">
+                    </div>
+                </div>
+
+                <div class="vector-readouts">
+                    <div class="readout-card">
+                        <div class="label">Horizontal Component ($u_x$)</div>
+                        <div class="value" id="uxVal">32.77 m/s</div>
+                    </div>
+                    <div class="readout-card purple">
+                        <div class="label">Vertical Component ($u_y$)</div>
+                        <div class="value" id="uyVal">22.94 m/s</div>
+                    </div>
+                    <div class="readout-card">
+                        <div class="label">Ratio ($u_y / u_x$)</div>
+                        <div class="value" id="ratioVal">0.700</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Four Worked Solutions -->
+        <section class="content-section" id="worked-examples">
+            <h2>Worked Examples (Step-by-Step)</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question" style="margin-bottom: 2rem;">
+                <div class="question-header">
+                    <h4>Worked Example 1: Direct Component Resolution (Easy)</h4>
+                    <span class="marks-allocated">[Easy]</span>
+                </div>
+                <div class="question-body">
+                    <p>A football is kicked off the ground with an initial velocity of $22.0\text{ m/s}$ at an angle of $35.0^\circ$ above the horizontal. Calculate the horizontal ($u_x$) and vertical ($u_y$) components of the initial velocity.</p>
+                    
+                    <div class="worked-solution" style="margin-top: 1.5rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px;">
+                        <h5 style="color: var(--accent-cyan);">Solution:</h5>
+                        <p><strong>Step 1: Identify given variables</strong></p>
+                        <p>$$u = 22.0\text{ m/s}, \quad \theta = 35.0^\circ$$</p>
+                        
+                        <p><strong>Step 2: Apply horizontal resolution formula</strong></p>
+                        <p>$$u_x = u \cos\theta = 22.0 \times \cos(35.0^\circ) = 22.0 \times 0.81915 = 18.02\text{ m/s}$$</p>
+                        
+                        <p><strong>Step 3: Apply vertical resolution formula</strong></p>
+                        <p>$$u_y = u \sin\theta = 22.0 \times \sin(35.0^\circ) = 22.0 \times 0.57358 = 12.62\text{ m/s}$$</p>
+                        
+                        <p><strong>Final Answer:</strong><br>
+                        Horizontal initial velocity component $u_x = 18.0\text{ m/s}$ (rightwards).<br>
+                        Vertical initial velocity component $u_y = 12.6\text{ m/s}$ (upwards) [both to 3 sig. figs.].</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question" style="margin-bottom: 2rem;">
+                <div class="question-header">
+                    <h4>Worked Example 2: Reconstructing Resultant Velocity Vector (Medium)</h4>
+                    <span class="marks-allocated">[Medium]</span>
+                </div>
+                <div class="question-body">
+                    <p>At a specific point during its flight, a projectile has a horizontal velocity component of $v_x = 18.5\text{ m/s}$ (rightward) and a vertical velocity component of $v_y = -12.4\text{ m/s}$ (downward). Calculate the magnitude and direction of the resultant velocity vector $\mathbf{v}$.</p>
+                    
+                    <div class="worked-solution" style="margin-top: 1.5rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px;">
+                        <h5 style="color: var(--accent-cyan);">Solution:</h5>
+                        <p><strong>Step 1: Calculate magnitude using Pythagorean theorem</strong></p>
+                        <p>$$v = \sqrt{v_x^2 + v_y^2} = \sqrt{(18.5)^2 + (-12.4)^2} = \sqrt{342.25 + 153.76} = \sqrt{496.01} = 22.27\text{ m/s}$$</p>
+
+                        <p><strong>Step 2: Calculate direction angle using inverse tangent</strong></p>
+                        <p>$$\theta = \tan^{-1}\left( \frac{|v_y|}{v_x} \right) = \tan^{-1}\left( \frac{12.4}{18.5} \right) = \tan^{-1}(0.67027) = 33.83^\circ$$</p>
+
+                        <p><strong>Final Answer:</strong><br>
+                        The resultant velocity is $22.3\text{ m/s}$ at an angle of $33.8^\circ$ below the horizontal (to 3 sig. figs.).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question" style="margin-bottom: 2rem;">
+                <div class="question-header">
+                    <h4>Worked Example 3: Inclined Launcher & Coordinate Transformation (Hard)</h4>
+                    <span class="marks-allocated">[Hard]</span>
+                </div>
+                <div class="question-body">
+                    <p>A cannon mounted on a hill inclined at $15.0^\circ$ to the horizontal fires a shell at an elevation angle of $30.0^\circ$ <em>relative to the inclined hill surface</em> with an initial speed of $85.0\text{ m/s}$. Determine the true horizontal ($u_x$) and vertical ($u_y$) components of the initial velocity relative to a standard flat Cartesian coordinate frame.</p>
+
+                    <div class="worked-solution" style="margin-top: 1.5rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px;">
+                        <h5 style="color: var(--accent-cyan);">Solution:</h5>
+                        <p><strong>Step 1: Find total launch angle relative to true horizontal ($\theta_{total}$)</strong></p>
+                        <p>$$\theta_{total} = \theta_{hill} + \theta_{rel} = 15.0^\circ + 30.0^\circ = 45.0^\circ$$</p>
+
+                        <p><strong>Step 2: Resolve into Cartesian components</strong></p>
+                        <p>$$u_x = u \cos(\theta_{total}) = 85.0 \times \cos(45.0^\circ) = 85.0 \times 0.70711 = 60.10\text{ m/s}$$</p>
+                        <p>$$u_y = u \sin(\theta_{total}) = 85.0 \times \sin(45.0^\circ) = 85.0 \times 0.70711 = 60.10\text{ m/s}$$</p>
+
+                        <p><strong>Final Answer:</strong><br>
+                        True horizontal component $u_x = 60.1\text{ m/s}$.<br>
+                        True vertical component $u_y = 60.1\text{ m/s}$ (both upwards/rightwards to 3 sig. figs.).</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4: Trigonometric Identity Proof of Speed Conservation (Extension)</h4>
+                    <span class="marks-allocated">[Extension]</span>
+                </div>
+                <div class="question-body">
+                    <p>Prove analytically using trigonometric component decomposition that the total speed $u$ of a projectile launched at speed $u$ and angle $\theta$ is identically equal to $\sqrt{u_x^2 + u_y^2}$ for all launch angles $\theta \in [0^\circ, 90^\circ]$.</p>
+
+                    <div class="worked-solution" style="margin-top: 1.5rem; background: rgba(0,0,0,0.3); padding: 1.5rem; border-radius: 8px;">
+                        <h5 style="color: var(--accent-cyan);">Analytical Proof:</h5>
+                        <p>Substitute $u_x = u \cos\theta$ and $u_y = u \sin\theta$ into the right-hand expression:</p>
+
+                        $$\sqrt{u_x^2 + u_y^2} = \sqrt{(u \cos\theta)^2 + (u \sin\theta)^2}$$
+
+                        $$\sqrt{u_x^2 + u_y^2} = \sqrt{u^2 \cos^2\theta + u^2 \sin^2\theta}$$
+
+                        <p>Factor out the common scalar $u^2$:</p>
+
+                        $$\sqrt{u_x^2 + u_y^2} = \sqrt{u^2 (\cos^2\theta + \sin^2\theta)}$$
+
+                        <p>Apply the fundamental Pythagorean trigonometric identity $\sin^2\theta + \cos^2\theta = 1$:</p>
+
+                        $$\sqrt{u_x^2 + u_y^2} = \sqrt{u^2 (1)} = \sqrt{u^2} = u$$
+
+                        <p><strong>Q.E.D.</strong> The magnitude of the initial speed vector is perfectly conserved through component decomposition across all valid angles.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="section-divider">
+
+        <!-- Four Interactive Practice Questions with NESA Criteria -->
+        <section class="content-section" id="practice-questions">
+            <h2>Interactive Practice Questions</h2>
+            <p>Complete these four NESA-style questions to test your understanding. Reveal the solutions and marking criteria to self-assess your work and log your marks.</p>
+
+            <!-- Practice 1: Easy -->
+            <div class="practise-question" id="question-01-e">
+                <div class="question-header">
+                    <h4>Question 1: Archery Vector Decomposition (Easy)</h4>
+                    <span class="marks-allocated">[2 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>An archer fires an arrow with an initial velocity of $48.0\text{ m/s}$ at an angle of $24.0^\circ$ above the horizontal. Calculate the initial vertical component of velocity ($u_y$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-01-e')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-01-e')">Reveal Solution & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-01-e" style="display: none;">
+                    <p><strong>Hint:</strong> The vertical component lies opposite the launch angle in the right-angled vector triangle. Use $u_y = u \sin\theta$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-01-e" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p>$$u_y = u \sin\theta = 48.0 \times \sin(24.0^\circ)$$</p>
+                        <p>$$u_y = 48.0 \times 0.40674 = 19.52\text{ m/s}$$</p>
+                        <p>$$u_y = 19.5\text{ m/s}\text{ (upwards, 3 sig. figs.)}$$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly selects and substitutes into the sine vector resolution formula.</li>
+                            <li><strong>2 Marks:</strong> Calculates correct final answer ($19.5\text{ m/s}$) with correct SI units and significant figures.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-01-e">Assign yourself a mark:</label>
+                        <select id="mark-selector-01-e" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('01-e')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-01-e"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice 2: Medium -->
+            <div class="practise-question" id="question-01-m">
+                <div class="question-header">
+                    <h4>Question 2: Tennis Ball Cliff Launch (Medium)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A tennis player strikes a ball off the edge of a cliff at a speed of $16.5\text{ m/s}$ at an angle of $12.0^\circ$ <em>below</em> the horizontal. Calculate the initial horizontal ($u_x$) and vertical ($u_y$) components of velocity, taking upwards as the positive $y$-direction.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-01-m')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-01-m')">Reveal Solution & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-01-m" style="display: none;">
+                    <p><strong>Hint:</strong> Since the launch is <em>below</em> the horizontal, the vertical direction is negative relative to an upward Cartesian frame ($u_y = -u\sin\theta$).</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-01-m" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Horizontal component ($u_x$):</strong></p>
+                        <p>$$u_x = u \cos\theta = 16.5 \times \cos(12.0^\circ) = 16.5 \times 0.97815 = 16.14\text{ m/s}$$</p>
+                        <p><strong>Vertical component ($u_y$):</strong></p>
+                        <p>$$u_y = -u \sin\theta = -16.5 \times \sin(12.0^\circ) = -16.5 \times 0.20791 = -3.43\text{ m/s}$$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates horizontal component $u_x = 16.1\text{ m/s}$.</li>
+                            <li><strong>2 Marks:</strong> Correctly calculates magnitude of vertical component ($3.43\text{ m/s}$).</li>
+                            <li><strong>3 Marks:</strong> Correctly applies negative sign to $u_y = -3.43\text{ m/s}$ to indicate downward initial vector orientation relative to Cartesian frame.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-01-m">Assign yourself a mark:</label>
+                        <select id="mark-selector-01-m" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('01-m')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-01-m"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice 3: Hard -->
+            <div class="practise-question" id="question-01-h">
+                <div class="question-header">
+                    <h4>Question 3: Resultant Impact Vector Determination (Hard)</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A rescue package lands on the ground with a horizontal velocity component of $v_x = 25.0\text{ m/s}$ and a vertical velocity component of $v_y = -38.5\text{ m/s}$. Determine the final resultant speed $v$ and direction angle $\theta$ relative to the ground surface at impact.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-01-h')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-01-h')">Reveal Solution & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-01-h" style="display: none;">
+                    <p><strong>Hint:</strong> Combine $v_x$ and $v_y$ using $v = \sqrt{v_x^2 + v_y^2}$. Then find $\theta = \tan^{-1}(|v_y| / v_x)$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-01-h" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>1. Resultant Speed ($v$):</strong></p>
+                        <p>$$v = \sqrt{v_x^2 + v_y^2} = \sqrt{(25.0)^2 + (-38.5)^2} = \sqrt{625 + 1482.25} = \sqrt{2107.25} = 45.90\text{ m/s}$$</p>
+                        <p><strong>2. Impact Angle ($\theta$):</strong></p>
+                        <p>$$\theta = \tan^{-1}\left( \frac{|v_y|}{v_x} \right) = \tan^{-1}\left( \frac{38.5}{25.0} \right) = \tan^{-1}(1.54) = 57.0^\circ$$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly uses Pythagorean theorem formula setup.</li>
+                            <li><strong>2 Marks:</strong> Calculates correct resultant speed of $45.9\text{ m/s}$.</li>
+                            <li><strong>3 Marks:</strong> Applies inverse tangent formula correctly.</li>
+                            <li><strong>4 Marks:</strong> States final direction clearly ($57.0^\circ$ below horizontal / to ground) with appropriate SI units and 3 sig. figs.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-01-h">Assign yourself a mark:</label>
+                        <select id="mark-selector-01-h" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('01-h')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-01-h"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practice 4: Extension -->
+            <div class="practise-question" id="question-01-ext">
+                <div class="question-header">
+                    <h4>Question 4: Aircraft Cargo Relative Vector Analysis (Extension)</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A cargo aircraft climbs at a constant speed of $110\text{ m/s}$ at an angle of $20.0^\circ$ above the horizontal. A crate is released from the aircraft payload bay. At the instant of release, calculate:</p>
+                    <ol style="margin-left: 1.5rem; color: var(--text-secondary);">
+                        <li>The initial horizontal component of velocity of the crate ($u_x$).</li>
+                        <li>The initial vertical component of velocity of the crate ($u_y$).</li>
+                        <li>Explain why the crate initially moves upwards despite being dropped under the action of gravity.</li>
+                    </ol>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-01-ext')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-01-ext')">Reveal Solution & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-01-ext" style="display: none;">
+                    <p><strong>Hint:</strong> Remember Newton's First Law of Motion! An object released from a moving vehicle inherits the exact velocity vector of that vehicle at the moment of release.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-01-ext" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Part (a): Horizontal Component ($u_x$)</strong></p>
+                        <p>$$u_x = u \cos\theta = 110 \times \cos(20.0^\circ) = 110 \times 0.93969 = 103.37\text{ m/s} \approx 103\text{ m/s}$$</p>
+
+                        <p><strong>Part (b): Vertical Component ($u_y$)</strong></p>
+                        <p>$$u_y = u \sin\theta = 110 \times \sin(20.0^\circ) = 110 \times 0.34202 = 37.62\text{ m/s} \approx 37.6\text{ m/s}$$</p>
+
+                        <p><strong>Part (c): Physical Explanation</strong></p>
+                        <p>According to Newton's First Law of Motion (Inertia), an object in motion continues in its state of motion unless acted upon by an external net force. At the instant of release, the crate possesses the exact velocity vector of the climbing aircraft ($u_y = +37.6\text{ m/s}$). Gravity produces a downward acceleration ($a_y = -9.80\text{ m/s}^2$), which gradually decelerates the upward velocity to zero over time, but cannot instantaneously eliminate the initial upward momentum.</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Calculates $u_x = 103\text{ m/s}$ correctly.</li>
+                            <li><strong>2 Marks:</strong> Calculates $u_y = 37.6\text{ m/s}$ correctly.</li>
+                            <li><strong>3 Marks:</strong> Identifies that the crate inherits the aircraft's initial velocity vector upon release.</li>
+                            <li><strong>4 Marks:</strong> Links initial upward velocity to Newton's First Law / Inertia.</li>
+                            <li><strong>5 Marks:</strong> Fully explains that downward gravitational force provides acceleration that decelerates vertical speed over time rather than causing instantaneous downward motion.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-01-ext">Assign yourself a mark:</label>
+                        <select id="mark-selector-01-ext" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('01-ext')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-01-ext"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Page Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="02-horizontal-vertical-motion.html" class="btn-next">Proceed to Lesson 2: Motion Independence &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Interactivity Engine -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('01-e');
+            checkIfQuestionAnswered('01-m');
+            checkIfQuestionAnswered('01-h');
+            checkIfQuestionAnswered('01-ext');
+            
+            // Initialise Canvas Interactive Component
+            initVectorCanvas();
+        });
+
+        /* --- Canvas Interactive Vector Decomposer Engine --- */
+        function initVectorCanvas() {
+            const canvas = document.getElementById('vectorCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+
+            const speedSlider = document.getElementById('speedSlider');
+            const angleSlider = document.getElementById('angleSlider');
+            const speedVal = document.getElementById('speedVal');
+            const angleVal = document.getElementById('angleVal');
+            const uxVal = document.getElementById('uxVal');
+            const uyVal = document.getElementById('uyVal');
+            const ratioVal = document.getElementById('ratioVal');
+
+            function draw() {
+                const u = parseFloat(speedSlider.value);
+                const angleDeg = parseFloat(angleSlider.value);
+                const angleRad = angleDeg * (Math.PI / 180);
+
+                // Update text displays
+                speedVal.innerText = u.toFixed(1) + " m/s";
+                angleVal.innerText = angleDeg.toFixed(1) + "°";
+
+                const ux = u * Math.cos(angleRad);
+                const uy = u * Math.sin(angleRad);
+
+                uxVal.innerText = ux.toFixed(2) + " m/s";
+                uyVal.innerText = uy.toFixed(2) + " m/s";
+                ratioVal.innerText = (ux !== 0) ? (uy / ux).toFixed(3) : "∞";
+
+                // Canvas drawing
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const originX = 60;
+                const originY = 240;
+                const scale = 2.5; // Scale pixels per m/s
+
+                const targetX = originX + ux * scale;
+                const targetY = originY - uy * scale;
+
+                // Draw Grid Axes
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.1)";
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(30, originY);
+                ctx.lineTo(570, originY);
+                ctx.moveTo(originX, 30);
+                ctx.lineTo(originX, 270);
+                ctx.stroke();
+
+                // Draw Horizontal Component (ux) - Cyan
+                ctx.strokeStyle = "#00f0ff";
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(originX, originY);
+                ctx.lineTo(targetX, originY);
+                ctx.stroke();
+                drawArrowhead(ctx, targetX, originY, 0, "#00f0ff");
+
+                // Draw Vertical Component (uy) - Purple
+                ctx.strokeStyle = "#b026ff";
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(targetX, originY);
+                ctx.lineTo(targetX, targetY);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                drawArrowhead(ctx, targetX, targetY, -Math.PI/2, "#b026ff");
+
+                // Draw Resultant Vector (u) - White
+                ctx.strokeStyle = "#ffffff";
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                ctx.moveTo(originX, originY);
+                ctx.lineTo(targetX, targetY);
+                ctx.stroke();
+                drawArrowhead(ctx, targetX, targetY, -angleRad, "#ffffff");
+
+                // Draw Angle Arc
+                if (angleDeg > 0) {
+                    ctx.strokeStyle = "#00f0ff";
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(originX, originY, 40, 0, -angleRad, true);
+                    ctx.stroke();
+                }
+
+                // Angle text
+                ctx.fillStyle = "#00f0ff";
+                ctx.font = "bold 13px sans-serif";
+                ctx.fillText("θ = " + angleDeg.toFixed(0) + "°", originX + 48, originY - 12);
+            }
+
+            function drawArrowhead(ctx, x, y, angle, color) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(angle);
+                ctx.fillStyle = color;
+                ctx.beginPath();
+                ctx.moveTo(0, 0);
+                ctx.lineTo(-10, -5);
+                ctx.lineTo(-10, 5);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            speedSlider.addEventListener('input', draw);
+            angleSlider.addEventListener('input', draw);
+            draw();
+        }
+
+        /* --- Global Interactive Helper Functions --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement) {
+                hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+            }
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement) {
+                if (solutionElement.style.display === "none") {
+                    solutionElement.style.display = "block";
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        window.MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                            console.error('MathJax error:', err.message);
+                        });
+                    }
+                } else {
+                    solutionElement.style.display = "none";
+                }
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            if (feedbackSpan) {
+                feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+                feedbackSpan.style.color = "#00e676";
+            }
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

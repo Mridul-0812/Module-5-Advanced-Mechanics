@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>05. Lab Investigation & Spreadsheet Modelling - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Embedded styling enhancements for spreadsheet tables, lab schematics and interactive engine */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .symbol-badge {
+            display: inline-block;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.12);
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            font-family: 'SF Mono', Consolas, monospace;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .spreadsheet-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-family: 'SF Mono', Consolas, Monaco, monospace;
+            font-size: 0.88rem;
+            background: rgba(5, 10, 20, 0.85);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 1.5rem 0;
+        }
+
+        .spreadsheet-table th {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--accent-cyan);
+            padding: 0.6rem 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+        }
+
+        .spreadsheet-table td {
+            padding: 0.5rem 0.8rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: #e2e8f0;
+            text-align: right;
+        }
+
+        .spreadsheet-table tr.header-row td {
+            background: rgba(176, 38, 255, 0.15);
+            color: #ffffff;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .cell-formula {
+            color: #ffd700;
+            font-style: italic;
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#spreadsheetCanvas {
+            width: 100%;
+            height: 400px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        .exam-warning-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .exam-warning-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .exam-warning-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html" class="active">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>05. First-Hand Investigation & Spreadsheet Modelling</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 1</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Inquiry Question</h2>
+            <p><strong>Inquiry Question 1:</strong> <em>How can models that are used to explain projectile motion be used to analyse and make predictions?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus, students must master the following practical and computational outcomes:</p>
+            <ul class="feature-list">
+                <li>Conduct a first-hand scientific investigation to collect quantitative data on the two-dimensional trajectory of a projectile (e.g. using video motion analysis software, photogate arrays, or strobe photography).</li>
+                <li>Analyse experimental data to determine horizontal and vertical displacement components ($s_x, s_y$), velocity components ($v_x, v_y$), and local acceleration due to gravity ($g$).</li>
+                <li>Construct a computational spreadsheet model using discrete time steps ($\Delta t$) and the finite-difference method (Euler's integration technique) to predict position and velocity over time.</li>
+                <li>Compare analytical $SUVAT$ predictions, computational spreadsheet models, and experimental first-hand data to evaluate model validity, numerical truncation errors, and physical limitations (such as air resistance).</li>
+                <li>Evaluate sources of systematic and random error in experimental setups and assess method reliability and accuracy.</li>
+            </ul>
+        </section>
+
+        <!-- 2. Deep Dive Part A: First-Hand Experimental Methodology -->
+        <section class="content-section" id="deep-dive-practical">
+            <h2>Deep Dive Part A: Experimental Laboratory Investigation</h2>
+
+            <h3>1. Scientific Purpose & Equipment Setup</h3>
+            <p>To scientifically test the independence of horizontal and vertical motion, students conduct a primary laboratory investigation. A standard setup involves launching a steel marble from a curved metal ramp mounted on a benchtop, capturing its two-dimensional flight against a calibrated vertical grid background using a high-speed digital camera (120 or 240 frames per second).</p>
+
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.8rem;">Core Experimental Components & Variables</h4>
+                <ul class="feature-list" style="margin-bottom: 0;">
+                    <li><strong>Independent Variable:</strong> Time elapsed $t$ (s), measured in discrete frame increments ($\Delta t = 1 / \text{Frame Rate}$).</li>
+                    <li><strong>Dependent Variables:</strong> Horizontal displacement $s_x$ (m) and vertical displacement $s_y$ (m), extracted frame-by-frame.</li>
+                    <li><strong>Controlled Variables:</strong> Launch height off ramp, initial launch velocity $u$, mass of projectile, zero wind currents, and camera angle/distance.</li>
+                    <li><strong>Calibration Scale:</strong> A vertical $1.00\text{ m}$ ruler placed in the exact plane of motion to establish a pixel-to-metre conversion factor ($\text{Scale} = \text{pixels} / \text{metre}$).</li>
+                    <li><strong>Plumb Line & Spirit Level:</strong> Used to ensure the grid backdrop is perfectly vertical and the launching bench is horizontally aligned.</li>
+                </ul>
+            </div>
+
+            <h3>2. Data Processing & Graphical Extraction of Acceleration ($g$)</h3>
+            <p>From the digitized video frames, coordinates $(x_i, y_i)$ are recorded at each time increment $t_i$. The raw position data is then analysed graphically using three standard diagnostic plots:</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Graphical Analysis Procedures</h4>
+                <ol class="feature-list" style="padding-left: 1.2rem; margin-bottom: 0;">
+                    <li><strong>Horizontal Displacement vs Time ($s_x$ vs $t$):</strong> Yields a straight line passing through the origin. The gradient represents the constant horizontal launch speed:
+                        $$\text{Gradient} = \frac{\Delta s_x}{\Delta t} = u_x$$
+                    </li>
+                    <li><strong>Vertical Velocity vs Time ($v_y$ vs $t$):</strong> Instantaneous vertical velocity is computed using central finite differences ($v_{y,i} = \frac{y_{i+1} - y_{i-1}}{2\Delta t}$). Plotting $v_y$ against $t$ produces a straight line with a negative gradient:
+                        $$\text{Gradient} = \frac{\Delta v_y}{\Delta t} = a_y = -g_{\text{exp}}$$
+                        Comparing $g_{\text{exp}}$ to the accepted value ($9.80\text{ m/s}^2$) allows calculation of percentage error:
+                        $$\text{Percentage Error} = \left| \frac{g_{\text{exp}} - 9.80}{9.80} \right| \times 100\%$$
+                    </li>
+                    <li><strong>Vertical Displacement vs Horizontal Displacement ($s_y$ vs $s_x$):</strong> Displays the physical parabolic spatial path. Fitting a quadratic function $y = A x^2 + B x + C$ yields an experimental coefficient $A = -\frac{g}{2 u_x^2}$, providing a secondary check on $g$.</li>
+                </ol>
+            </div>
+
+            <h3>3. Evaluating Experimental Validity, Accuracy, Reliability & Errors</h3>
+            <p>NESA HSC examinations frequently assess student capacity to critique practical methodologies. Below is a structured summary of experimental error analysis:</p>
+
+            <div class="uvtaxy-table-container">
+                <table class="uvtaxy-grid-table">
+                    <thead>
+                        <tr>
+                            <th>Scientific Category</th>
+                            <th>Experimental Definition</th>
+                            <th>Specific Laboratory Causes in Projectile Motion</th>
+                            <th>Improvement & Mitigation Strategy</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Parallax Error</strong></td>
+                            <td>Systematic reading error caused by viewing calibration scales at an oblique angle.</td>
+                            <td>Camera lens not aligned perpendicularly to the centre of the plane of motion.</td>
+                            <td>Position camera axis precisely perpendicular to motion plane; place calibration scale in identical optical plane.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Lens Distortion</strong></td>
+                            <td>Optical distortion warping pixel distances near frame edges (barrel distortion).</td>
+                            <td>Wide-angle camera lenses warping grid boundaries.</td>
+                            <td>Use telephoto zoom from further away; apply optical lens-correction software filters during video analysis.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Motion Blur</strong></td>
+                            <td>Uncertainty in pinpointing projectile centre of mass due to finite exposure time.</td>
+                            <td>Slow shutter speed causing streaking of fast-moving marble across frames.</td>
+                            <td>Increase camera shutter speed ($> 1/1000\text{ s}$) and increase background illumination.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Frictional Energy Loss</strong></td>
+                            <td>Non-zero external work reducing initial kinetic energy prior to launch.</td>
+                            <td>Friction between marble and launch track; rotational energy consumption.</td>
+                            <td>Use low-friction photogates at track exit to measure true $u$ directly at the instant of release.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Aerodynamic Drag</strong></td>
+                            <td>Air resistance opposing motion, causing trajectory deviation from ideal $SUVAT$.</td>
+                            <td>Air resistance acting on light projectiles (e.g. table tennis balls).</td>
+                            <td>Use dense, small, spherical steel marbles to minimise surface-area-to-mass ratio ($A/m$).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. Deep Dive Part B: Spreadsheet Finite-Difference Integration -->
+        <section class="content-section" id="deep-dive-spreadsheet">
+            <h2>Deep Dive Part B: Spreadsheet Modelling & Finite-Difference Step Integration</h2>
+
+            <h3>1. The Need for Computational Numerical Modelling</h3>
+            <p>While analytical $SUVAT$ equations perfectly predict projectile paths in ideal vacuums, real-world engineering problems (such as ballistics, sports science, and atmospheric re-entry) involve complex forces like velocity-dependent air drag ($F_D \propto v^2$). Under drag, differential equations of motion become non-linear and cannot be solved algebraically without advanced calculus.</p>
+
+            <p>A <strong>computational spreadsheet model</strong> bypasses complex calculus by breaking continuous time into small, discrete increments ($\Delta t$). Using <strong>Euler's Finite-Difference Method</strong>, the spreadsheet calculates acceleration at the current instant, updates velocity for the next step, and then updates position iteratively.</p>
+
+            <h3>2. Mathematical Derivation of Euler's Step-Integration Algorithm</h3>
+            <p>Consider a time step interval $\Delta t$ (e.g. $0.01\text{ s}$). At step $i$, the projectile has known position $(x_i, y_i)$ and velocity $(v_{x,i}, v_{y,i})$.</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Iterative Step Formulas</h4>
+
+                <p><strong>Step 1: Compute Acceleration at Step $i$:</strong></p>
+                <p>For ideal vacuum motion:</p>
+                $$a_{x,i} = 0\text{ m/s}^2 \quad \text{and} \quad a_{y,i} = -g = -9.80\text{ m/s}^2$$
+                <p>If linear air drag ($F_D = -k v$) is included:</p>
+                $$a_{x,i} = -\frac{k}{m} v_{x,i} \quad \text{and} \quad a_{y,i} = -g - \frac{k}{m} v_{y,i}$$
+
+                <p><strong>Step 2: Update Velocity Components for Step $i+1$:</strong></p>
+                $$v_{x,i+1} = v_{x,i} + a_{x,i} \Delta t$$
+                $$v_{y,i+1} = v_{y,i} + a_{y,i} \Delta t$$
+
+                <p><strong>Step 3: Update Displacement Positions for Step $i+1$:</strong></p>
+                $$s_{x,i+1} = s_{x,i} + v_{x,i} \Delta t$$
+                $$s_{y,i+1} = s_{y,i} + v_{y,i} \Delta t$$
+
+                <p><strong>Step 4: Advance Time Counter:</strong></p>
+                $$t_{i+1} = t_i + \Delta t$$
+            </div>
+
+            <h3>3. Complete Spreadsheet Cell Reference Syntax Table</h3>
+            <p>To build a working model in Excel or Google Sheets, parameters are defined in absolute reference cells, while state variables occupy data rows. The table below illustrates exact cell syntax mapping:</p>
+
+            <div class="uvtaxy-table-container">
+                <table class="spreadsheet-table">
+                    <thead>
+                        <tr>
+                            <th>Cell / Column</th>
+                            <th>Variable Name</th>
+                            <th>Row 1 (Headers)</th>
+                            <th>Row 2 (Initial State $t=0$)</th>
+                            <th>Row 3 (Step 1: $t_1 = t_0 + \Delta t$)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="header-row">
+                            <td>Parameter Cells</td>
+                            <td>Constants</td>
+                            <td>`$K$1`: g = 9.80</td>
+                            <td>`$K$2`: dt = 0.01</td>
+                            <td>`$K$3`: Mass = 0.10</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Column A</strong></td>
+                            <td>Time $t$ (s)</td>
+                            <td>`Time t`</td>
+                            <td>`0.00`</td>
+                            <td class="cell-formula">`=A2+$K$2`</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Column B</strong></td>
+                            <td>Accel $a_x$ ($\text{m/s}^2$)</td>
+                            <td>`ax`</td>
+                            <td>`0.00`</td>
+                            <td class="cell-formula">`=0.00`</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Column C</strong></td>
+                            <td>Accel $a_y$ ($\text{m/s}^2$)</td>
+                            <td>`ay`</td>
+                            <td>`=-$K$1`</td>
+                            <td class="cell-formula">`=-$K$1`</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Column D</strong></td>
+                            <td>Velocity $v_x$ ($\text{m/s}$)</td>
+                            <td>`vx`</td>
+                            <td>`=u*COS(RAD(angle))`</td>
+                            <td class="cell-formula">`=D2+B2*$K$2`</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Column E</strong></td>
+                            <td>Velocity $v_y$ ($\text{m/s}$)</td>
+                            <td>`vy`</td>
+                            <td>`=u*SIN(RAD(angle))`</td>
+                            <td class="cell-formula">`=E2+C2*$K$2`</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Column F</strong></td>
+                            <td>Position $s_x$ (m)</td>
+                            <td>`sx`</td>
+                            <td>`0.00`</td>
+                            <td class="cell-formula">`=F2+D2*$K$2`</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Column G</strong></td>
+                            <td>Position $s_y$ (m)</td>
+                            <td>`sy`</td>
+                            <td>`0.00` (or $h_0$)</td>
+                            <td class="cell-formula">`=G2+E2*$K$2`</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>4. Truncation Error vs Step Size $\Delta t$ Optimisation</h3>
+            <p>Because Euler's method assumes acceleration and velocity remain constant across each interval $\Delta t$, it introduces a small systematic mathematical error known as <strong>discretisation truncation error</strong>.</p>
+
+            <div class="concept-highlight-card">
+                <h5 style="color: var(--accent-cyan);">Selecting the Optimal Time Step ($\Delta t$)</h5>
+                <p><strong>If $\Delta t$ is too large (e.g. $\Delta t = 0.50\text{ s}$):</strong> The spreadsheet overestimates distance travelled because velocity changes rapidly within half a second. The calculated parabolic path systematically drifts above the true path (accumulation of truncation error).</p>
+                <p><strong>If $\Delta t$ is too small (e.g. $\Delta t = 0.000001\text{ s}$):</strong> The spreadsheet requires millions of computational rows, increasing processor load and introducing floating-point round-off error.</p>
+                <p><strong>Optimal Computational Range:</strong> For HSC Physics models, choosing $\Delta t$ between $0.001\text{ s}$ and $0.01\text{ s}$ keeps numerical truncation error below $0.1\%$, rendering the spreadsheet model practically identical to exact theoretical $SUVAT$ equations!</p>
+            </div>
+        </section>
+
+        <!-- 4. Interactive Workbench: Spreadsheet Integration Engine -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Interactive Workbench: Spreadsheet Numerical Model vs Analytical SUVAT Visualiser</h2>
+            <p>Adjust launch parameters and computational step size $\Delta t$ below. Watch how changing $\Delta t$ affects numerical truncation error by comparing the Euler Spreadsheet model (dashed green curve) against the exact analytical $SUVAT$ solution (solid purple curve).</p>
+
+            <div class="sim-container">
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-timestep">Time Step ($\Delta t$): <span id="disp-timestep" class="sim-value-display">0.10 s</span></label>
+                        <select id="sim-timestep">
+                            <option value="0.25">0.25 s (Coarse - High Error)</option>
+                            <option value="0.10" selected>0.10 s (Moderate Step)</option>
+                            <option value="0.02">0.02 s (Fine Step - High Accuracy)</option>
+                            <option value="0.005">0.005 s (Ultra-Fine Step)</option>
+                        </select>
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-drag">Physics Model Mode:</label>
+                        <select id="sim-drag">
+                            <option value="none">Ideal Vacuum (Zero Drag)</option>
+                            <option value="linear">Linear Air Drag (F_D = -k*v)</option>
+                        </select>
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-speed">Launch Speed ($u$): <span id="disp-speed" class="sim-value-display">30 m/s</span></label>
+                        <input type="range" id="sim-speed" min="10" max="60" value="30" step="1">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-angle">Launch Angle ($\theta$): <span id="disp-angle" class="sim-value-display">45°</span></label>
+                        <input type="range" id="sim-angle" min="15" max="75" value="45" step="1">
+                    </div>
+                </div>
+
+                <canvas id="spreadsheetCanvas" width="800" height="400"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Total Rows Calculated</div>
+                        <div class="value" id="out-rows">44</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Spreadsheet Range</div>
+                        <div class="value" id="out-num-range">91.80 m</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Exact SUVAT Range</div>
+                        <div class="value" id="out-ana-range">91.84 m</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Numerical Error</div>
+                        <div class="value" id="out-error">0.04%</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Spreadsheet Max Height</div>
+                        <div class="value" id="out-num-height">23.10 m</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): Manual Construction of First Two Integration Steps</h4>
+                    <span class="marks-allocated">[Computational Algorithm Fundamentals]</span>
+                </div>
+                <div class="question-body">
+                    <p>A projectile is launched from ground level with initial horizontal velocity $u_x = 15.0\text{ m/s}$ and initial vertical velocity $u_y = 20.0\text{ m/s}$. Using Euler's finite-difference method with a discrete time step $\Delta t = 0.10\text{ s}$ and $g = 9.80\text{ m/s}^2$ (assuming zero air resistance), manually calculate the position coordinates $(s_x, s_y)$ and velocity components $(v_x, v_y)$ at $t = 0.10\text{ s}$ and $t = 0.20\text{ s}$. Show all step formulas explicitly.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step 1: Initial State ($t_0 = 0.00\text{ s}$)</h5>
+                        <p>$$s_{x,0} = 0.00\text{ m}, \quad s_{y,0} = 0.00\text{ m}, \quad v_{x,0} = 15.0\text{ m/s}, \quad v_{y,0} = 20.0\text{ m/s}$$</p>
+                        <p>$$a_{x,0} = 0.00\text{ m/s}^2, \quad a_{y,0} = -9.80\text{ m/s}^2$$</p>
+
+                        <h5>Step 2: Compute Step 1 ($t_1 = 0.10\text{ s}$)</h5>
+                        <p>Updating velocities:</p>
+                        <p>$$v_{x,1} = v_{x,0} + a_{x,0} \Delta t = 15.0 + (0)(0.10) = \mathbf{15.0\text{ m/s}}$$</p>
+                        <p>$$v_{y,1} = v_{y,0} + a_{y,0} \Delta t = 20.0 + (-9.80)(0.10) = 20.0 - 0.98 = \mathbf{19.02\text{ m/s}}$$</p>
+
+                        <p>Updating displacements:</p>
+                        <p>$$s_{x,1} = s_{x,0} + v_{x,0} \Delta t = 0.00 + (15.0)(0.10) = \mathbf{1.50\text{ m}}$$</p>
+                        <p>$$s_{y,1} = s_{y,0} + v_{y,0} \Delta t = 0.00 + (20.0)(0.10) = \mathbf{2.00\text{ m}}$$</p>
+
+                        <h5>Step 3: Compute Step 2 ($t_2 = 0.20\text{ s}$)</h5>
+                        <p>Updating velocities:</p>
+                        <p>$$v_{x,2} = v_{x,1} + a_{x,1} \Delta t = 15.0 + (0)(0.10) = \mathbf{15.0\text{ m/s}}$$</p>
+                        <p>$$v_{y,2} = v_{y,1} + a_{y,1} \Delta t = 19.02 + (-9.80)(0.10) = 19.02 - 0.98 = \mathbf{18.04\text{ m/s}}$$</p>
+
+                        <p>Updating displacements:</p>
+                        <p>$$s_{x,2} = s_{x,1} + v_{x,1} \Delta t = 1.50 + (15.0)(0.10) = \mathbf{3.00\text{ m}}$$</p>
+                        <p>$$s_{y,2} = s_{y,1} + v_{y,1} \Delta t = 2.00 + (19.02)(0.10) = 2.00 + 1.902 = \mathbf{3.902\text{ m}}$$</p>
+
+                        <h5>Summary Results Table:</h5>
+                        <div class="uvtaxy-table-container">
+                            <table class="spreadsheet-table">
+                                <thead>
+                                    <tr>
+                                        <th>Step $i$</th>
+                                        <th>Time $t$ (s)</th>
+                                        <th>$v_x$ (m/s)</th>
+                                        <th>$v_y$ (m/s)</th>
+                                        <th>$s_x$ (m)</th>
+                                        <th>$s_y$ (m)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>0</td><td>0.00</td><td>15.00</td><td>20.00</td><td>0.00</td><td>0.00</td></tr>
+                                    <tr><td>1</td><td>0.10</td><td>15.00</td><td>19.02</td><td>1.50</td><td>2.00</td></tr>
+                                    <tr><td>2</td><td>0.20</td><td>15.00</td><td>18.04</td><td>3.00</td><td>3.90</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Video Analysis Data Processing & Percentage Error</h4>
+                    <span class="marks-allocated">[Experimental Data Analysis]</span>
+                </div>
+                <div class="question-body">
+                    <p>A student uses video analysis software (recording at 60 frames per second) to track a ball launched off a bench. The table below displays extracted time $t$ and vertical velocity $v_y$ data points recorded during its flight:</p>
+
+                    <div class="uvtaxy-table-container">
+                        <table class="spreadsheet-table">
+                            <thead>
+                                <tr>
+                                    <th>Frame Number</th>
+                                    <th>Time $t$ (s)</th>
+                                    <th>Vertical Velocity $v_y$ (m/s)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>0</td><td>0.000</td><td>+4.50</td></tr>
+                                <tr><td>6</td><td>0.100</td><td>+3.54</td></tr>
+                                <tr><td>12</td><td>0.200</td><td>+2.58</td></tr>
+                                <tr><td>18</td><td>0.300</td><td>+1.59</td></tr>
+                                <tr><td>24</td><td>0.400</td><td>+0.62</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p>a) Construct a linear gradient model to determine the experimental acceleration due to gravity ($g_{\text{exp}}$).<br>b) Calculate the percentage error relative to the accepted value ($9.80\text{ m/s}^2$).<br>c) Identify two physical sources of experimental error that could explain any discrepancy.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step 1: Calculate Gradient of $v_y$ vs $t$ Data</h5>
+                        <p>Select two widely separated data points from the linear set: $(t_1 = 0.000\text{ s}, v_{y,1} = +4.50\text{ m/s})$ and $(t_2 = 0.400\text{ s}, v_{y,2} = +0.62\text{ m/s})$.</p>
+
+                        $$\text{Gradient} = \frac{v_{y,2} - v_{y,1}}{t_2 - t_1} = \frac{0.62 - 4.50}{0.400 - 0.000} = \frac{-3.88}{0.400} = -9.70\text{ m/s}^2$$
+
+                        <p>Therefore, experimental acceleration $a_y = -9.70\text{ m/s}^2 \implies g_{\text{exp}} = \mathbf{9.70\text{ m/s}^2}$.</p>
+
+                        <h5>Step 2: Calculate Percentage Error</h5>
+                        $$\text{Percentage Error} = \left| \frac{g_{\text{exp}} - g_{\text{accepted}}}{g_{\text{accepted}}} \right| \times 100\% = \left| \frac{9.70 - 9.80}{9.80} \right| \times 100\% = \frac{0.10}{9.80} \times 100\% = \mathbf{1.02\%}$$
+
+                        <h5>Step 3: Identify Physical Error Sources</h5>
+                        <ul class="feature-list">
+                            <li><strong>1. Aerodynamic Drag:</strong> Air resistance exerts a upward force opposing downward motion, slightly reducing net downward acceleration below $9.80\text{ m/s}^2$.</li>
+                            <li><strong>2. Optical Frame Rate Timing Jitter:</strong> Camera frame rate variations ($\pm 1\text{ frame}$) introduce systematic time measurement uncertainty.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Spreadsheet Integration with Linear Air Drag</h4>
+                    <span class="marks-allocated">[Non-Linear Numerical Modeling]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $0.20\text{ kg}$ projectile is launched horizontally at $u_x = 25.0\text{ m/s}$ from height $h = 20.0\text{ m}$. It experiences linear drag given by $\vec{F}_D = -k \vec{v}$, where resistance coefficient $k = 0.040\text{ N}\cdot\text{s/m}$. Using step size $\Delta t = 0.050\text{ s}$, compute the horizontal acceleration $a_{x,0}$ and vertical acceleration $a_{y,0}$ at $t = 0$, and determine updated velocity components $(v_{x,1}, v_{y,1})$ at $t = 0.050\text{ s}$.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step 1: Compute Initial Forces and Accelerations at $t = 0$</h5>
+                        <p>At $t = 0$, $v_{x,0} = 25.0\text{ m/s}$ and $v_{y,0} = 0.00\text{ m/s}$. Mass $m = 0.20\text{ kg}$, $k = 0.040\text{ N s/m}$.</p>
+
+                        <p>Horizontal Force & Acceleration:</p>
+                        $$F_{x,0} = -k v_{x,0} = -(0.040)(25.0) = -1.00\text{ N}$$
+                        $$a_{x,0} = \frac{F_{x,0}}{m} = \frac{-1.00}{0.20} = \mathbf{-5.00\text{ m/s}^2}$$
+
+                        <p>Vertical Force & Acceleration:</p>
+                        $$F_{y,0} = -m g - k v_{y,0} = -(0.20)(9.80) - (0.040)(0.00) = -1.96\text{ N}$$
+                        $$a_{y,0} = \frac{F_{y,0}}{m} = \frac{-1.96}{0.20} = \mathbf{-9.80\text{ m/s}^2}$$
+
+                        <h5>Step 2: Perform Step Integration for $t_1 = 0.050\text{ s}$</h5>
+                        $$v_{x,1} = v_{x,0} + a_{x,0} \Delta t = 25.0 + (-5.00)(0.050) = 25.0 - 0.25 = \mathbf{24.75\text{ m/s}}$$
+                        $$v_{y,1} = v_{y,0} + a_{y,0} \Delta t = 0.00 + (-9.80)(0.050) = 0.00 - 0.49 = \mathbf{-0.49\text{ m/s}}$$
+
+                        <p><em>Notice how air resistance causes horizontal velocity to decrease from $25.0\text{ m/s}$ to $24.75\text{ m/s}$, breaking the constant horizontal velocity rule of ideal vacuums!</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension): Evaluating Discretisation Truncation Error</h4>
+                    <span class="marks-allocated">[Computational Error Analysis]</span>
+                </div>
+                <div class="question-body">
+                    <p>A ball dropped from rest under gravity ($a_y = -9.80\text{ m/s}^2$) travels downward for $t = 1.00\text{ s}$.</p>
+                    <p>a) Calculate the exact analytical displacement $s_y$ using $SUVAT$.<br>b) Calculate the numerical displacement $s_y$ predicted by Euler's method using a single coarse step $\Delta t = 1.00\text{ s}$.<br>c) Calculate the numerical displacement $s_y$ predicted by Euler's method using two fine steps $\Delta t = 0.50\text{ s}$.<br>d) Explain why reducing step size $\Delta t$ reduces computational truncation error.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Part a) Exact Analytical SUVAT Calculation:</h5>
+                        $$s_{y,\text{exact}} = u_y t + \frac{1}{2}a_y t^2 = 0(1.00) + \frac{1}{2}(-9.80)(1.00)^2 = \mathbf{-4.90\text{ m}}$$
+
+                        <h5>Part b) Euler Method with Single Step ($\Delta t = 1.00\text{ s}$):</h5>
+                        <p>At $t=0$, $v_{y,0} = 0\text{ m/s}$.</p>
+                        $$s_{y,1} = s_{y,0} + v_{y,0} \Delta t = 0.00 + (0.00)(1.00) = \mathbf{0.00\text{ m}}\quad (\text{Error} = 100\%!)$$
+
+                        <h5>Part c) Euler Method with Two Steps ($\Delta t = 0.50\text{ s}$):</h5>
+                        <p>Step 1 ($t_1 = 0.50\text{ s}$):</p>
+                        $$v_{y,1} = 0 + (-9.80)(0.50) = -4.90\text{ m/s}$$
+                        $$s_{y,1} = 0 + (0.00)(0.50) = 0.00\text{ m}$$
+
+                        <p>Step 2 ($t_2 = 1.00\text{ s}$):</p>
+                        $$s_{y,2} = s_{y,1} + v_{y,1} \Delta t = 0.00 + (-4.90)(0.50) = \mathbf{-2.45\text{ m}}\quad (\text{Error reduced to } 50\%)$$
+
+                        <h5>Part d) Physical & Mathematical Explanation:</h5>
+                        <p>Euler's method assumes velocity remains constant at its initial value over each interval $\Delta t$. Because gravity continuously accelerates the object throughout the interval, using a large $\Delta t$ ignores the velocity increase that occurs inside the step. As $\Delta t \to 0$, the step approximation approaches continuous calculus integration, eliminating truncation error.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Four Practice Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Marking Criteria</h2>
+            <p>Complete the questions below, write out explicit spreadsheet cell formulas, check the exemplar answers, and submit your score using the self-assessment drop-down options.</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-05-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Spreadsheet Cell Formula Syntax</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A student builds a Google Sheets model for a projectile with time step $\Delta t = 0.02\text{ s}$ stored in cell `$B$1`. Row 5 contains data at $t = 0.08\text{ s}$, with vertical acceleration $a_y$ in `C5`, vertical velocity $v_y$ in `E5`, and vertical displacement $s_y$ in `G5`.</p>
+                    <p>Write the exact spreadsheet formulas that must be typed into Row 6 to calculate:</p>
+                    <p>a) Updated vertical velocity `E6`.<br>b) Updated vertical position `G6`.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-05-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-05-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-05-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Remember that updated velocity equals previous velocity plus acceleration multiplied by time step (`=E5+C5*$B$1`). Absolute cell references use dollar signs (`$B$1`).</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-05-easy" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Formula for Updated Vertical Velocity `E6`:</strong></p>
+                        <p>`=E5+C5*$B$1`</p>
+
+                        <p><strong>b) Formula for Updated Vertical Position `G6`:</strong></p>
+                        <p>`=G5+E5*$B$1`</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"To update vertical velocity in cell `E6`, the formula is `=E5+C5*$B$1`, which adds the product of acceleration (`C5`) and time step (`$B$1`) to the previous velocity (`E5`). To update vertical displacement in cell `G6`, the formula is `=G5+E5*$B$1`, adding the distance covered over time step (`E5*$B$1`) to previous position (`G5`)."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies correct cell addresses and basic structure.</li>
+                            <li><strong>2 Marks:</strong> Correctly uses absolute reference (`$B$1`) for time step in both formulas.</li>
+                            <li><strong>3 Marks:</strong> Writes both spreadsheet formulas completely and accurately with leading equals signs.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-05-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-05-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('05-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-05-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-05-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Video Motion Analysis & Error Identification</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A physics class uses high-speed video analysis to track a marble launched horizontally. The experimental horizontal velocity plot ($v_x$ vs $t$) exhibits a slight downward slope, dropping from $4.00\text{ m/s}$ at $t=0$ to $3.70\text{ m/s}$ at $t=0.50\text{ s}$.</p>
+                    <p>a) Explain why ideal theory predicts a zero slope for $v_x$ vs $t$.<br>b) Identify the physical cause of the observed downward slope.<br>c) Calculate the magnitude of the experimental horizontal deceleration.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-05-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-05-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-05-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Ideal theory assumes zero horizontal force ($\Sigma F_x = 0$). Real air drag exerts a retarding force $F_D = -k v_x$. Deceleration is gradient $\frac{\Delta v_x}{\Delta t}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-05-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Theoretical Prediction:</strong></p>
+                        <p>Ideal projectile models assume zero net horizontal force ($\Sigma F_x = 0$). By Newton's First Law, acceleration $a_x = 0\text{ m/s}^2$, predicting a constant horizontal velocity and a zero-slope horizontal line on a $v_x-t$ graph.</p>
+
+                        <p><strong>b) Physical Cause:</strong></p>
+                        <p>Aerodynamic drag (air resistance) exerts a retarding force opposing horizontal motion, creating a non-zero horizontal deceleration ($a_x < 0$).</p>
+
+                        <p><strong>c) Deceleration Calculation:</strong></p>
+                        $$a_x = \frac{\Delta v_x}{\Delta t} = \frac{3.70 - 4.00}{0.50 - 0.00} = \frac{-0.30}{0.50} = \mathbf{-0.60\text{ m/s}^2}$$
+                        <p>Magnitude of horizontal deceleration is $\mathbf{0.60\text{ m/s}^2}$.</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Ideal projectile theory assumes zero horizontal force ($\Sigma F_x = 0$), yielding $a_x = 0\text{ m/s}^2$ and a horizontal $v_x-t$ line. The observed negative gradient is caused by air resistance opposing horizontal velocity. Calculating the gradient $\frac{3.70 - 4.00}{0.50 - 0} = -0.60\text{ m/s}^2$ gives an experimental horizontal deceleration of $0.60\text{ m/s}^2$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Explains ideal theory assumption ($\Sigma F_x = 0 \implies a_x = 0$).</li>
+                            <li><strong>2 Marks:</strong> Identifies air resistance as the physical cause of deceleration.</li>
+                            <li><strong>3 Marks:</strong> Applies gradient formula correctly.</li>
+                            <li><strong>4 Marks:</strong> Computes correct horizontal deceleration magnitude ($0.60\text{ m/s}^2$) with correct units.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-05-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-05-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('05-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-05-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard -->
+            <div class="practise-question" id="question-05-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard): Evaluating Step Size & Truncation Error</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A student creates two spreadsheet models (Model A with $\Delta t = 0.20\text{ s}$ and Model B with $\Delta t = 0.01\text{ s}$) to model a ball launched vertically upward at $19.6\text{ m/s}$.</p>
+                    <p>a) Calculate the exact theoretical apex time using $SUVAT$.<br>b) Determine which model (A or B) predicts the maximum apex height with greater accuracy, explaining the mathematical mechanism of truncation error.<br>c) Describe the trade-off of choosing an excessively small time step ($\Delta t = 0.000001\text{ s}$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-05-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-05-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-05-hard" style="display: none;">
+                    <p><strong>Hint:</strong> Exact apex time occurs when $v_y = 0 \implies t = u_y / g$. Smaller step size $\Delta t$ reduces Euler truncation error because velocity changes within the step are smaller.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-05-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Exact Theoretical Apex Time:</strong></p>
+                        $$v_y = u_y + a_y t \implies 0 = 19.6 - 9.80 t \implies t = \frac{19.6}{9.80} = \mathbf{2.00\text{ s}}$$
+
+                        <p><strong>b) Model Accuracy & Truncation Error Mechanism:</strong></p>
+                        <p><strong>Model B ($\Delta t = 0.01\text{ s}$)</strong> is significantly more accurate. Euler's method assumes velocity remains constant over each time step $\Delta t$. In reality, velocity changes continuously under gravity. Large time steps ($\Delta t = 0.20\text{ s}$) accumulate significant discretisation truncation error across each step. Smaller time steps ($\Delta t = 0.01\text{ s}$) make the constant-velocity assumption valid over the tiny interval, matching true calculus integration.</p>
+
+                        <p><strong>c) Trade-Off of Excessively Small Time Step:</strong></p>
+                        <p>While extremely small steps reduce truncation error, they dramatically increase the required row count (millions of rows), increasing computer processing time and introducing floating-point round-off errors in memory.</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"The exact apex time is $t = \frac{19.6}{9.80} = 2.00\text{ s}$. Model B ($\Delta t = 0.01\text{ s}$) is vastly more accurate because Euler step-integration assumes constant velocity over $\Delta t$. Large steps ($\Delta t = 0.20\text{ s}$) cause systematic truncation error as velocity changes within each step are ignored. However, an excessively small step ($\Delta t = 10^{-6}\text{ s}$) requires excessive computational memory and risks floating-point rounding errors."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Calculates exact apex time $t = 2.00\text{ s}$.</li>
+                            <li><strong>2 Marks:</strong> Correctly identifies Model B as more accurate.</li>
+                            <li><strong>3 Marks:</strong> Explains mathematical cause of truncation error in Euler's method.</li>
+                            <li><strong>4 Marks:</strong> Contrasts discrete step approximation with continuous calculus integration.</li>
+                            <li><strong>5 Marks:</strong> Clearly evaluates computational trade-offs (processing time vs round-off error).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-05-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-05-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('05-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-05-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension -->
+            <div class="practise-question" id="question-05-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (Extension): Spreadsheet Algorithm with Quadratic Air Drag</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A spherical projectile of mass $m = 0.50\text{ kg}$ is dropped from rest ($u = 0\text{ m/s}$) under gravity ($g = 9.80\text{ m/s}^2$). It experiences quadratic air drag given by $F_D = c v^2$, where drag constant $c = 0.020\text{ N}\cdot\text{s}^2/\text{m}^2$.</p>
+                    <p>a) Derive the theoretical terminal velocity $v_T$ where net acceleration becomes zero.<br>b) Construct the explicit Euler update equations for $a_{y,i}$, $v_{y,i+1}$, and $s_{y,i+1}$.<br>c) Manually compute $a_{y,1}$, $v_{y,1}$, and $s_{y,1}$ for the first step ($\Delta t = 0.10\text{ s}$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-05-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-05-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-05-extension" style="display: none;">
+                    <p><strong>Hint:</strong> Terminal velocity occurs when drag force equals weight force ($c v_T^2 = m g \implies v_T = \sqrt{\frac{mg}{c}}$). At step 0, $v=0 \implies a_{y,0} = -9.80\text{ m/s}^2$. Update $v_{y,1} = 0 + (-9.80)(0.10) = -0.98\text{ m/s}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-05-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Terminal Velocity Derivation:</strong></p>
+                        <p>At terminal velocity, net acceleration $a_y = 0 \implies \Sigma F_y = 0$.</p>
+                        $$m g = c v_T^2 \implies v_T^2 = \frac{m g}{c} = \frac{(0.50)(9.80)}{0.020} = \frac{4.90}{0.020} = 245.0$$
+                        $$v_T = \sqrt{245.0} = \mathbf{15.7\text{ m/s}}$$
+
+                        <p><strong>b) Euler Update Formulas:</strong></p>
+                        $$a_{y,i} = -g + \frac{c}{m} v_{y,i}^2$$
+                        $$v_{y,i+1} = v_{y,i} + a_{y,i} \Delta t$$
+                        $$s_{y,i+1} = s_{y,i} + v_{y,i} \Delta t$$
+
+                        <p><strong>c) First Step Computation ($t_1 = 0.10\text{ s}$):</strong></p>
+                        <p>At $t=0$, $v_{y,0} = 0\text{ m/s}$.</p>
+                        $$a_{y,0} = -9.80 + \frac{0.020}{0.50}(0)^2 = \mathbf{-9.80\text{ m/s}^2}$$
+                        $$v_{y,1} = 0.00 + (-9.80)(0.10) = \mathbf{-0.980\text{ m/s}}$$
+                        $$s_{y,1} = 0.00 + (0.00)(0.10) = \mathbf{0.00\text{ m}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Equating gravitational weight force to quadratic drag force $m g = c v_T^2$ yields terminal velocity $v_T = \sqrt{\frac{0.50 \times 9.80}{0.020}} = 15.7\text{ m/s}$. The Euler update equations are $a_{y,i} = -g + \frac{c}{m}v_{y,i}^2$, $v_{y,i+1} = v_{y,i} + a_{y,i}\Delta t$, and $s_{y,i+1} = s_{y,i} + v_{y,i}\Delta t$. At step $t=0.10\text{ s}$, $a_{y,0} = -9.80\text{ m/s}^2$, $v_{y,1} = -0.98\text{ m/s}$, and $s_{y,1} = 0.00\text{ m}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Equates weight force to drag force for terminal velocity.</li>
+                            <li><strong>2 Marks:</strong> Calculates correct terminal velocity $15.7\text{ m/s}$.</li>
+                            <li><strong>3 Marks:</strong> Formulates non-linear acceleration equation $a_{y,i} = -g + \frac{c}{m}v_{y,i}^2$.</li>
+                            <li><strong>4 Marks:</strong> Writes complete Euler velocity and position update formulas.</li>
+                            <li><strong>5 Marks:</strong> Evaluates acceleration and velocity at step 1 ($a_{y,0} = -9.80\text{ m/s}^2, v_{y,1} = -0.98\text{ m/s}$).</li>
+                            <li><strong>6 Marks:</strong> Evaluates displacement position at step 1 ($s_{y,1} = 0.00\text{ m}$) with correct SI units.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-05-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-05-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('05-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-05-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="04-angled-and-height-launches.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 4: Height & Angled Launches</a>
+                <a href="06-uniform-circular-motion.html" class="btn-next">Proceed to Lesson 6: Uniform Circular Motion &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('05-easy');
+            checkIfQuestionAnswered('05-medium');
+            checkIfQuestionAnswered('05-hard');
+            checkIfQuestionAnswered('05-extension');
+            
+            initSpreadsheetSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        /* --- Interactive Canvas Spreadsheet Simulator Code --- */
+        function initSpreadsheetSimulator() {
+            const canvas = document.getElementById('spreadsheetCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const selStep = document.getElementById('sim-timestep');
+            const selDrag = document.getElementById('sim-drag');
+            const inSpeed = document.getElementById('sim-speed');
+            const inAngle = document.getElementById('sim-angle');
+
+            const dispTimestep = document.getElementById('disp-timestep');
+            const dispSpeed = document.getElementById('disp-speed');
+            const dispAngle = document.getElementById('disp-angle');
+
+            const outRows = document.getElementById('out-rows');
+            const outNumRange = document.getElementById('out-num-range');
+            const outAnaRange = document.getElementById('out-ana-range');
+            const outError = document.getElementById('out-error');
+            const outNumHeight = document.getElementById('out-num-height');
+
+            function updateAndRender() {
+                const dt = parseFloat(selStep.value);
+                const dragMode = selDrag.value;
+                const u = parseFloat(inSpeed.value);
+                const deg = parseFloat(inAngle.value);
+                const g = 9.80;
+
+                dispTimestep.innerText = dt.toFixed(3) + ' s';
+                dispSpeed.innerText = u + ' m/s';
+                dispAngle.innerText = deg + '°';
+
+                const rad = deg * Math.PI / 180;
+                const ux0 = u * Math.cos(rad);
+                const uy0 = u * Math.sin(rad);
+
+                // Exact Analytical Vacuum Parameters
+                const tFlightExact = (2 * uy0) / g;
+                const rangeExact = ux0 * tFlightExact;
+                const heightExact = (uy0 * uy0) / (2 * g);
+
+                outAnaRange.innerText = rangeExact.toFixed(2) + ' m';
+
+                // Compute Numerical Euler Steps
+                let t = 0;
+                let sx = 0;
+                let sy = 0;
+                let vx = ux0;
+                let vy = uy0;
+
+                const numPoints = [];
+                numPoints.push({ x: sx, y: sy });
+
+                let maxNumY = 0;
+                let rowCount = 0;
+
+                const k = (dragMode === 'linear') ? 0.15 : 0.0; // drag coefficient
+
+                while (sy >= 0 && rowCount < 5000) {
+                    rowCount++;
+                    t += dt;
+
+                    // Compute Accelerations
+                    let ax = -k * vx;
+                    let ay = -g - k * vy;
+
+                    // Euler Updates
+                    sx += vx * dt;
+                    sy += vy * dt;
+
+                    vx += ax * dt;
+                    vy += ay * dt;
+
+                    if (sy > maxNumY) maxNumY = sy;
+                    numPoints.push({ x: sx, y: Math.max(0, sy) });
+                }
+
+                const rangeNum = sx;
+                const errPct = Math.abs((rangeNum - rangeExact) / rangeExact) * 100;
+
+                outRows.innerText = rowCount;
+                outNumRange.innerText = rangeNum.toFixed(2) + ' m';
+                outError.innerText = (dragMode === 'linear' ? 'N/A (Drag Active)' : errPct.toFixed(2) + '%');
+                outNumHeight.innerText = maxNumY.toFixed(2) + ' m';
+
+                // Rendering Canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const margin = 45;
+                const maxRenderX = Math.max(rangeExact * 1.15, rangeNum * 1.15, 30);
+                const maxRenderY = Math.max(heightExact * 1.25, maxNumY * 1.25, 15);
+
+                const scaleX = (canvas.width - margin * 2) / maxRenderX;
+                const scaleY = (canvas.height - margin * 2) / maxRenderY;
+
+                const originX = margin;
+                const originY = canvas.height - margin;
+
+                // Grid background
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                // Ground Line
+                ctx.strokeStyle = '#00f0ff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, originY);
+                ctx.lineTo(canvas.width, originY);
+                ctx.stroke();
+
+                // 1. Draw Exact Analytical Curve (Solid Purple Line)
+                ctx.beginPath();
+                ctx.strokeStyle = '#b026ff';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([]);
+                
+                const anaSteps = 150;
+                for (let i = 0; i <= anaSteps; i++) {
+                    const tAna = (i / anaSteps) * tFlightExact;
+                    const xAna = ux0 * tAna;
+                    const yAna = uy0 * tAna - 0.5 * g * tAna * tAna;
+
+                    const pxX = originX + xAna * scaleX;
+                    const pxY = originY - yAna * scaleY;
+
+                    if (i === 0) ctx.moveTo(pxX, pxY);
+                    else ctx.lineTo(pxX, pxY);
+                }
+                ctx.stroke();
+
+                // 2. Draw Numerical Euler Spreadsheet Curve (Dashed Green Line with Step Dots)
+                ctx.beginPath();
+                ctx.strokeStyle = '#00e676';
+                ctx.lineWidth = 2.5;
+                ctx.setLineDash([5, 4]);
+
+                for (let i = 0; i < numPoints.length; i++) {
+                    const pxX = originX + numPoints[i].x * scaleX;
+                    const pxY = originY - numPoints[i].y * scaleY;
+
+                    if (i === 0) ctx.moveTo(pxX, pxY);
+                    else ctx.lineTo(pxX, pxY);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]); // reset line dash
+
+                // Draw Dots for Discrete Euler Spreadsheet Steps
+                for (let i = 0; i < numPoints.length; i += Math.max(1, Math.floor(numPoints.length / 30))) {
+                    const pxX = originX + numPoints[i].x * scaleX;
+                    const pxY = originY - numPoints[i].y * scaleY;
+
+                    ctx.fillStyle = '#00e676';
+                    ctx.beginPath();
+                    ctx.arc(pxX, pxY, 3.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Legend Overlay
+                ctx.fillStyle = '#b026ff';
+                ctx.fillRect(canvas.width - 240, 20, 15, 3);
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '12px sans-serif';
+                ctx.fillText('Exact Analytical SUVAT', canvas.width - 215, 24);
+
+                ctx.fillStyle = '#00e676';
+                ctx.fillRect(canvas.width - 240, 40, 15, 3);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText('Spreadsheet Model (Euler)', canvas.width - 215, 44);
+            }
+
+            selStep.addEventListener('change', updateAndRender);
+            selDrag.addEventListener('change', updateAndRender);
+            inSpeed.addEventListener('input', updateAndRender);
+            inAngle.addEventListener('input', updateAndRender);
+
+            updateAndRender();
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

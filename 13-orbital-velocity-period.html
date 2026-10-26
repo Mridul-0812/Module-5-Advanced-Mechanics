@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>13. Orbital Velocity & Period Derivations - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS Reset & Box Sizing Safeguards */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Responsive Layout & Container Enhancements */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border-radius: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .sim-mode-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-mode {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.65rem 1.3rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mode.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(176, 38, 255, 0.35));
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#orbitCanvas {
+            width: 100%;
+            height: 440px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        /* Callouts and Containers */
+        .concept-highlight-card, 
+        .worked-solution, 
+        .derivation-steps, 
+        .practise-question, 
+        .formula-callout-box, 
+        .misconception-box, 
+        .exam-warning-box, 
+        .extension-note-box,
+        .beginner-box {
+            max-width: 100%;
+            overflow-x: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .beginner-box {
+            background: rgba(0, 230, 118, 0.06);
+            border-left: 4px solid #00e676;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.8rem 0;
+        }
+
+        .beginner-box h4 {
+            color: #69f0ae;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .beginner-box p {
+            color: #e8f5e9;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+            line-height: 1.6;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .vector-diagram-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .formula-callout-box {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.12), rgba(0, 240, 255, 0.12));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            text-align: center;
+        }
+
+        .formula-callout-box h4 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .formula-callout-box p {
+            margin-bottom: 0;
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .misconception-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .misconception-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .misconception-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        /* MathJax Overflow Fixes */
+        .MathJax_Display, .mjx-chtml, .MathJax {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding: 0.3rem 0;
+            margin: 0.5rem 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html" class="active">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>13. Orbital Velocity ($v$) & Orbital Period ($T$)</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 4 (Part 1)</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Core Mechanics</h2>
+            <p><strong>Inquiry Question 4:</strong> <em>How does Kepler's laws of planetary motion describe the movements of natural and artificial satellites?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus (calculus-free), students must master the mathematical derivation and physical concepts of orbital motion:</p>
+            <ul class="feature-list">
+                <li>Derive the orbital velocity equation $v = \sqrt{\frac{GM}{r}}$ by equating centripetal force ($F_c = \frac{m v^2}{r}$) to the universal gravitational force ($F_g = \frac{G M m}{r^2}$).</li>
+                <li>Derive the orbital period equation $T = \sqrt{\frac{4\pi^2 r^3}{GM}}$ by linking linear orbital velocity to circular circumference ($v = \frac{2\pi r}{T}$).</li>
+                <li>Analyse the physical consequences of satellite mass independence (i.e., a $1\text{ kg}$ CubeSat and a $400,000\text{ kg}$ space station at the same altitude travel at the exact same orbital speed).</li>
+                <li>Evaluate how orbital radius $r = R + h$ dictates both orbital speed ($v \propto \frac{1}{\sqrt{r}}$) and period ($T \propto r^{3/2}$).</li>
+            </ul>
+        </section>
+
+        <!-- 2. Intuitive Starter: What Keeps a Satellite Up? -->
+        <section class="content-section" id="beginner-intro">
+            <h2>Part 1: The Intuitive Bridge — Falling Around the Earth</h2>
+
+            <div class="beginner-box">
+                <h4>Beginner Concept: Newton's Thought Experiment (Newton's Cannon)</h4>
+                <p>How does a satellite stay in orbit without engines running continuously? Why doesn't gravity pull it straight down to the ground?</p>
+                <p>Isaac Newton imagined a powerful cannon on top of a tall mountain above Earth's atmosphere:</p>
+                <ol class="feature-list" style="margin-bottom: 0;">
+                    <li><strong>Slow Shot:</strong> The cannonball travels horizontally, but gravity pulls it down, hitting Earth a few hundred metres away.</li>
+                    <li><strong>Faster Shot:</strong> It travels further before hitting the ground.</li>
+                    <li><strong>Orbital Speed Shot:</strong> The cannonball is fired so fast horizontally ($\sim 7.9\text{ km/s}$) that as gravity pulls it downward, the curvature of the Earth falls away beneath it at the exact same rate! The cannonball is in continuous free-fall, yet it never hits the ground. It is in <strong>stable orbit</strong>!</li>
+                </ol>
+            </div>
+
+            <div class="vector-diagram-card">
+                <svg width="520" height="260" viewBox="0 0 520 260" style="background: transparent;">
+                    <!-- Central Earth -->
+                    <circle cx="260" cy="130" r="70" fill="rgba(0, 240, 255, 0.15)" stroke="#00f0ff" stroke-width="2.5"/>
+                    <circle cx="260" cy="130" r="4" fill="#00f0ff"/>
+                    <text x="245" y="135" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="14">Earth (M)</text>
+
+                    <!-- Circular Orbit Path -->
+                    <circle cx="260" cy="130" r="110" fill="none" stroke="rgba(176, 38, 255, 0.4)" stroke-width="2" stroke-dasharray="4"/>
+
+                    <!-- Satellite at Top -->
+                    <circle cx="260" cy="20" r="8" fill="#ffd700"/>
+                    <text x="252" y="12" fill="#ffd700" font-family="sans-serif" font-size="12" font-weight="bold">m</text>
+
+                    <!-- Tangential Velocity Vector v (Right) -->
+                    <line x1="260" y1="20" x2="350" y2="20" stroke="#00e676" stroke-width="3"/>
+                    <polygon points="350,20 340,15 340,25" fill="#00e676"/>
+                    <text x="300" y="12" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="13">Velocity (v)</text>
+
+                    <!-- Gravitational Pull F_g = F_c (Inward) -->
+                    <line x1="260" y1="20" x2="260" y2="80" stroke="#b026ff" stroke-width="3"/>
+                    <polygon points="260,80 255,70 265,70" fill="#b026ff"/>
+                    <text x="170" y="55" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="13">F_g = F_c (Inward)</text>
+
+                    <!-- Radius r Line -->
+                    <line x1="260" y1="130" x2="260" y2="20" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="2"/>
+                    <text x="268" y="100" fill="#ffffff" font-family="sans-serif" font-size="12">r = R + h</text>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 1: Vector dynamics of stable circular orbit. Gravity ($F_g$) acts as the sole centripetal force ($F_c$) pulling perpendicular to tangential orbital velocity ($v$).</p>
+            </div>
+        </section>
+
+        <!-- 3. Step-by-Step Mathematical Derivations -->
+        <section class="content-section" id="deep-dive-derivations">
+            <h2>Part 2: Step-by-Step Core Derivations ($F_c = F_g$)</h2>
+
+            <h3>1. Derivation 1: Orbital Speed ($v = \sqrt{\frac{GM}{r}}$)</h3>
+            <p>For any object of mass $m$ moving in a stable circular orbit of radius $r$ around a central mass $M$:</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Step-by-Step Derivation of Orbital Velocity</h4>
+                
+                <p><strong>Step 1: State the physical condition for stable circular orbit.</strong></p>
+                <p>The necessary centripetal force ($F_c$) required to keep the satellite turning in a circle is provided entirely by the universal gravitational attraction force ($F_g$):</p>
+                $$F_c = F_g$$
+
+                <p><strong>Step 2: Substitute the formulas for centripetal force and gravitational force.</strong></p>
+                $$\frac{m v^2}{r} = \frac{G M m}{r^2}$$
+
+                <p>Where:</p>
+                <ul class="feature-list">
+                    <li>$m$: Mass of the orbiting satellite ($\text{kg}$).</li>
+                    <li>$M$: Mass of the central body being orbited ($\text{kg}$).</li>
+                    <li>$v$: Orbital velocity of the satellite ($\text{m/s}$).</li>
+                    <li>$r$: Center-to-center orbital radius ($\text{m}$).</li>
+                    <li>$G$: Universal Gravitational Constant ($6.674 \times 10^{-11} \text{ N}\cdot\text{m}^2/\text{kg}^2$).</li>
+                </ul>
+
+                <p><strong>Step 3: Cancel the satellite mass $m$ from both sides.</strong></p>
+                $$\frac{v^2}{r} = \frac{G M}{r^2}$$
+
+                <p><strong>Step 4: Multiply both sides by $r$ to isolate $v^2$.</strong></p>
+                $$v^2 = \frac{G M}{r}$$
+
+                <p><strong>Step 5: Take the square root of both sides.</strong></p>
+
+                <div class="formula-callout-box">
+                    <h4>Orbital Velocity Formula</h4>
+                    <p>$$v = \sqrt{\frac{G M}{r}}$$</p>
+                </div>
+
+                <div class="concept-highlight-card">
+                    <h4 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">CRITICAL INSIGHT: Satellite Mass Independence</h4>
+                    <p>Notice that satellite mass $m$ canceled out completely during Step 3! This proves that <strong>orbital speed depends ONLY on the central mass $M$ and orbital radius $r$</strong>. A feather, a astronaut, and a heavy space station placed at the exact same altitude will orbit at the exact same speed!</p>
+                </div>
+            </div>
+
+            <h3>2. Derivation 2: Orbital Period ($T = \sqrt{\frac{4\pi^2 r^3}{GM}}$)</h3>
+            <p>The <strong>orbital period ($T$)</strong> is the time required for a satellite to complete one full revolution around its orbit.</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Step-by-Step Derivation of Orbital Period</h4>
+
+                <p><strong>Step 1: Express linear circular velocity in terms of circumference ($2\pi r$) and period ($T$).</strong></p>
+                $$v = \frac{\text{Distance}}{\text{Time}} = \frac{2\pi r}{T}$$
+
+                <p><strong>Step 2: Square both sides of this velocity equation.</strong></p>
+                $$v^2 = \frac{4\pi^2 r^2}{T^2}$$
+
+                <p><strong>Step 3: Equate this to our orbital speed squared expression ($v^2 = \frac{GM}{r}$).</strong></p>
+                $$\frac{4\pi^2 r^2}{T^2} = \frac{G M}{r}$$
+
+                <p><strong>Step 4: Cross-multiply to isolate $T^2$.</strong></p>
+                $$T^2 G M = 4\pi^2 r^3 \implies T^2 = \frac{4\pi^2 r^3}{G M}$$
+
+                <p><strong>Step 5: Take the square root to solve for orbital period $T$.</strong></p>
+
+                <div class="formula-callout-box">
+                    <h4>Orbital Period Formula</h4>
+                    <p>$$T = \sqrt{\frac{4\pi^2 r^3}{G M}} = 2\pi \sqrt{\frac{r^3}{G M}}$$</p>
+                </div>
+
+                <p><strong>Kepler's Third Law Connection:</strong> Rearranging $T^2 = \frac{4\pi^2 r^3}{GM}$ gives $\frac{r^3}{T^2} = \frac{GM}{4\pi^2} = \text{constant}$. This proves Kepler's 3rd Law directly from Newton's mechanics!</p>
+            </div>
+        </section>
+
+        <!-- 4. Advanced Concepts: Altitudes & Speed Relationships -->
+        <section class="content-section" id="advanced-relationships">
+            <h2>Part 3: Advanced Orbital Relationships & Altitude Effects</h2>
+
+            <h3>1. The Altitude Rule ($r = R + h$)</h3>
+            <p>Remember that $r$ is the distance from the **center of the central body** to the satellite. If an exam gives altitude $h$ above the surface of a planet with radius $R$:</p>
+
+            $$r = R + h \implies v = \sqrt{\frac{G M}{R + h}}$$
+
+            <div class="uvtaxy-table-container">
+                <table class="uvtaxy-grid-table">
+                    <thead>
+                        <tr>
+                            <th>Orbit Type</th>
+                            <th>Typical Altitude ($h$)</th>
+                            <th>Orbital Radius ($r = R_E + h$)</th>
+                            <th>Orbital Speed ($v$)</th>
+                            <th>Orbital Period ($T$)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Low Earth Orbit (LEO)</th>
+                            <td>$400\text{ km}$ (ISS)</td>
+                            <td>$\sim 6,771\text{ km}$</td>
+                            <td>$\sim 7.67\text{ km/s}$ ($\mathbf{27,600\text{ km/h}}$)</td>
+                            <td>$\sim \mathbf{92\text{ minutes}}$</td>
+                        </tr>
+                        <tr>
+                            <th>Medium Earth Orbit (MEO)</th>
+                            <td>$20,200\text{ km}$ (GPS)</td>
+                            <td>$\sim 26,571\text{ km}$</td>
+                            <td>$\sim 3.87\text{ km/s}$</td>
+                            <td>$\sim \mathbf{12\text{ hours}}$</td>
+                        </tr>
+                        <tr>
+                            <th>Geostationary Orbit (GEO)</th>
+                            <td>$35,786\text{ km}$</td>
+                            <td>$\sim 42,157\text{ km}$</td>
+                            <td>$\sim 3.07\text{ km/s}$</td>
+                            <td>$\mathbf{24\text{ hours}}$ (1 Sidereal Day)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="misconception-box">
+                <h4>Exam Warning: Higher Altitude Means SLOWER Speed!</h4>
+                <p>A very common student mistake is assuming that satellites further away move faster to "stay up". In reality, because $v = \sqrt{\frac{GM}{r}}$, as orbital radius $r$ increases, <strong>orbital speed DECREASES</strong> ($v \propto \frac{1}{\sqrt{r}}$)! High altitude satellites move slower and take much longer to complete an orbit.</p>
+            </div>
+        </section>
+
+        <!-- 5. Dynamic Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Dynamic Interactive Workbench: Orbital Velocity & Period Simulator</h2>
+            <p>Use the simulator below to launch satellites around Earth, Mars, or the Sun. Adjust orbital altitude or central mass in real-time to observe speed, period, and trajectory vectors!</p>
+
+            <div class="sim-container">
+                <div class="sim-mode-selector">
+                    <button id="btn-mode-earth" class="btn-mode active" onclick="setOrbitSimMode('earth')">Earth Orbit (LEO to GEO)</button>
+                    <button id="btn-mode-solar" class="btn-mode" onclick="setOrbitSimMode('solar')">Solar System Orbit (Planets around Sun)</button>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-central-mass">Central Body Mass ($M / M_E$): <span id="disp-cmass" class="sim-value-display">1.00 Earth Mass</span></label>
+                        <input type="range" id="sim-central-mass" min="0.1" max="5.0" value="1.0" step="0.1">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-altitude">Altitude ($h$ in km): <span id="disp-alt" class="sim-value-display">400 km (ISS)</span></label>
+                        <input type="range" id="sim-altitude" min="200" max="40000" value="400" step="200">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-sat-mass">Satellite Mass ($m$): <span id="disp-smass" class="sim-value-display">1000 kg</span></label>
+                        <input type="range" id="sim-sat-mass" min="100" max="10000" value="1000" step="100">
+                    </div>
+                </div>
+
+                <canvas id="orbitCanvas" width="800" height="440"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Orbital Speed (v)</div>
+                        <div class="value" id="out-v">7.67 km/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Orbital Period (T)</div>
+                        <div class="value" id="out-t">92.5 mins</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Orbital Radius (r)</div>
+                        <div class="value" id="out-r">6771 km</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Centripetal Accel (a_c)</div>
+                        <div class="value" id="out-ac">8.69 m/s²</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Mass Effect Check</div>
+                        <div class="value" id="out-masseffect" style="color: var(--success-green);">Mass Independent!</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): ISS Orbital Speed & Period</h4>
+                    <span class="marks-allocated">[Basic Orbital Velocity Calculation]</span>
+                </div>
+                <div class="question-body">
+                    <p>The International Space Station (ISS) orbits Earth at an altitude of $h = 400\text{ km}$. Earth's mass is $M_E = 5.972 \times 10^{24}\text{ kg}$ and Earth's radius is $R_E = 6.371 \times 10^6\text{ m}$.</p>
+                    <p>a) Calculate the orbital radius $r$ of the ISS.<br>b) Calculate the orbital speed $v$ of the ISS in $\text{m/s}$ and $\text{km/h}$.<br>c) Calculate the orbital period $T$ of the ISS in minutes.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Orbital Radius ($r$):</strong></p>
+
+                        $$r = R_E + h = 6.371 \times 10^6\text{ m} + 400,000\text{ m} = \mathbf{6.771 \times 10^6\text{ m}}$$
+
+                        <p><strong>Part b) Orbital Speed ($v$):</strong></p>
+
+                        $$v = \sqrt{\frac{G M_E}{r}} = \sqrt{\frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})}{6.771 \times 10^6}}$$
+                        $$v = \sqrt{\frac{3.9857 \times 10^{14}}{6.771 \times 10^6}} = \sqrt{5.8864 \times 10^7} = \mathbf{7672\text{ m/s}} \quad (\mathbf{7.67\text{ km/s}})$$
+
+                        <p>Converting to $\text{km/h}$ ($7672 \times 3.6$):</p>
+                        $$v = \mathbf{27,620\text{ km/h}}$$
+
+                        <p><strong>Part c) Orbital Period ($T$):</strong></p>
+
+                        $$T = \frac{2\pi r}{v} = \frac{2 \pi \times (6.771 \times 10^6)}{7672} = \frac{4.2544 \times 10^7}{7672} = \mathbf{5545\text{ seconds}}$$
+                        <p>Converting to minutes ($\frac{5545}{60}$):</p>
+                        $$T = \mathbf{92.4\text{ minutes}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Deriving Geostationary Orbit Radius ($T = 24\text{ hours}$)</h4>
+                    <span class="marks-allocated">[Rearranging Period Equation]</span>
+                </div>
+                <div class="question-body">
+                    <p>A geostationary satellite remains fixed above the same point on Earth's equator. Its orbital period matches Earth's rotation period ($T = 24.0\text{ hours} = 86,400\text{ seconds}$).</p>
+                    <p>a) Calculate the required orbital radius $r$ for a geostationary satellite.<br>b) Calculate its altitude $h$ above Earth's surface ($R_E = 6.371 \times 10^6\text{ m}, M_E = 5.972 \times 10^{24}\text{ kg}$).</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Orbital Radius ($r$):</strong></p>
+                        <p>Starting from $T^2 = \frac{4\pi^2 r^3}{G M_E}$, solve for $r^3$:</p>
+
+                        $$r^3 = \frac{G M_E T^2}{4\pi^2}$$
+                        $$r^3 = \frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})(86400)^2}{4\pi^2}$$
+                        $$r^3 = \frac{(3.9857 \times 10^{14}) \times (7.46496 \times 10^9)}{39.4784} = \frac{2.9753 \times 10^{24}}{39.4784} = 7.5365 \times 10^{22}\text{ m}^3$$
+
+                        <p>Taking cube root ($\sqrt[3]{r^3}$):</p>
+                        $$r = (7.5365 \times 10^{22})^{1/3} = \mathbf{4.224 \times 10^7\text{ m}} \quad (\mathbf{42,240\text{ km}})$$
+
+                        <p><strong>Part b) Altitude ($h$):</strong></p>
+
+                        $$h = r - R_E = 42,240\text{ km} - 6,371\text{ km} = \mathbf{35,869\text{ km}} \approx \mathbf{3.59 \times 10^7\text{ m}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Exoplanet Star Mass Determination</h4>
+                    <span class="marks-allocated">[Astronomical Mass Calculation]</span>
+                </div>
+                <div class="question-body">
+                    <p>Astronomers observe an exoplanet orbiting a distant star at an orbital radius $r = 1.20 \times 10^{11}\text{ m}$ with an orbital period $T = 110\text{ Earth days}$ ($9.504 \times 10^6\text{ seconds}$).</p>
+                    <p>a) Calculate the mass $M_*$ of the central star.<br>b) Express $M_*$ as a fraction/multiple of Sun's mass ($M_{\text{Sun}} = 1.989 \times 10^{30}\text{ kg}$).</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Central Star Mass ($M_*$):</strong></p>
+
+                        $$T^2 = \frac{4\pi^2 r^3}{G M_*} \implies M_* = \frac{4\pi^2 r^3}{G T^2}$$
+                        $$M_* = \frac{4\pi^2 \times (1.20 \times 10^{11})^3}{(6.674 \times 10^{-11}) \times (9.504 \times 10^6)^2}$$
+                        $$M_* = \frac{39.4784 \times (1.728 \times 10^{33})}{(6.674 \times 10^{-11}) \times (9.0326 \times 10^{13})} = \frac{6.8218 \times 10^{34}}{6.0283 \times 10^3} = \mathbf{1.13 \times 10^{31}\text{ kg}}$$
+
+                        <p><strong>Part b) Ratio to Solar Mass:</strong></p>
+
+                        $$\frac{M_*}{M_{\text{Sun}}} = \frac{1.1316 \times 10^{31}}{1.989 \times 10^{30}} = \mathbf{5.69 \text{ Solar Masses}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension - JRAHS Style): Hohmann Transfer Orbit Velocity Boost</h4>
+                    <span class="marks-allocated">[Dual Orbital Velocity Shift & Energy]</span>
+                </div>
+                <div class="question-body">
+                    <p>A satellite of mass $m = 1200\text{ kg}$ is initially in a circular LEO orbit of radius $r_1 = 6.70 \times 10^6\text{ m}$. To transfer to a higher circular orbit of radius $r_2 = 1.34 \times 10^7\text{ m}$ ($2 r_1$), it undergoes orbital maneuvers.</p>
+                    <p>a) Calculate its initial orbital speed $v_1$ and final circular orbital speed $v_2$.<br>b) Calculate the ratio of final kinetic energy to initial kinetic energy ($K_2 / K_1$).<br>c) Explain why moving to a higher orbit requires firing thrusters forward to gain total energy, yet results in a *slower* final circular speed!</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Full Band 6 JRAHS Solution:</h5>
+
+                        <p><strong>Part a) Speeds $v_1$ and $v_2$:</strong></p>
+
+                        $$v_1 = \sqrt{\frac{G M_E}{r_1}} = \sqrt{\frac{3.9857 \times 10^{14}}{6.70 \times 10^6}} = \mathbf{7713\text{ m/s}}$$
+                        $$v_2 = \sqrt{\frac{G M_E}{2 r_1}} = \frac{v_1}{\sqrt{2}} = \frac{7713}{1.4142} = \mathbf{5454\text{ m/s}}$$
+
+                        <p><strong>Part b) Kinetic Energy Ratio ($K_2 / K_1$):</strong></p>
+
+                        $$\frac{K_2}{K_1} = \frac{\frac{1}{2} m v_2^2}{\frac{1}{2} m v_1^2} = \left(\frac{v_2}{v_1}\right)^2 = \left(\frac{1}{\sqrt{2}}\right)^2 = \mathbf{0.500} \quad (50\%)$$
+
+                        <p><strong>Part c) Energy Paradox Explanation:</strong></p>
+                        <p>Firing thrusters adds work and increases the satellite's **total mechanical energy** ($E = K + U$). However, as the satellite climbs to higher radius $r_2$, it loses kinetic energy because Earth's gravity does negative work against its climb, storing energy as **gravitational potential energy** ($\Delta U > 0$). In fact, the gain in potential energy is twice as large as the loss in kinetic energy ($\vert{}\Delta U\vert{} = 2 \vert{}\Delta K\vert{}$), leaving the satellite in a higher, slower circular orbit!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Four Practice Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Marking Criteria</h2>
+            <p>Attempt the practice questions below and log your marks.</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-13-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Speed Ratio for Quadrupled Orbital Radius</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Satellite A orbits Earth at radius $r_A = R$. Satellite B orbits Earth at radius $r_B = 4 R$.</p>
+                    <p>Calculate the ratio of Satellite B's orbital speed to Satellite A's orbital speed ($v_B / v_A$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-13-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-13-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-13-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Use $v = \sqrt{\frac{GM}{r}} \implies v \propto \frac{1}{\sqrt{r}}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-13-easy" style="display: none;">
+                    <div class="worked-solution">
+                        $$v_A = \sqrt{\frac{G M}{R}} \quad \text{and} \quad v_B = \sqrt{\frac{G M}{4 R}} = \frac{1}{\sqrt{4}} \sqrt{\frac{G M}{R}} = \frac{1}{2} v_A$$
+                        $$\frac{v_B}{v_A} = \mathbf{0.500} \quad (\mathbf{1:2\text{ ratio}})$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Orbital velocity satisfies $v = \sqrt{\frac{GM}{r}}$, showing $v \propto r^{-1/2}$. Quadrupling orbital radius ($r_B = 4 r_A$) changes speed by a factor of $\frac{1}{\sqrt{4}} = 0.5$. Thus $\frac{v_B}{v_A} = 0.500$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies relationship $v \propto \frac{1}{\sqrt{r}}$.</li>
+                            <li><strong>2 Marks:</strong> Substitutes radius factor of 4 into square root denominator.</li>
+                            <li><strong>3 Marks:</strong> Obtains correct speed ratio $0.500$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-13-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-13-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('13-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-13-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-13-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Deriving $v = \sqrt{\frac{GM}{r}}$ Written Response</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Derive the formula for orbital speed $v = \sqrt{\frac{GM}{r}}$ from first principles, explaining every step and stating why satellite mass does not affect orbital velocity.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-13-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-13-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-13-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Start by equating centripetal force $F_c = \frac{m v^2}{r}$ to gravitational force $F_g = \frac{G M m}{r^2}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-13-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <p>1. Equate centripetal force to gravitational force: $\frac{m v^2}{r} = \frac{G M m}{r^2}$.</p>
+                        <p>2. Cancel satellite mass $m$ from both sides: $\frac{v^2}{r} = \frac{G M}{r^2}$.</p>
+                        <p>3. Multiply both sides by $r$: $v^2 = \frac{G M}{r}$.</p>
+                        <p>4. Take square root: $v = \sqrt{\frac{G M}{r}}$.</p>
+                        <p>5. Satellite mass $m$ cancels because gravitational force and inertial resistance to acceleration are both proportional to $m$. Thus all objects at radius $r$ accelerate at the same rate regardless of mass.</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"In circular orbit, gravity provides centripetal force: $F_c = F_g \implies \frac{m v^2}{r} = \frac{G M m}{r^2}$. Cancelling satellite mass $m$ gives $\frac{v^2}{r} = \frac{G M}{r^2}$. Multiplying by $r$ yields $v^2 = \frac{G M}{r}$, and taking the square root gives $v = \sqrt{\frac{G M}{r}}$. Satellite mass cancels because gravitational mass equals inertial mass; hence gravitational acceleration depends solely on central mass $M$ and radius $r$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Equates $F_c = F_g$ using correct algebraic formulas.</li>
+                            <li><strong>2 Marks:</strong> Cancels satellite mass $m$ correctly.</li>
+                            <li><strong>3 Marks:</strong> Obtains final expression $v = \sqrt{\frac{GM}{r}}$.</li>
+                            <li><strong>4 Marks:</strong> Explains physical reason for mass independence (gravitational mass = inertial mass).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-13-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-13-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('13-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-13-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard -->
+            <div class="practise-question" id="question-13-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard): Orbital Period Calculation for GPS Satellite</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A GPS satellite orbits Earth at an altitude of $h = 20,200\text{ km}$. Earth's mass is $M_E = 5.972 \times 10^{24}\text{ kg}$ and Earth's radius is $R_E = 6,371\text{ km}$.</p>
+                    <p>a) Calculate the orbital period $T$ of the GPS satellite in hours.<br>b) How many full orbits does this satellite complete in one 24-hour day?</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-13-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-13-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-13-hard" style="display: none;">
+                    <p><strong>Hint:</strong> $r = (6371 + 20200) \times 10^3 = 2.6571 \times 10^7\text{ m}$. Use $T = \sqrt{\frac{4\pi^2 r^3}{G M_E}}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-13-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Part a) Period Calculation ($T$):</strong></p>
+
+                        $$r = 6,371,000 + 20,200,000 = 2.6571 \times 10^7\text{ m}$$
+                        $$r^3 = (2.6571 \times 10^7)^3 = 1.8759 \times 10^{22}\text{ m}^3$$
+
+                        $$T^2 = \frac{4\pi^2 r^3}{G M_E} = \frac{4\pi^2 \times (1.8759 \times 10^{22})}{(6.674 \times 10^{-11})(5.972 \times 10^{24})} = \frac{7.4058 \times 10^{23}}{3.9857 \times 10^{14}} = 1.8581 \times 10^9\text{ s}^2$$
+                        $$T = \sqrt{1.8581 \times 10^9} = 43,105\text{ seconds}$$
+
+                        <p>Converting to hours ($\frac{43105}{3600}$):</p>
+                        $$T = \mathbf{11.97\text{ hours}} \approx \mathbf{12.0\text{ hours}}$$
+
+                        <p><strong>Part b) Orbits per day:</strong></p>
+
+                        $$\text{Orbits} = \frac{24.0\text{ hours}}{11.97\text{ hours}} = \mathbf{2.00\text{ orbits per day}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Orbital radius is $r = R_E + h = 2.6571 \times 10^7\text{ m}$. Applying period equation $T = \sqrt{\frac{4\pi^2 r^3}{G M_E}} = \sqrt{\frac{4\pi^2 (2.6571 \times 10^7)^3}{(6.674 \times 10^{-11})(5.972 \times 10^{24})}} = 43,100\text{ s} = 12.0\text{ hours}$. In a 24-hour day, the satellite completes $\frac{24}{12} = 2.00\text{ orbits}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Calculates total orbital radius $r = 2.6571 \times 10^7\text{ m}$.</li>
+                            <li><strong>2 Marks:</strong> Correctly substitutes into period equation $T^2 = \frac{4\pi^2 r^3}{GM}$.</li>
+                            <li><strong>3 Marks:</strong> Obtains period in seconds ($43,100\text{ s}$).</li>
+                            <li><strong>4 Marks:</strong> Converts period to hours ($12.0\text{ hours}$).</li>
+                            <li><strong>5 Marks:</strong> Determines satellite completes 2 orbits per day.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-13-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-13-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('13-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-13-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension (JRAHS Distinction Separator) -->
+            <div class="practise-question" id="question-13-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (JRAHS Extension): Binary Star System Orbital Mechanics</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Two identical stars, each of mass $M = 3.00 \times 10^{30}\text{ kg}$, orbit around their common center of mass in circular orbits of radius $R = 2.00 \times 10^{11}\text{ m}$ (separation $2 R = 4.00 \times 10^{11}\text{ m}$).</p>
+                    <p>a) Express the gravitational attraction force $F_g$ between the two stars in terms of $G, M, R$.<br>b) Equate $F_g$ to centripetal force to derive the orbital speed $v$ of each star.<br>c) Calculate the orbital period $T$ of the binary star system in years ($G = 6.674 \times 10^{-11}\text{ N}\cdot\text{m}^2/\text{kg}^2$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-13-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-13-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-13-extension" style="display: none;">
+                    <p><strong>Hint:</strong> Separation distance between stars is $2 R$. Gravitational force is $F_g = \frac{G M^2}{(2 R)^2} = \frac{G M^2}{4 R^2}$. Centripetal force for radius $R$ is $F_c = \frac{M v^2}{R}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-13-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Gravitational Force ($F_g$):</strong></p>
+
+                        $$F_g = \frac{G M M}{(2 R)^2} = \mathbf{\frac{G M^2}{4 R^2}}$$
+
+                        <p><strong>b) Deriving Orbital Speed ($v$):</strong></p>
+                        <p>Each star orbits in a circle of radius $R$ around the center of mass:</p>
+
+                        $$F_c = \frac{M v^2}{R}$$
+                        $$\frac{M v^2}{R} = \frac{G M^2}{4 R^2} \implies v^2 = \frac{G M}{4 R} \implies \mathbf{v = \sqrt{\frac{G M}{4 R}} = \frac{1}{2}\sqrt{\frac{G M}{R}}}$$
+
+                        <p>Numerical calculation of $v$:</p>
+                        $$v = \frac{1}{2} \sqrt{\frac{(6.674 \times 10^{-11})(3.00 \times 10^{30})}{2.00 \times 10^{11}}} = 0.5 \times \sqrt{1.0011 \times 10^9} = 0.5 \times 31,640 = \mathbf{15,820\text{ m/s}}$$
+
+                        <p><strong>c) Orbital Period ($T$):</strong></p>
+
+                        $$T = \frac{2\pi R}{v} = \frac{2 \pi \times (2.00 \times 10^{11})}{15,820} = \frac{1.2566 \times 10^{12}}{15,820} = \mathbf{7.943 \times 10^7\text{ seconds}}$$
+
+                        <p>Converting to Earth years ($\frac{7.943 \times 10^7}{3.1536 \times 10^7}$):</p>
+                        $$T = \mathbf{2.52\text{ Earth years}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Separation distance is $2 R$, so gravitational attraction is $F_g = \frac{G M^2}{(2 R)^2} = \frac{G M^2}{4 R^2}$. Equating to centripetal force for orbit radius $R$ gives $\frac{M v^2}{R} = \frac{G M^2}{4 R^2} \implies v = \sqrt{\frac{G M}{4 R}} = 15,820\text{ m/s}$. The orbital period is $T = \frac{2\pi R}{v} = \frac{2\pi (2.00 \times 10^{11})}{15,820} = 7.94 \times 10^7\text{ s} = 2.52\text{ years}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Recognises separation distance is $2 R$.</li>
+                            <li><strong>2 Marks:</strong> Correctly expresses $F_g = \frac{G M^2}{4 R^2}$.</li>
+                            <li><strong>3 Marks:</strong> Derives formula $v = \sqrt{\frac{GM}{4R}}$.</li>
+                            <li><strong>4 Marks:</strong> Calculates numerical orbital speed $v = 15,820\text{ m/s}$.</li>
+                            <li><strong>5 Marks:</strong> Calculates period in seconds ($7.94 \times 10^7\text{ s}$).</li>
+                            <li><strong>6 Marks:</strong> Converts period to Earth years ($2.52\text{ years}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-13-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-13-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('13-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-13-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="12-gravitational-field-strength.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 12: Field Strength</a>
+                <a href="14-satellite-types-leo-geo.html" class="btn-next">Proceed to Lesson 14: Satellite Orbits (LEO/GEO) &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let orbitSimMode = 'earth'; // 'earth' or 'solar'
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('13-easy');
+            checkIfQuestionAnswered('13-medium');
+            checkIfQuestionAnswered('13-hard');
+            checkIfQuestionAnswered('13-extension');
+            
+            initOrbitSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        function setOrbitSimMode(mode) {
+            orbitSimMode = mode;
+            document.getElementById('btn-mode-earth').classList.toggle('active', mode === 'earth');
+            document.getElementById('btn-mode-solar').classList.toggle('active', mode === 'solar');
+        }
+
+        /* --- Interactive Canvas Orbit Simulator Engine --- */
+        function initOrbitSimulator() {
+            const canvas = document.getElementById('orbitCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const inCmass = document.getElementById('sim-central-mass');
+            const inAlt = document.getElementById('sim-altitude');
+            const inSmass = document.getElementById('sim-sat-mass');
+
+            const dispCmass = document.getElementById('disp-cmass');
+            const dispAlt = document.getElementById('disp-alt');
+            const dispSmass = document.getElementById('disp-smass');
+
+            const outV = document.getElementById('out-v');
+            const outT = document.getElementById('out-t');
+            const outR = document.getElementById('out-r');
+            const outAc = document.getElementById('out-ac');
+            const outMasseffect = document.getElementById('out-masseffect');
+
+            let theta = 0;
+            let lastTime = performance.now();
+
+            function animate(now) {
+                const dt = (now - lastTime) / 1000;
+                lastTime = now;
+
+                const cmassVal = parseFloat(inCmass.value);
+                const altVal = parseFloat(inAlt.value);
+                const smassVal = parseFloat(inSmass.value);
+
+                dispCmass.innerText = cmassVal.toFixed(2) + ' Earth Mass';
+                dispAlt.innerText = altVal.toLocaleString() + ' km';
+                dispSmass.innerText = smassVal.toLocaleString() + ' kg';
+
+                const G = 6.674e-11;
+                const ME = 5.972e24;
+                const RE = 6371e3; // metres
+
+                const M = cmassVal * ME;
+                const h = altVal * 1000;
+                const r = RE + h;
+
+                const v = Math.sqrt((G * M) / r);
+                const T_sec = Math.sqrt((4 * Math.PI * Math.PI * Math.pow(r, 3)) / (G * M));
+                const ac = (v * v) / r;
+
+                outV.innerText = (v / 1000).toFixed(2) + ' km/s';
+                outT.innerText = (T_sec / 60).toFixed(1) + ' mins';
+                outR.innerText = Math.round(r / 1000).toLocaleString() + ' km';
+                outAc.innerText = ac.toFixed(2) + ' m/s²';
+                outMasseffect.innerText = "Mass Independent (v unchanged)";
+
+                // Animate position angle theta
+                const omega = v / r; // rad/s
+                theta += omega * dt * 800; // visual speedup
+                if (theta > 2 * Math.PI) theta -= 2 * Math.PI;
+
+                // Render Canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Grid
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                const cX = 400;
+                const cY = 220;
+
+                // Scaled Radius
+                const planetPx = 45;
+                const rPx = planetPx + Math.min(150, (altVal / 40000) * 130);
+
+                // Earth Sphere
+                ctx.fillStyle = 'rgba(0, 240, 255, 0.2)';
+                ctx.strokeStyle = '#00f0ff';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.arc(cX, cY, planetPx, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12px sans-serif'; ctx.fillText("Earth", cX - 16, cY + 4);
+
+                // Orbit Trail
+                ctx.strokeStyle = 'rgba(176, 38, 255, 0.35)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath(); ctx.arc(cX, cY, rPx, 0, Math.PI * 2); ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Satellite Position
+                const satX = cX + rPx * Math.cos(theta);
+                const satY = cY - rPx * Math.sin(theta);
+
+                // Velocity Arrow (Gold)
+                const vLen = 35;
+                const vx = satX - vLen * Math.sin(theta);
+                const vy = satY - vLen * Math.cos(theta);
+
+                ctx.strokeStyle = '#ffd700';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.moveTo(satX, satY); ctx.lineTo(vx, vy); ctx.stroke();
+
+                // Centripetal Force Arrow (Cyan)
+                const fcLen = 30;
+                const fcx = satX - fcLen * Math.cos(theta);
+                const fcy = satY + fcLen * Math.sin(theta);
+
+                ctx.strokeStyle = '#00f0ff';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.moveTo(satX, satY); ctx.lineTo(fcx, fcy); ctx.stroke();
+
+                // Satellite Body
+                ctx.fillStyle = '#00e676';
+                ctx.beginPath(); ctx.arc(satX, satY, 7, 0, Math.PI * 2); ctx.fill();
+
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

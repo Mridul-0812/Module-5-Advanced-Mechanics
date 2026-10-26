@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>14. Satellite Types: Low Earth Orbit (LEO) vs Geostationary Orbit (GEO) - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS Reset & Box Sizing Safeguards */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Responsive Layout & Container Enhancements */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border-radius: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .sim-mode-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-mode {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.65rem 1.3rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mode.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(176, 38, 255, 0.35));
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#satelliteCanvas {
+            width: 100%;
+            height: 440px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        /* Callouts and Containers */
+        .concept-highlight-card, 
+        .worked-solution, 
+        .derivation-steps, 
+        .practise-question, 
+        .formula-callout-box, 
+        .misconception-box, 
+        .exam-warning-box, 
+        .extension-note-box,
+        .beginner-box {
+            max-width: 100%;
+            overflow-x: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .beginner-box {
+            background: rgba(0, 230, 118, 0.06);
+            border-left: 4px solid #00e676;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.8rem 0;
+        }
+
+        .beginner-box h4 {
+            color: #69f0ae;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .beginner-box p {
+            color: #e8f5e9;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+            line-height: 1.6;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .vector-diagram-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .formula-callout-box {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.12), rgba(0, 240, 255, 0.12));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            text-align: center;
+        }
+
+        .formula-callout-box h4 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .formula-callout-box p {
+            margin-bottom: 0;
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .misconception-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .misconception-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .misconception-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        /* MathJax Overflow Fixes */
+        .MathJax_Display, .mjx-chtml, .MathJax {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding: 0.3rem 0;
+            margin: 0.5rem 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html" class="active">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>14. Satellite Orbits: LEO vs GEO (and MEO / Polar)</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 4 (Part 2)</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Core Learning Goals</h2>
+            <p><strong>Inquiry Question 4:</strong> <em>How does Kepler's laws of planetary motion describe the movements of natural and artificial satellites?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus (calculus-free), students must thoroughly analyse and compare different satellite orbits used around Earth:</p>
+            <ul class="feature-list">
+                <li>Compare Low Earth Orbit (LEO) and Geostationary Earth Orbit (GEO) satellites in terms of altitude ($h$), orbital period ($T$), orbital velocity ($v$), inclination angle, and applications.</li>
+                <li>Evaluate the physical criteria required for a satellite to achieve a Geostationary Orbit (equatorial plane, $0^\circ$ inclination, prograde rotation, period $T = 23\text{h } 56\text{m } 4\text{s}$).</li>
+                <li>Distinguish Geostationary Orbit (GEO) from Geosynchronous Orbit (GSO).</li>
+                <li>Analyse Low Earth Orbit variants such as Sun-Synchronous and Polar Orbits for complete Earth mapping and observation.</li>
+                <li>Compare trade-offs of LEO vs GEO regarding radio signal latency ($t = \frac{2r}{c}$), atmospheric drag/decay, launch energy, and surface coverage.</li>
+            </ul>
+        </section>
+
+        <!-- 2. Beginner-Friendly Intuitive Starter -->
+        <section class="content-section" id="beginner-intro">
+            <h2>Part 1: The Intuitive Idea — Two Different Jobs for Satellites</h2>
+
+            <div class="beginner-box">
+                <h4>Beginner Analogy: The "Express Train" vs The "Hovering Billboard"</h4>
+                <p>Imagine two very different ways to observe or communicate with a city on Earth from above:</p>
+                <ol class="feature-list" style="margin-bottom: 0;">
+                    <li><strong>Low Earth Orbit (LEO): The Fast Express Train.</strong> Imagine flying in a jet right above the rooftops ($160\text{ to } 2,000\text{ km}$ up). You get an incredibly sharp, close-up view of details on the ground! But because you are so close, you are zooming across the sky at $28,000\text{ km/h}$, passing overhead in just 10 minutes before disappearing over the horizon.</li>
+                    <li><strong>Geostationary Orbit (GEO): The Stationary Hovering Platform.</strong> Imagine sitting in a hot air balloon extremely high in the sky ($35,786\text{ km}$ up). You are so far away that you can see an entire hemisphere at once! More importantly, as Earth spins underneath, you move in sync with it. To someone standing on the ground below, you appear to hang frozen in the exact same spot in the sky 24 hours a day!</li>
+                </ol>
+            </div>
+
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">Clearing Up a Huge Student Misconception: "Does a Geostationary Satellite Stay Up Because Gravity is Zero?"</h4>
+                <p><strong>NO! Gravity at GEO altitude is NOT zero!</strong></p>
+                <p>At geostationary altitude ($r \approx 42,164\text{ km}$ from Earth's center), Earth's gravitational acceleration is still $g = \frac{G M_E}{r^2} \approx 0.22\text{ N/kg}$ (about 2.3% of surface gravity). The satellite stays in orbit because it moves sideways at an exact speed of $v = 3.07\text{ km/s}$ ($11,000\text{ km/h}$), so its curved falling path matches Earth's circular radius, while its orbital rotation speed matches Earth's daily spin!</p>
+            </div>
+        </section>
+
+        <!-- 3. Comprehensive Technical Breakdown & Comparison Table -->
+        <section class="content-section" id="deep-dive-comparison">
+            <h2>Part 2: Technical Comparison of Satellite Orbits</h2>
+
+            <p>Satellites are grouped into primary orbital bands based on altitude, period, and inclination:</p>
+
+            <div class="uvtaxy-table-container">
+                <table class="uvtaxy-grid-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Low Earth Orbit (LEO)</th>
+                            <th>Medium Earth Orbit (MEO)</th>
+                            <th>Geostationary Orbit (GEO)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Altitude Range ($h$)</th>
+                            <td>$160\text{ km} - 2,000\text{ km}$</td>
+                            <td>$2,000\text{ km} - 35,000\text{ km}$</td>
+                            <td><strong style="color: var(--accent-cyan);">Exactly $35,786\text{ km}$</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Orbital Radius ($r = R_E + h$)</th>
+                            <td>$6,530\text{ km} - 8,370\text{ km}$</td>
+                            <td>$8,370\text{ km} - 41,370\text{ km}$</td>
+                            <td><strong style="color: var(--accent-cyan);">$42,164\text{ km}$</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Orbital Period ($T$)</th>
+                            <td>$88\text{ minutes} - 127\text{ minutes}$</td>
+                            <td>$2\text{ hours} - 24\text{ hours}$ (GPS = $12\text{ h}$)</td>
+                            <td><strong style="color: #ffd700;">23h 56m 4s</strong> (1 Sidereal Day)</td>
+                        </tr>
+                        <tr>
+                            <th>Orbital Speed ($v$)</th>
+                            <td>$7.8\text{ km/s} - 6.9\text{ km/s}$</td>
+                            <td>$6.9\text{ km/s} - 3.1\text{ km/s}$</td>
+                            <td><strong style="color: var(--success-green);">$3.07\text{ km/s}$</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Inclination Angle</th>
+                            <td>Any inclination (0° to 90° / Polar)</td>
+                            <td>Typically 55° (GPS constellation)</td>
+                            <td><strong style="color: var(--accent-cyan);">Must be exactly 0° (Equatorial)</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Primary Applications</th>
+                            <td>ISS, Earth imaging, Hubble, Starlink broadband, weather monitoring</td>
+                            <td>Navigation constellations (GPS, Galileo, GLONASS)</td>
+                            <td>TV broadcast, fixed satellite internet, equatorial weather tracking</td>
+                        </tr>
+                        <tr>
+                            <th>Signal Latency ($t = 2r/c$)</th>
+                            <td>Very low ($\sim 5\text{ to } 15\text{ ms}$)</td>
+                            <td>Moderate ($\sim 100\text{ to } 150\text{ ms}$)</td>
+                            <td>High ($\sim 240\text{ to } 280\text{ ms}$)</td>
+                        </tr>
+                        <tr>
+                            <th>Atmospheric Drag & Life</th>
+                            <td>Significant drag at lower $h$; orbital decay requires re-boosts</td>
+                            <td>Negligible drag; multi-decade lifespan</td>
+                            <td>Zero drag; centuries lifespan (moved to graveyard orbit at end)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Vector Diagram: Orbital Planes and Geometry -->
+            <div class="vector-diagram-card">
+                <svg width="520" height="280" viewBox="0 0 520 280" style="background: transparent;">
+                    <!-- Earth Body -->
+                    <circle cx="260" cy="140" r="50" fill="rgba(0, 240, 255, 0.15)" stroke="#00f0ff" stroke-width="2.5"/>
+                    <circle cx="260" cy="140" r="4" fill="#00f0ff"/>
+                    
+                    <!-- Equator Line -->
+                    <line x1="200" y1="140" x2="320" y2="140" stroke="#00f0ff" stroke-width="2" stroke-dasharray="3"/>
+                    <text x="260" y="132" fill="#00f0ff" font-family="sans-serif" font-size="11" text-anchor="middle">Equator (0°)</text>
+
+                    <!-- LEO Inner Circular Orbit -->
+                    <circle cx="260" cy="140" r="72" fill="none" stroke="#00e676" stroke-width="2"/>
+                    <circle cx="332" cy="140" r="6" fill="#00e676"/>
+                    <text x="342" y="144" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="12">LEO (h = 400 km)</text>
+
+                    <!-- Polar Orbit Line (Vertical) -->
+                    <ellipse cx="260" cy="140" rx="20" ry="76" fill="none" stroke="#ffd700" stroke-width="1.8" stroke-dasharray="4"/>
+                    <circle cx="260" cy="64" r="5" fill="#ffd700"/>
+                    <text x="270" y="60" fill="#ffd700" font-family="sans-serif" font-size="11">Polar Orbit (90°)</text>
+
+                    <!-- GEO Outer Large Equatorial Orbit -->
+                    <circle cx="260" cy="140" r="120" fill="none" stroke="#b026ff" stroke-width="2.5"/>
+                    <circle cx="380" cy="140" r="7" fill="#b026ff"/>
+                    <text x="392" y="144" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="12">GEO (h = 35,786 km)</text>
+
+                    <!-- Rotational Arrow on Earth -->
+                    <path d="M 240 100 A 25 25 0 0 1 280 100" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+                    <polygon points="280,100 273,95 273,105" fill="#ffffff"/>
+                    <text x="260" y="90" fill="#ffffff" font-family="sans-serif" font-size="10" text-anchor="middle">Earth Spin (West → East)</text>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 1: Comparison of Low Earth Orbit (LEO), Polar Orbit (90° inclination), and Geostationary Earth Orbit (GEO, 0° equatorial inclination).</p>
+            </div>
+        </section>
+
+        <!-- 4. The 4 Strict Criteria for Geostationary Orbit & GEO vs GSO -->
+        <section class="content-section" id="geo-criteria">
+            <h2>Part 3: Deep Technical Insights & Exam-Level Distinction</h2>
+
+            <h3>1. The 4 Mandatory Criteria for a Geostationary Orbit (GEO)</h3>
+            <p>In HSC Physics exams, students are frequently asked to <em>"State and explain the conditions necessary for a satellite to be geostationary."</em> To earn full marks, you must state all 4 criteria:</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">The Four Geostationary Requirements</h4>
+                <ol class="feature-list">
+                    <li><strong>Orbital Period Equals Earth's Sidereal Rotation Period:</strong> $T = 23\text{ hours } 56\text{ minutes } 4.1\text{ seconds}$ ($86,164\text{ s}$). This ensures the satellite completes one rotation in the exact time Earth spins once relative to background stars.</li>
+                    <li><strong>Circular Equatorial Plane (Inclination $i = 0^\circ$):</strong> The orbit MUST lie directly above Earth's equator. If the orbit is inclined at an angle (e.g., $20^\circ$), the satellite will drift North and South across the sky during the day.</li>
+                    <li><strong>Prograde Direction (West-to-East Rotation):</strong> The satellite must orbit in the exact same direction as Earth's rotation (counter-clockwise when viewed from above the North Pole). If it orbits East-to-West, it will sweep across Earth's surface twice per day!</li>
+                    <li><strong>Specific Altitude / Radius ($h = 35,786\text{ km}$):</strong> By $T^2 = \frac{4\pi^2 r^3}{G M_E}$, matching $T = 86,164\text{ s}$ uniquely fixes the orbital radius to $r = 42,164\text{ km}$, placing the altitude strictly at $h = 35,786\text{ km}$.</li>
+                </ol>
+            </div>
+
+            <div class="extension-note-box">
+                <h4>Band 6 Distinction: GEO vs GSO (Geostationary vs Geosynchronous)</h4>
+                <p><strong>Geosynchronous Orbit (GSO):</strong> ANY orbit with a period of 24 hours ($T = 86,164\text{ s}$). It can have an elliptical shape or an inclined plane ($i > 0^\circ$). To an observer on Earth, a GSO satellite traces a figure-eight path ("analemma") in the sky every day.</p>
+                <p><strong>Geostationary Orbit (GEO):</strong> A special subset of GSO that is strictly **CIRCULAR** and strictly **EQUATORIAL** ($i = 0^\circ$). It remains completely motionless relative to the ground!</p>
+                <p>$$\text{All GEO satellites are GSO, but NOT all GSO satellites are GEO!}$$</p>
+            </div>
+
+            <h3>2. Signal Latency & The Speed of Light Limit</h3>
+            <p>Radio signals travel at the speed of light ($c = 3.00 \times 10^8\text{ m/s}$). The round-trip delay (latency) for a radio signal sent from ground station $\to$ satellite $\to$ ground station is:</p>
+
+            $$t_{\text{latency}} = \frac{2 \times \text{Distance}}{c}$$
+
+            <ul class="feature-list">
+                <li><strong>For LEO ($h = 500\text{ km}$):</strong> Round-trip distance $\approx 1,000\text{ km}$. Latency $t \approx \frac{1.0 \times 10^6}{3.00 \times 10^8} \approx \mathbf{0.0033\text{ s}} \quad (3.3\text{ ms})$. Perfect for high-speed online gaming and voice calls!</li>
+                <li><strong>For GEO ($h = 35,786\text{ km}$):</strong> Round-trip distance $\approx 71,572\text{ km}$. Latency $t \approx \frac{7.1572 \times 10^7}{3.00 \times 10^8} \approx \mathbf{0.238\text{ s}} \quad (238\text{ ms})$. Causes noticeable audio delays during live TV news broadcasts!</li>
+            </ul>
+        </section>
+
+        <!-- 5. Dynamic Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Dynamic Interactive Workbench: LEO vs GEO Constellation Visualizer</h2>
+            <p>Toggle between orbital altitudes and view real-time ground coverage, satellite movement, latency, and ground-station dish tracking requirements!</p>
+
+            <div class="sim-container">
+                <div class="sim-mode-selector">
+                    <button id="btn-mode-leo" class="btn-mode active" onclick="setSatSimMode('leo')">Low Earth Orbit (LEO - Fast Pass)</button>
+                    <button id="btn-mode-geo" class="btn-mode" onclick="setSatSimMode('geo')">Geostationary Orbit (GEO - Fixed View)</button>
+                    <button id="btn-mode-polar" class="btn-mode" onclick="setSatSimMode('polar')">Polar Orbit (Global Scan)</button>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-altitude-sat">Altitude ($h$ in km): <span id="disp-sat-alt" class="sim-value-display">500 km</span></label>
+                        <input type="range" id="sim-altitude-sat" min="200" max="36000" value="500" step="100">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-earth-rot">Earth Rotation Speed: <span id="disp-erot" class="sim-value-display">Real Sync</span></label>
+                        <input type="range" id="sim-earth-rot" min="0.5" max="5.0" value="1.0" step="0.5">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-ground-lat">Ground Station Latitude: <span id="disp-glat" class="sim-value-display">0° (Equator)</span></label>
+                        <input type="range" id="sim-ground-lat" min="0" max="80" value="0" step="10">
+                    </div>
+                </div>
+
+                <canvas id="satelliteCanvas" width="800" height="440"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Orbital Velocity (v)</div>
+                        <div class="value" id="out-sat-v">7.61 km/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Orbital Period (T)</div>
+                        <div class="value" id="out-sat-t">94.6 mins</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Round-Trip Latency</div>
+                        <div class="value" id="out-latency">3.3 ms</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Ground Antenna Type</div>
+                        <div class="value" id="out-antenna" style="color: var(--accent-cyan);">Motorized Tracking Dish</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Synchronization Status</div>
+                        <div class="value" id="out-sync" style="color: #ffd700;">FAST OVERPASS (10 MINS)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): LEO vs GEO Speed & Period Comparison</h4>
+                    <span class="marks-allocated">[Basic Orbital Comparison]</span>
+                </div>
+                <div class="question-body">
+                    <p>Satellite A is in Low Earth Orbit at altitude $h_A = 500\text{ km}$ ($r_A = 6.871 \times 10^6\text{ m}$). Satellite B is in Geostationary Orbit at altitude $h_B = 35,786\text{ km}$ ($r_B = 4.2157 \times 10^7\text{ m}$). ($M_E = 5.972 \times 10^{24}\text{ kg}$).</p>
+                    <p>a) Calculate the orbital speeds $v_A$ and $v_B$.<br>b) Calculate the ratio of their orbital periods ($T_B / T_A$).</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Orbital Speeds ($v = \sqrt{\frac{G M_E}{r}}$):</strong></p>
+
+                        $$v_A = \sqrt{\frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})}{6.871 \times 10^6}} = \sqrt{\frac{3.9857 \times 10^{14}}{6.871 \times 10^6}} = \mathbf{7616\text{ m/s}} \quad (\mathbf{7.62\text{ km/s}})$$
+                        $$v_B = \sqrt{\frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})}{4.2157 \times 10^7}} = \sqrt{\frac{3.9857 \times 10^{14}}{4.2157 \times 10^7}} = \mathbf{3075\text{ m/s}} \quad (\mathbf{3.08\text{ km/s}})$$
+
+                        <p><strong>Part b) Period Ratio ($T_B / T_A$):</strong></p>
+
+                        $$T_A = \frac{2\pi r_A}{v_A} = \frac{2\pi (6.871 \times 10^6)}{7616} = 5668\text{ s} \quad (94.5\text{ mins})$$
+                        $$T_B = \frac{2\pi r_B}{v_B} = \frac{2\pi (4.2157 \times 10^7)}{3075} = 86,133\text{ s} \quad (23.9\text{ hours})$$
+                        $$\frac{T_B}{T_A} = \frac{86,133}{5668} = \mathbf{15.2 \text{ times longer period for GEO}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Signal Delay Calculation for GEO Satellite Communications</h4>
+                    <span class="marks-allocated">[Speed of Light Latency Analysis]</span>
+                </div>
+                <div class="question-body">
+                    <p>A mobile phone user in Sydney makes an international VoIP call via a geostationary communications satellite ($h = 35,786\text{ km}$). Assuming the ground station is directly below the satellite ($r = 4.216 \times 10^7\text{ m}$):</p>
+                    <p>a) Calculate the minimum time required for a radio signal to travel from Sydney to the satellite and back to a receiving ground station ($c = 3.00 \times 10^8\text{ m/s}$).<br>b) Explain why high online gaming performance is significantly superior using a LEO Starlink constellation ($h = 550\text{ km}$) compared to a GEO satellite dish.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Latency Calculation:</strong></p>
+                        <p>The signal travels up to the satellite ($35,786\text{ km}$) and back down ($35,786\text{ km}$). Total distance $d = 2 \times 3.5786 \times 10^7\text{ m} = 7.1572 \times 10^7\text{ m}$.</p>
+
+                        $$t = \frac{d}{c} = \frac{7.1572 \times 10^7\text{ m}}{3.00 \times 10^8\text{ m/s}} = \mathbf{0.239\text{ s}} \quad (\mathbf{239\text{ milliseconds}})$$
+
+                        <p><strong>Part b) LEO vs GEO Latency Explanation:</strong></p>
+                        <p>For LEO ($h = 550\text{ km}$), the round-trip distance is $2 \times 550 = 1,100\text{ km}$. The signal latency is $t = \frac{1.10 \times 10^6}{3.00 \times 10^8} \approx \mathbf{3.67\text{ ms}}$. This is over 60 times faster than GEO, eliminating lag in real-time online applications!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Evaluating LEO Atmospheric Decay & Re-boost Energy</h4>
+                    <span class="marks-allocated">[Atmospheric Drag & Orbital Energy]</span>
+                </div>
+                <div class="question-body">
+                    <p>The International Space Station ($m = 420,000\text{ kg}$) orbits at $h = 400\text{ km}$ ($r = 6.771 \times 10^6\text{ m}$). Due to subtle atmospheric drag from the thermosphere, its altitude drops by $2.0\text{ km}$ per month ($r_{\text{new}} = 6.769 \times 10^6\text{ m}$).</p>
+                    <p>a) Calculate the station's initial and final orbital speed.<br>b) Explain the paradox of why atmospheric drag causes the ISS to *speed up* as it decays!<br>c) Calculate the energy required to boost the ISS back to $400\text{ km}$ ($M_E = 5.972 \times 10^{24}\text{ kg}$).</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Orbital Speeds:</strong></p>
+
+                        $$v_1 = \sqrt{\frac{G M_E}{6.771 \times 10^6}} = \mathbf{7672.1\text{ m/s}}$$
+                        $$v_2 = \sqrt{\frac{G M_E}{6.769 \times 10^6}} = \mathbf{7673.2\text{ m/s}} \quad (\text{Station sped up by } 1.1\text{ m/s}!)$$
+
+                        <p><strong>Part b) Orbital Decay Speed Paradox:</strong></p>
+                        <p>Atmospheric drag removes total mechanical energy ($E = -\frac{G M m}{2 r}$). As total energy decreases (becomes more negative), orbital radius $r$ shrinks. Because $v = \sqrt{\frac{GM}{r}}$, a smaller radius requires a HIGHER orbital speed to maintain orbit. Gravitational potential energy lost is twice the kinetic energy gained ($\Delta U = -2 \Delta K$), so half the potential energy lost goes into increasing kinetic speed, while half is lost as thermal friction!</p>
+
+                        <p><strong>Part c) Re-boost Energy ($\Delta E$):</strong></p>
+
+                        $$\Delta E = E_1 - E_2 = \left( -\frac{G M_E m}{2 r_1} \right) - \left( -\frac{G M_E m}{2 r_2} \right) = \frac{G M_E m}{2} \left( \frac{1}{r_2} - \frac{1}{r_1} \right)$$
+                        $$\Delta E = \frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})(420000)}{2} \left( \frac{1}{6.769 \times 10^6} - \frac{1}{6.771 \times 10^6} \right)$$
+                        $$\Delta E = (8.370 \times 10^{19}) \times (4.37 \times 10^{-11}) = \mathbf{3.66 \times 10^9\text{ Joules}} \quad (\mathbf{3.66\text{ GJ}})$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension - JRAHS Style): Polar Orbit Earth Mapping Overpass Frequency</h4>
+                    <span class="marks-allocated">[Polar Geometry & Earth Spin Integration]</span>
+                </div>
+                <div class="question-body">
+                    <p>A Earth-observation satellite is placed in a circular Polar LEO orbit ($i = 90^\circ$) at altitude $h = 850\text{ km}$ ($r = 7.221 \times 10^6\text{ m}$).</p>
+                    <p>a) Calculate the satellite's orbital period $T$ in minutes.<br>b) Calculate the longitude shift ($\Delta \lambda$ in degrees) of Earth's surface beneath the satellite during each successive orbit pass ($M_E = 5.972 \times 10^{24}\text{ kg}, T_{\text{Earth}} = 23\text{h } 56\text{m } 4\text{s} = 86,164\text{ s}$).<br>c) Explain why polar orbits are chosen over equatorial orbits for global environmental mapping.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Full Band 6 JRAHS Solution:</h5>
+
+                        <p><strong>Part a) Orbital Period ($T$):</strong></p>
+
+                        $$T = \sqrt{\frac{4\pi^2 r^3}{G M_E}} = \sqrt{\frac{4\pi^2 \times (7.221 \times 10^6)^3}{(6.674 \times 10^{-11})(5.972 \times 10^{24})}} = \sqrt{\frac{1.487 \times 10^{22}}{3.9857 \times 10^{14}}} = \sqrt{3.731 \times 10^7} = \mathbf{6108\text{ s}} \quad (\mathbf{101.8\text{ mins}})$$
+
+                        <p><strong>Part b) Longitude Shift per Pass ($\Delta \lambda$):</strong></p>
+                        <p>As the satellite flies North-to-South over the poles, Earth rotates West-to-East beneath it. The fraction of a full $360^\circ$ turn made by Earth during one satellite orbit is:</p>
+
+                        $$\Delta \lambda = 360^\circ \times \left( \frac{T_{\text{sat}}}{T_{\text{Earth}}} \right) = 360^\circ \times \left( \frac{6108\text{ s}}{86,164\text{ s}} \right) = 360^\circ \times 0.070887 = \mathbf{25.5^\circ \text{ Westward Shift}}$$
+
+                        <p><strong>Part c) Advantage of Polar Orbits for Global Mapping:</strong></p>
+                        <p>An equatorial orbit ($i = 0^\circ$) stays directly above the equator and can never scan high-latitude regions (like North America, Europe, Antarctica). A polar orbit ($i = 90^\circ$) crosses both poles on every revolution while Earth rotates $25.5^\circ$ underneath each orbit. Over approximately 14 orbits ($\approx 24\text{ hours}$), the satellite scans every single square kilometer of Earth's surface!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Four Practice Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Marking Criteria</h2>
+            <p>Attempt the practice questions below and log your marks into the self-assessment system.</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-14-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Geostationary Orbit Criteria Identification</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>State THREE necessary orbital conditions for a satellite to remain stationary relative to a point on Earth's surface.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-14-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-14-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-14-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Think about orbital plane (equator), period (24h), direction (prograde), and altitude ($35,786\text{ km}$).</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-14-easy" style="display: none;">
+                    <div class="worked-solution">
+                        <p>1. Must be in a circular orbit directly above Earth's equator ($0^\circ$ inclination).</p>
+                        <p>2. Must have an orbital period equal to Earth's sidereal rotation period ($23\text{h } 56\text{m } 4\text{s} \approx 24\text{ hours}$).</p>
+                        <p>3. Must orbit in the same direction as Earth's rotation (prograde / West to East) at altitude $35,786\text{ km}$.</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"For a satellite to be geostationary, it must satisfy three core conditions: (1) Its orbit must lie in Earth's equatorial plane ($0^\circ$ inclination). (2) Its orbital period must match Earth's rotational period ($T = 23\text{h } 56\text{m } 4\text{s}$). (3) It must travel in the same direction as Earth's rotation (prograde, West-to-East)."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies equatorial plane ($0^\circ$ inclination).</li>
+                            <li><strong>2 Marks:</strong> States matching orbital period ($24\text{ hours}$ / sidereal day).</li>
+                            <li><strong>3 Marks:</strong> States prograde West-to-East direction / fixed altitude $35,786\text{ km}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-14-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-14-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('14-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-14-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-14-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Comparing LEO vs GEO Communication Trade-offs</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Compare Low Earth Orbit (LEO) and Geostationary Earth Orbit (GEO) satellites for global telecommunication services, outlining ONE advantage and ONE disadvantage of each.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-14-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-14-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-14-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Consider latency, ground dish tracking, coverage area per satellite, and atmospheric drag/lifespan.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-14-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>LEO Satellites ($160 - 2000\text{ km}$):</strong></p>
+                        <ul class="feature-list">
+                            <li><em>Advantage:</em> Very low signal latency ($\sim 5-15\text{ ms}$), enabling real-time video calls and fast internet.</li>
+                            <li><em>Disadvantage:</em> Small surface footprint requires large constellations (thousands of satellites) with motorized ground tracking dish receivers.</li>
+                        </ul>
+                        <p><strong>GEO Satellites ($35,786\text{ km}$):</strong></p>
+                        <ul class="feature-list">
+                            <li><em>Advantage:</em> Remains stationary in sky; a single satellite covers $40\%$ of Earth's surface using fixed, non-tracking receiver dishes.</li>
+                            <li><em>Disadvantage:</em> High signal latency ($\sim 240\text{ ms}$) due to large speed-of-light distance delay.</li>
+                        </ul>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"LEO satellites offer the advantage of extremely low signal latency ($\sim 10\text{ ms}$) due to low altitude, but suffer the disadvantage of small coverage footprints requiring thousands of satellites in a constellation. Conversely, GEO satellites offer the advantage of remaining fixed overhead so a stationary dish can provide wide-area coverage ($\approx 40\%$ Earth surface), but suffer high signal latency ($\approx 240\text{ ms}$) due to the $35,786\text{ km}$ distance."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies LEO advantage (low latency) or disadvantage (constellation needed).</li>
+                            <li><strong>2 Marks:</strong> Identifies GEO advantage (fixed dish / wide coverage) or disadvantage (high latency).</li>
+                            <li><strong>3 Marks:</strong> Provides detailed technical comparison including numerical values/altitude context.</li>
+                            <li><strong>4 Marks:</strong> Writes a balanced comparison clearly connecting physics principles to applications.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-14-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-14-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('14-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-14-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard -->
+            <div class="practise-question" id="question-14-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard): Calculating Geostationary Radius & Altitude Derivation</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Using Newton's Law of Universal Gravitation and circular motion mechanics, derive the exact orbital altitude $h$ of a geostationary satellite. ($M_E = 5.972 \times 10^{24}\text{ kg}, R_E = 6.371 \times 10^6\text{ m}, G = 6.674 \times 10^{-11}\text{ N}\cdot\text{m}^2/\text{kg}^2, T = 86,164\text{ s}$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-14-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-14-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-14-hard" style="display: none;">
+                    <p><strong>Hint:</strong> Start from $F_c = F_g \implies T^2 = \frac{4\pi^2 r^3}{G M_E}$. Solve for $r = \sqrt[3]{\frac{G M_E T^2}{4\pi^2}}$, then $h = r - R_E$. Use sidereal period $86,164\text{ s}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-14-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Step 1: Equate forces and rearrange for $r$:</strong></p>
+
+                        $$\frac{m v^2}{r} = \frac{G M_E m}{r^2} \implies v = \frac{2\pi r}{T} \implies \frac{4\pi^2 r^2}{T^2} = \frac{G M_E}{r}$$
+                        $$r^3 = \frac{G M_E T^2}{4\pi^2}$$
+
+                        <p><strong>Step 2: Substitute values with sidereal period $T = 86,164\text{ s}$:</strong></p>
+
+                        $$r^3 = \frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})(86164)^2}{4\pi^2} = \frac{(3.9857 \times 10^{14})(7.4242 \times 10^9)}{39.4784} = 7.4955 \times 10^{22}\text{ m}^3$$
+
+                        <p><strong>Step 3: Cube root for orbital radius $r$:</strong></p>
+                        $$r = (7.4955 \times 10^{22})^{1/3} = \mathbf{4.2164 \times 10^7\text{ m}} \quad (42,164\text{ km})$$
+
+                        <p><strong>Step 4: Subtract Earth radius $R_E$:</strong></p>
+                        $$h = r - R_E = 4.2164 \times 10^7 - 0.6371 \times 10^7 = \mathbf{3.5793 \times 10^7\text{ m}} \quad (\mathbf{35,793\text{ km}} \approx \mathbf{35,800\text{ km}})$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Equating centripetal force to gravity $\frac{m v^2}{r} = \frac{G M_E m}{r^2}$ and substituting $v = \frac{2\pi r}{T}$ gives $r^3 = \frac{G M_E T^2}{4\pi^2}$. Using Earth's sidereal period $T = 86,164\text{ s}$, $r^3 = \frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})(86164)^2}{4\pi^2} = 7.496 \times 10^{22}\text{ m}^3$. Taking the cube root yields $r = 4.216 \times 10^7\text{ m}$. Altitude is $h = r - R_E = 4.216 \times 10^7 - 6.371 \times 10^6 = 3.579 \times 10^7\text{ m}$ ($35,790\text{ km}$)."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly sets up force equation $F_c = F_g$.</li>
+                            <li><strong>2 Marks:</strong> Derives formula $r^3 = \frac{G M_E T^2}{4\pi^2}$.</li>
+                            <li><strong>3 Marks:</strong> Uses correct sidereal period $86,164\text{ s}$ (or $86,400\text{ s}$).</li>
+                            <li><strong>4 Marks:</strong> Obtains orbital radius $r = 4.216 \times 10^7\text{ m}$.</li>
+                            <li><strong>5 Marks:</strong> Correctly subtracts Earth radius to give altitude $3.58 \times 10^7\text{ m}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-14-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-14-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('14-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-14-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension (JRAHS Distinction Separator) -->
+            <div class="practise-question" id="question-14-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (JRAHS Extension): Launch Energy Efficiency (Equatorial vs Polar Launch Sites)</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Space agencies prefer launching geostationary communication satellites from launch sites near the equator (e.g. ESA Guiana Space Centre in Kourou, $5^\circ\text{N}$) rather than high-latitude sites (e.g. Baikonur, $46^\circ\text{N}$).</p>
+                    <p>a) Calculate Earth's rotational speed $v_{\text{rot}}$ at the equator ($R_E = 6.378 \times 10^6\text{ m}, T = 86,164\text{ s}$).<br>b) Calculate the additional kinetic energy provided "for free" by Earth's rotation to a $3000\text{ kg}$ satellite launched eastward from the equator vs from the North Pole ($0\text{ m/s}$).<br>c) Explain TWO distinct physics reasons why equatorial launches save massive amounts of rocket fuel for GEO satellite placement.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-14-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-14-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-14-extension" style="display: none;">
+                    <p><strong>Hint:</strong> $v_{\text{rot}} = \frac{2\pi R_E}{T}$. Energy saved is $K = \frac{1}{2} m v_{\text{rot}}^2$. Consider initial boost + avoiding expensive orbital inclination plane changes!</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-14-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Surface Rotational Speed at Equator ($v_{\text{rot}}$):</strong></p>
+
+                        $$v_{\text{rot}} = \frac{2 \pi R_E}{T} = \frac{2 \pi \times 6.378 \times 10^6\text{ m}}{86,164\text{ s}} = \mathbf{465.1\text{ m/s}} \quad (\mathbf{1674\text{ km/h}})$$
+
+                        <p><strong>b) Initial Kinetic Energy Boost ($\Delta K$):</strong></p>
+
+                        $$\Delta K = \frac{1}{2} m v_{\text{rot}}^2 = \frac{1}{2} \times 3000\text{ kg} \times (465.1\text{ m/s})^2 = \mathbf{3.24 \times 10^8\text{ Joules}} \quad (\mathbf{324\text{ MJ}})$$
+
+                        <p><strong>c) Two Physics Reasons for Equatorial Launch Efficiency:</strong></p>
+                        <p>1. <strong>Rotational Speed Boost:</strong> Launching eastward at the equator provides an initial $465\text{ m/s}$ velocity boost toward the required orbital speed ($3.07\text{ km/s}$ at GEO), reducing the necessary rocket propulsive $\Delta v$.</p>
+                        <p>2. <strong>Eliminating Plane Changes:</strong> GEO orbits MUST have an inclination of $0^\circ$. Launching from latitude $\theta$ (e.g. $46^\circ\text{N}$) places the satellite initially into a $46^\circ$ inclined orbit. Performing an orbital plane change maneuver to reduce inclination to $0^\circ$ at high altitude requires a massive vector thruster burn ($\Delta v = 2 v \sin(\theta/2)$), consuming huge quantities of extra propellant!</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Earth's equatorial surface speed is $v_{\text{rot}} = \frac{2\pi R_E}{T} = \frac{2\pi (6.378 \times 10^6)}{86164} = 465\text{ m/s}$. Launching eastward from the equator gives a $3000\text{ kg}$ payload $\frac{1}{2} (3000) (465)^2 = 324\text{ MJ}$ of initial kinetic energy for free. Equatorial launches save fuel for two reasons: (1) The rotational speed directly contributes toward orbital speed ($3.07\text{ km/s}$), reducing required $\Delta v$. (2) Launching from the equator automatically places the rocket into a $0^\circ$ inclination orbit, eliminating the need for high-energy orbital plane change burns."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Calculates equatorial rotation speed $v_{\text{rot}} = 465\text{ m/s}$.</li>
+                            <li><strong>2 Marks:</strong> Calculates initial kinetic energy boost $324\text{ MJ}$.</li>
+                            <li><strong>3 Marks:</strong> Explains rotational velocity boost effect on rocket propellant.</li>
+                            <li><strong>4 Marks:</strong> Identifies that GEO requires $0^\circ$ equatorial inclination.</li>
+                            <li><strong>5 Marks:</strong> Explains the energy cost of orbital plane change maneuvers ($\Delta v$).</li>
+                            <li><strong>6 Marks:</strong> Writes a comprehensive, mathematically supported Band 6 evaluation.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-14-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-14-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('14-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-14-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="13-orbital-velocity-period.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 13: Orbital Velocity & Period</a>
+                <a href="15-keplers-three-laws.html" class="btn-next">Proceed to Lesson 15: Kepler's Three Laws &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let satSimMode = 'leo'; // 'leo', 'geo', or 'polar'
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('14-easy');
+            checkIfQuestionAnswered('14-medium');
+            checkIfQuestionAnswered('14-hard');
+            checkIfQuestionAnswered('14-extension');
+            
+            initSatSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        function setSatSimMode(mode) {
+            satSimMode = mode;
+            document.getElementById('btn-mode-leo').classList.toggle('active', mode === 'leo');
+            document.getElementById('btn-mode-geo').classList.toggle('active', mode === 'geo');
+            document.getElementById('btn-mode-polar').classList.toggle('active', mode === 'polar');
+
+            const sliderAlt = document.getElementById('sim-altitude-sat');
+            if (mode === 'leo') sliderAlt.value = 500;
+            else if (mode === 'geo') sliderAlt.value = 35786;
+            else if (mode === 'polar') sliderAlt.value = 850;
+        }
+
+        /* --- Interactive Canvas Satellite Simulator Engine --- */
+        function initSatSimulator() {
+            const canvas = document.getElementById('satelliteCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const inAlt = document.getElementById('sim-altitude-sat');
+            const inErot = document.getElementById('sim-earth-rot');
+            const inGlat = document.getElementById('sim-ground-lat');
+
+            const dispAlt = document.getElementById('disp-sat-alt');
+            const dispErot = document.getElementById('disp-erot');
+            const dispGlat = document.getElementById('disp-glat');
+
+            const outV = document.getElementById('out-sat-v');
+            const outT = document.getElementById('out-sat-t');
+            const outLatency = document.getElementById('out-latency');
+            const outAntenna = document.getElementById('out-antenna');
+            const outSync = document.getElementById('out-sync');
+
+            let thetaSat = 0;
+            let thetaEarth = 0;
+            let lastTime = performance.now();
+
+            function animate(now) {
+                const dt = (now - lastTime) / 1000;
+                lastTime = now;
+
+                const altVal = parseFloat(inAlt.value);
+                const erotVal = parseFloat(inErot.value);
+                const glatVal = parseFloat(inGlat.value);
+
+                dispAlt.innerText = altVal.toLocaleString() + ' km';
+                dispErot.innerText = erotVal.toFixed(1) + 'x Speed';
+                dispGlat.innerText = glatVal + '°';
+
+                const G = 6.674e-11;
+                const ME = 5.972e24;
+                const RE = 6371e3; // metres
+
+                const h = altVal * 1000;
+                const r = RE + h;
+
+                const v = Math.sqrt((G * M) / r);
+                const T_sec = Math.sqrt((4 * Math.PI * Math.PI * Math.pow(r, 3)) / (G * M));
+                
+                // Latency calculation (2 * h / c)
+                const c = 3.00e8;
+                const latencyMs = ((2 * h) / c) * 1000;
+
+                outV.innerText = (v / 1000).toFixed(2) + ' km/s';
+                outT.innerText = (T_sec > 3600) ? (T_sec / 3600).toFixed(1) + ' hours' : (T_sec / 60).toFixed(1) + ' mins';
+                outLatency.innerText = latencyMs.toFixed(1) + ' ms';
+
+                if (altVal > 30000) {
+                    outAntenna.innerText = "Fixed Fixed Dish Antenna";
+                    outAntenna.style.color = "#00e676";
+                    outSync.innerText = "PERFECT GEOSTATIONARY LOCK";
+                    outSync.style.color = "#00e676";
+                } else if (satSimMode === 'polar') {
+                    outAntenna.innerText = "Motorized Sky Tracker";
+                    outAntenna.style.color = "#b026ff";
+                    outSync.innerText = "POLAR GLOBAL STRIP SCAN";
+                    outSync.style.color = "#b026ff";
+                } else {
+                    outAntenna.innerText = "Motorized Sky Tracker";
+                    outAntenna.style.color = "#00f0ff";
+                    outSync.innerText = "FAST OVERPASS (10-15 MINS)";
+                    outSync.style.color = "#ffd700";
+                }
+
+                // Angular velocities
+                const omegaSat = (2 * Math.PI) / T_sec; // rad/s
+                const omegaEarth = ((2 * Math.PI) / 86164) * erotVal; // rad/s
+
+                thetaSat += omegaSat * dt * 600;
+                thetaEarth += omegaEarth * dt * 600;
+
+                if (thetaSat > 2 * Math.PI) thetaSat -= 2 * Math.PI;
+                if (thetaEarth > 2 * Math.PI) thetaEarth -= 2 * Math.PI;
+
+                // Render Canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Grid
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                const cX = 400;
+                const cY = 220;
+
+                // Scaled radii
+                const planetPx = 50;
+                const satPx = planetPx + Math.min(130, (altVal / 36000) * 110);
+
+                // Central Earth Sphere
+                ctx.fillStyle = 'rgba(0, 240, 255, 0.15)';
+                ctx.strokeStyle = '#00f0ff';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath(); ctx.arc(cX, cY, planetPx, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+                // Ground Station Marker on Earth
+                const gAngle = thetaEarth;
+                const gX = cX + planetPx * Math.cos(gAngle);
+                const gY = cY - planetPx * Math.sin(gAngle);
+
+                ctx.fillStyle = '#ff3d00';
+                ctx.beginPath(); ctx.arc(gX, gY, 5, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#ffffff'; ctx.font = '10px sans-serif'; ctx.fillText("Ground Dish", gX + 8, gY + 3);
+
+                // Orbit Trail
+                ctx.strokeStyle = (satSimMode === 'polar') ? '#ffd700' : 'rgba(176, 38, 255, 0.4)';
+                ctx.lineWidth = 1.8;
+                ctx.setLineDash([4, 4]);
+
+                if (satSimMode === 'polar') {
+                    ctx.beginPath(); ctx.ellipse(cX, cY, 15, satPx, 0, 0, Math.PI * 2); ctx.stroke();
+                } else {
+                    ctx.beginPath(); ctx.arc(cX, cY, satPx, 0, Math.PI * 2); ctx.stroke();
+                }
+                ctx.setLineDash([]);
+
+                // Satellite Position
+                let sX = cX + satPx * Math.cos(thetaSat);
+                let sY = cY - satPx * Math.sin(thetaSat);
+
+                if (satSimMode === 'polar') {
+                    sX = cX + 15 * Math.cos(thetaSat);
+                    sY = cY - satPx * Math.sin(thetaSat);
+                }
+
+                // Satellite Body
+                ctx.fillStyle = '#00e676';
+                ctx.beginPath(); ctx.arc(sX, sY, 7, 0, Math.PI * 2); ctx.fill();
+
+                // Signal Ray Line between Ground Station and Satellite
+                ctx.strokeStyle = 'rgba(0, 240, 255, 0.5)';
+                ctx.lineWidth = 1.5;
+                ctx.setLineDash([2, 2]);
+                ctx.beginPath(); ctx.moveTo(gX, gY); ctx.lineTo(sX, sY); ctx.stroke();
+                ctx.setLineDash([]);
+
+                requestAnimationFrame(animate);
+            }
+
+            const M = 5.972e24; // scope variable fix
+            requestAnimationFrame(animate);
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

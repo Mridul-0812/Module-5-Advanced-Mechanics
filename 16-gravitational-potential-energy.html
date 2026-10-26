@@ -1,0 +1,1329 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>16. Gravitational Potential Energy & Potential Wells - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS Reset & Box Sizing Safeguards */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Responsive Layout & Container Enhancements */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border-radius: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#wellCanvas {
+            width: 100%;
+            height: 440px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        /* Callout & Beginner Boxes */
+        .beginner-box {
+            background: rgba(0, 230, 118, 0.06);
+            border-left: 4px solid #00e676;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.8rem 0;
+        }
+
+        .beginner-box h4 {
+            color: #69f0ae;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .beginner-box p {
+            color: #e8f5e9;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+            line-height: 1.6;
+        }
+
+        .concept-highlight-card, 
+        .worked-solution, 
+        .derivation-steps, 
+        .practise-question, 
+        .formula-callout-box, 
+        .misconception-box, 
+        .exam-warning-box, 
+        .extension-note-box {
+            max-width: 100%;
+            overflow-x: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .vector-diagram-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .formula-callout-box {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.12), rgba(0, 240, 255, 0.12));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            text-align: center;
+        }
+
+        .formula-callout-box h4 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .formula-callout-box p {
+            margin-bottom: 0;
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .misconception-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .misconception-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .misconception-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        /* MathJax Overflow Fixes */
+        .MathJax_Display, .mjx-chtml, .MathJax {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding: 0.3rem 0;
+            margin: 0.5rem 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html" class="active">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>16. Universal Gravitational Potential Energy ($U = -\frac{GMm}{r}$) & Potential Wells</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 4: Energy & Orbital Motion</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Core Mechanics</h2>
+            <p><strong>Inquiry Question Focus:</strong> <em>How does energy constrain the motion of satellites, spacecraft, and celestial bodies in gravitational fields?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus (calculus-free), students must achieve absolute mathematical, visual, and conceptual mastery over universal potential energy:</p>
+            <ul class="feature-list">
+                <li>Explain why the zero reference point for universal gravitational potential energy ($U$) is defined at infinitely large distances ($r = \infty$).</li>
+                <li>Apply the universal gravitational potential energy formula:
+                    $$U = -\frac{GMm}{r}$$
+                </li>
+                <li>Distinguish rigorously between the small-scale flat-Earth approximation ($E_p = mgh$) and the universal inverse-distance model ($U = -\frac{GMm}{r}$).</li>
+                <li>Calculate work done ($\Delta U$) when moving masses through dynamic non-uniform gravitational fields:
+                    $$W = \Delta U = U_f - U_i = -GMm \left( \frac{1}{r_f} - \frac{1}{r_i} \right)$$
+                </li>
+                <li>Interpret gravitational potential energy well graphs ($U$ vs $r$) to determine whether a system is gravitationally bound ($E_{\text{total}} < 0$) or unbound ($E_{\text{total}} \ge 0$).</li>
+            </ul>
+
+            <div class="extension-note-box">
+                <h4>Band 6 Exam Keyphrase Strategy: "Zero Reference Point at Infinity"</h4>
+                <p>When asked on an HSC exam why $U$ is negative, state clearly: <em>"Gravity is an attractive force. Work must be done against gravity to lift an object to infinity, where gravitational attraction vanishes ($F_g = 0$) and potential energy is defined to be zero ($U_\infty = 0$). Because energy is added to reach zero, all potential energy values closer than infinity must be negative."</em></p>
+            </div>
+        </section>
+
+        <!-- 2. Part 1: Beginner-Friendly Intuitive Starter -->
+        <section class="content-section" id="beginner-intro">
+            <h2>Part 1: The Intuitive Idea — The Gravity Hole Analogy</h2>
+
+            <div class="beginner-box">
+                <h4>Beginner Concept: Digging a Hole in the Sand</h4>
+                <p>Imagine you are standing on a completely flat beach. We decide to call the flat ground level <strong>Zero Height ($h = 0$)</strong>.</p>
+                <p>If you dig a deep well or hole in the sand and jump inside, where are you relative to the ground level? You are <strong>below zero</strong>!</p>
+                <p>To get back out to the surface ($0$), you have to expend personal effort (do work) by climbing up out of the hole. Until you do that work, you are trapped inside the hole!</p>
+                <p>In physics, every planet, moon, and star acts like a massive "energy well" or "hole" carved into space. Earth sits at the bottom of its own gravity well. To launch a rocket away from Earth into deep space, we must burn rocket fuel to climb out of this gravity hole!</p>
+            </div>
+
+            <h3>1. Clearing the Giant Confusion: $E_p = mgh$ vs $U = -\frac{GMm}{r}$</h3>
+            <p>Students often ask: <em>"In Year 11 I learned $E_p = mgh$. Why is potential energy now negative, and why does it have $r$ instead of $h$?"</em></p>
+
+            <div class="uvtaxy-table-container">
+                <table class="uvtaxy-grid-table">
+                    <thead>
+                        <tr>
+                            <th>Feature</th>
+                            <th>Flat-Earth Approximation ($E_p = mgh$)</th>
+                            <th>Universal Reality ($U = -\frac{GMm}{r}$)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Scope / Region</th>
+                            <td>Only valid near Earth's surface ($h \ll R_E$).</td>
+                            <td>Valid everywhere in the Universe (from surface to deep space).</td>
+                        </tr>
+                        <tr>
+                            <th>Gravitational Field ($g$)</th>
+                            <td>Assumed constant ($g = 9.80\text{ m/s}^2$).</td>
+                            <td>Varies with distance ($g = \frac{GM}{r^2}$). Inverse square law!</td>
+                        </tr>
+                        <tr>
+                            <th>Zero Reference Point</th>
+                            <td>Arbitrarily chosen (e.g., table top, floor, sea level).</td>
+                            <td>Fixed at Infinity ($r = \infty$), where $F_g = 0$.</td>
+                        </tr>
+                        <tr>
+                            <th>Algebraic Sign</th>
+                            <td>Always positive above the chosen reference.</td>
+                            <td>Always negative anywhere closer than infinity!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">Why Define $U = 0$ at Infinity?</h4>
+                <p>If we tried to define $U = 0$ at the center of the Earth ($r = 0$), the formula would divide by zero ($\frac{1}{0} = \infty$), creating an infinite mathematical nightmare!</p>
+                <p>Instead, astrophysicists pick the only unique, objective location in the Universe where gravity completely stops pulling: <strong>infinitely far away ($r = \infty$)</strong>. At $r = \infty$, $U = 0$. Since gravity pulls objects closer, moving closer releases energy, dropping $U$ below zero into negative numbers!</p>
+            </div>
+        </section>
+
+        <!-- 3. Part 2: Technical Mechanics — The Mechanics of Potential Wells -->
+        <section class="content-section" id="deep-dive-mechanics">
+            <h2>Part 2: Stepping Up — Mechanics of Potential Energy Wells</h2>
+
+            <h3>1. Visualizing the Potential Energy Curve ($U$ vs $r$)</h3>
+            <p>If we plot $U = -\frac{GMm}{r}$ against distance $r$ from the center of a planet, we get a rectangular hyperbola lying entirely in the 4th quadrant (negative energy region).</p>
+
+            <!-- Vector Diagram Card: Potential Energy Well Curve -->
+            <div class="vector-diagram-card">
+                <svg width="520" height="280" viewBox="0 0 520 280" style="background: transparent;">
+                    <!-- Coordinate Axes -->
+                    <line x1="70" y1="40" x2="500" y2="40" stroke="#ffffff" stroke-width="2"/>
+                    <line x1="70" y1="40" x2="70" y2="260" stroke="#ffffff" stroke-width="2"/>
+                    <text x="50" y="45" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="14">U = 0</text>
+                    <text x="480" y="30" fill="#ffffff" font-family="sans-serif" font-size="12">r (Distance)</text>
+
+                    <!-- Earth Surface Line r = R_E -->
+                    <line x1="140" y1="40" x2="140" y2="260" stroke="#b026ff" stroke-width="1.5" stroke-dasharray="4"/>
+                    <text x="145" y="255" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="12">r = R_E (Earth Surface)</text>
+
+                    <!-- Hyperbolic Potential Energy Well Curve U = -1/r -->
+                    <path d="M 140 230 Q 180 110, 480 50" fill="none" stroke="#00f0ff" stroke-width="3.5"/>
+
+                    <!-- Point on Surface (U_surface) -->
+                    <circle cx="140" cy="230" r="6" fill="#ef4444" stroke="#ffffff" stroke-width="1.5"/>
+                    <line x1="70" y1="230" x2="140" y2="230" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3"/>
+                    <text x="10" y="235" fill="#ef4444" font-family="sans-serif" font-size="11">U_surface</text>
+
+                    <!-- Point in Space (U_orbit) -->
+                    <circle cx="280" cy="85" r="6" fill="#00e676" stroke="#ffffff" stroke-width="1.5"/>
+                    <line x1="70" y1="85" x2="280" y2="85" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3"/>
+                    <text x="15" y="90" fill="#00e676" font-family="sans-serif" font-size="11">U_orbit</text>
+
+                    <!-- Arrow showing Delta U work needed -->
+                    <line x1="280" y1="230" x2="280" y2="95" stroke="#ffd700" stroke-width="2.5"/>
+                    <polygon points="280,95 275,105 285,105" fill="#ffd700"/>
+                    <text x="290" y="160" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="13">Work Done ΔU > 0</text>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 1: The Gravitational Potential Energy Well. As distance $r$ increases away from Earth's surface ($R_E$), $U$ becomes less negative (climbs upward towards zero).</p>
+            </div>
+
+            <div class="formula-callout-box">
+                <h4>Universal Potential Energy & Work Equations</h4>
+                <p>Potential Energy at distance $r$: $$U = -\frac{GMm}{r}$$</p>
+                <p>Work Required to Move Mass from $r_i$ to $r_f$: $$W = \Delta U = U_f - U_i = -GMm \left( \frac{1}{r_f} - \frac{1}{r_i} \right)$$</p>
+            </div>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">2. Deriving Why $E_p = mgh$ is Just a Special Case of $U = -GMm/r$</h4>
+                <p>Let's prove mathematically without calculus that lifting a mass by a small height $h$ above Earth's surface ($R_E$) reduces exactly to $mgh$!</p>
+
+                <p><strong>Step 1: Write the change in potential energy from $r_i = R_E$ to $r_f = R_E + h$:</strong></p>
+                $$\Delta U = -GMm \left( \frac{1}{R_E + h} - \frac{1}{R_E} \right) = GMm \left( \frac{1}{R_E} - \frac{1}{R_E + h} \right)$$
+
+                <p><strong>Step 2: Combine the fractions inside the brackets:</strong></p>
+                $$\Delta U = GMm \left( \frac{(R_E + h) - R_E}{R_E (R_E + h)} \right) = GMm \left( \frac{h}{R_E (R_E + h)} \right)$$
+
+                <p><strong>Step 3: Apply the small-height approximation ($h \ll R_E$):</strong></p>
+                <p>When $h$ is tiny compared to Earth's radius ($6,371\text{ km}$), $R_E + h \approx R_E$. Therefore, $R_E(R_E + h) \approx R_E^2$:</p>
+                $$\Delta U \approx GMm \left( \frac{h}{R_E^2} \right) = m \left( \frac{GM}{R_E^2} \right) h$$
+
+                <p><strong>Step 4: Recognize surface gravity $g = \frac{GM}{R_E^2}$:</strong></p>
+                $$\Delta U \approx m g h \quad \blacksquare$$
+
+                <p><em>Conclusion: $E_p = mgh$ is simply the linearized local slope of the universal hyperbola near $r = R_E$!</em></p>
+            </div>
+        </section>
+
+        <!-- 4. Dynamic Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Dynamic Interactive Workbench: Gravitational Potential Well Simulator</h2>
+            <p>Explore how central planetary mass $M$, satellite mass $m$, orbital distance $r$, and kinetic energy $K$ shape the potential energy well and determine system stability.</p>
+
+            <div class="sim-container">
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-planet">Central Body: <span id="disp-planet-name" class="sim-value-display">Earth</span></label>
+                        <select id="sim-planet" onchange="updateSimPlanet()">
+                            <option value="earth">Earth (M = 5.97 × 10²⁴ kg)</option>
+                            <option value="moon">Moon (M = 7.35 × 10²² kg)</option>
+                            <option value="jupiter">Jupiter (M = 1.90 × 10²⁷ kg)</option>
+                        </select>
+                    </div>
+
+                    <div class="sim-control-group">
+                        <label for="sim-mass">Payload Mass ($m$): <span id="disp-mass" class="sim-value-display">1000 kg</span></label>
+                        <input type="range" id="sim-mass" min="100" max="5000" value="1000" step="100">
+                    </div>
+
+                    <div class="sim-control-group">
+                        <label for="sim-dist">Distance ($r / R_E$): <span id="disp-dist" class="sim-value-display">1.50 R_E</span></label>
+                        <input type="range" id="sim-dist" min="1.0" max="6.0" value="1.50" step="0.1">
+                    </div>
+
+                    <div class="sim-control-group">
+                        <label for="sim-ke">Added Speed ($v$): <span id="disp-speed" class="sim-value-display">7.50 km/s</span></label>
+                        <input type="range" id="sim-ke" min="0.0" max="15.0" value="7.50" step="0.25">
+                    </div>
+                </div>
+
+                <canvas id="wellCanvas" width="800" height="440"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Potential Energy (U)</div>
+                        <div class="value" id="out-sim-u">-41.7 GJ</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Kinetic Energy (K)</div>
+                        <div class="value" id="out-sim-k">+28.1 GJ</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Total Energy (E_T)</div>
+                        <div class="value" id="out-sim-et">-13.6 GJ</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Escape Speed (v_esc)</div>
+                        <div class="value" id="out-sim-vesc">9.13 km/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Orbital Binding Status</div>
+                        <div class="value" id="out-sim-status" style="color: var(--success-green);">BOUND ORBIT</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): Potential Energy at Earth's Surface vs GEO Altitude</h4>
+                    <span class="marks-allocated">[Direct Formula Application]</span>
+                </div>
+                <div class="question-body">
+                    <p>A communications satellite has a mass $m = 1200\text{ kg}$. Data: Earth mass $M_E = 5.97 \times 10^{24}\text{ kg}$, Earth radius $R_E = 6.371 \times 10^6\text{ m}$, GEO altitude $h = 35,786\text{ km}$.</p>
+                    <p>a) Calculate the gravitational potential energy $U_1$ of the satellite while sitting on the launch pad at Earth's surface.<br>b) Calculate its potential energy $U_2$ when placed into Geostationary Earth Orbit (GEO).</p>
+
+                    <!-- Scenario SVG Diagram for Example 1 -->
+                    <div class="vector-diagram-card">
+                        <svg width="480" height="220" viewBox="0 0 480 220" style="background: transparent;">
+                            <!-- Earth Sphere -->
+                            <circle cx="120" cy="110" r="50" fill="rgba(0,240,255,0.2)" stroke="#00f0ff" stroke-width="2"/>
+                            <text x="120" y="115" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Earth (M_E)</text>
+
+                            <!-- Satellite Position 1 (Surface) -->
+                            <circle cx="170" cy="110" r="5" fill="#ef4444"/>
+                            <text x="170" y="95" fill="#ef4444" font-family="sans-serif" font-size="11" text-anchor="middle">Pos 1 (Pad)</text>
+
+                            <!-- GEO Orbit Circle -->
+                            <circle cx="120" cy="110" r="140" fill="none" stroke="#ffd700" stroke-width="1.5" stroke-dasharray="4"/>
+
+                            <!-- Satellite Position 2 (GEO) -->
+                            <circle cx="260" cy="110" r="6" fill="#00e676"/>
+                            <text x="260" y="95" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle">Pos 2 (GEO)</text>
+
+                            <!-- Radius Dimensions -->
+                            <line x1="120" y1="110" x2="170" y2="110" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="145" y="125" fill="#ffffff" font-family="sans-serif" font-size="10" text-anchor="middle">r_1 = R_E</text>
+
+                            <line x1="120" y1="110" x2="260" y2="110" stroke="#ffd700" stroke-width="1.5" stroke-dasharray="2"/>
+                            <text x="200" y="140" fill="#ffd700" font-family="sans-serif" font-size="10" text-anchor="middle">r_2 = R_E + h = 42,157 km</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 2: Setup for Worked Example 1 showing surface position ($r_1$) vs GEO orbital radius ($r_2$).</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Potential Energy at Earth's Surface ($U_1$):</strong></p>
+                        $$r_1 = R_E = 6.371 \times 10^6\text{ m}$$
+                        $$U_1 = -\frac{GM_E m}{r_1} = -\frac{(6.67 \times 10^{-11})(5.97 \times 10^{24})(1200)}{6.371 \times 10^6}$$
+                        $$U_1 = -\frac{4.77836 \times 10^{17}}{6.371 \times 10^6} = \mathbf{-7.50 \times 10^{10}\text{ J}} \quad (-75.0\text{ GJ})$$
+
+                        <p><strong>Part b) Potential Energy at GEO Orbit ($U_2$):</strong></p>
+                        $$r_2 = R_E + h = 6.371 \times 10^6 + 35.786 \times 10^6 = 4.2157 \times 10^7\text{ m}$$
+                        $$U_2 = -\frac{GM_E m}{r_2} = -\frac{4.77836 \times 10^{17}}{4.2157 \times 10^7} = \mathbf{-1.13 \times 10^{10}\text{ J}} \quad (-11.3\text{ GJ})$$
+
+                        <p><em>Notice: $U_2$ (-11.3 GJ) is much less negative than $U_1$ (-75.0 GJ), meaning potential energy increased as it climbed higher!</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Work Required to Lift a Spacecraft Payload</h4>
+                    <span class="marks-allocated">[Work & ΔU Calculation]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the minimum work required by rocket thrusters to raise a $500\text{ kg}$ robotic probe from an initial Low Earth Orbit at altitude $h_1 = 400\text{ km}$ to a higher parking orbit at altitude $h_2 = 2000\text{ km}$, ignoring kinetic energy changes.</p>
+
+                    <!-- Scenario SVG Diagram for Example 2 -->
+                    <div class="vector-diagram-card">
+                        <svg width="480" height="200" viewBox="0 0 480 200" style="background: transparent;">
+                            <!-- Earth Arc -->
+                            <path d="M 40 200 A 200 200 0 0 1 440 200" fill="rgba(0,240,255,0.1)" stroke="#00f0ff" stroke-width="2"/>
+                            <text x="240" y="185" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Earth Surface (R_E = 6371 km)</text>
+
+                            <!-- LEO Orbit Arc (h1 = 400km) -->
+                            <path d="M 70 200 A 170 170 0 0 1 410 200" fill="none" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3"/>
+                            <circle cx="240" cy="30" r="5" fill="#ef4444"/>
+                            <text x="240" y="15" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle">h_1 = 400 km (r_1 = 6771 km)</text>
+
+                            <!-- High Orbit Arc (h2 = 2000km) -->
+                            <path d="M 100 200 A 140 140 0 0 1 380 200" fill="none" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3"/>
+                            <circle cx="340" cy="70" r="5" fill="#00e676"/>
+                            <text x="350" y="55" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="11">h_2 = 2000 km (r_2 = 8371 km)</text>
+
+                            <!-- Work Arrow -->
+                            <line x1="240" y1="30" x2="335" y2="65" stroke="#ffd700" stroke-width="2.5"/>
+                            <polygon points="335,65 324,58 328,70" fill="#ffd700"/>
+                            <text x="280" y="40" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="12">Work W = ΔU</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 3: Orbit transfer scenario showing orbital radii $r_1$ and $r_2$.</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Step 1: Calculate initial and final radial distances from Earth's center:</strong></p>
+                        $$r_1 = R_E + h_1 = 6.371 \times 10^6 + 0.400 \times 10^6 = 6.771 \times 10^6\text{ m}$$
+                        $$r_2 = R_E + h_2 = 6.371 \times 10^6 + 2.000 \times 10^6 = 8.371 \times 10^6\text{ m}$$
+
+                        <p><strong>Step 2: Apply the Work-Energy Theorem ($W = \Delta U = U_2 - U_1$):</strong></p>
+                        $$W = -GM_E m \left( \frac{1}{r_2} - \frac{1}{r_1} \right) = GM_E m \left( \frac{1}{r_1} - \frac{1}{r_2} \right)$$
+
+                        <p>Substituting values:</p>
+                        $$GM_E m = (6.67 \times 10^{-11})(5.97 \times 10^{24})(500) = 1.99098 \times 10^{17}\text{ N}\cdot\text{m}^2$$
+                        $$\frac{1}{r_1} - \frac{1}{r_2} = \frac{1}{6.771 \times 10^6} - \frac{1}{8.371 \times 10^6} = 1.47688 \times 10^{-7} - 1.19460 \times 10^{-7} = 2.8228 \times 10^{-8}\text{ m}^{-1}$$
+
+                        $$W = (1.99098 \times 10^{17}) \times (2.8228 \times 10^{-8}) = \mathbf{5.62 \times 10^9\text{ J}} \quad (5.62\text{ GJ})$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Error Percentage of $mgh$ vs $U = -GMm/r$</h4>
+                    <span class="marks-allocated">[Comparative Model Analysis]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $1000\text{ kg}$ rocket is launched vertically to an altitude of $h = 500\text{ km}$ above Earth. A student calculates the potential energy gain using $\Delta E_p = mgh$ (taking $g = 9.80\text{ m/s}^2$).</p>
+                    <p>a) Calculate $\Delta E_p$ using the flat-Earth formula $mgh$.<br>b) Calculate the true work done $\Delta U$ using the universal potential formula.<br>c) Calculate the percentage error introduced by using $mgh$.</p>
+
+                    <!-- Scenario SVG Diagram for Example 3 -->
+                    <div class="vector-diagram-card">
+                        <svg width="480" height="200" viewBox="0 0 480 200" style="background: transparent;">
+                            <line x1="50" y1="160" x2="430" y2="160" stroke="#00f0ff" stroke-width="3"/>
+                            <text x="240" y="180" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Earth Surface (r = R_E)</text>
+
+                            <circle cx="240" cy="50" r="8" fill="#ffd700"/>
+                            <line x1="240" y1="160" x2="240" y2="50" stroke="#ffd700" stroke-width="2" stroke-dasharray="4"/>
+                            <text x="255" y="105" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="12">h = 500 km</text>
+
+                            <!-- Model comparison text boxes -->
+                            <rect x="60" y="30" width="130" height="45" rx="6" fill="rgba(239,68,68,0.15)" stroke="#ef4444"/>
+                            <text x="125" y="48" fill="#ef4444" font-family="sans-serif" font-size="11" text-anchor="middle">Model 1: mgh</text>
+                            <text x="125" y="63" fill="#ef4444" font-family="sans-serif" font-size="10" text-anchor="middle">(Assumes g constant)</text>
+
+                            <rect x="290" y="30" width="150" height="45" rx="6" fill="rgba(0,230,118,0.15)" stroke="#00e676"/>
+                            <text x="365" y="48" fill="#00e676" font-family="sans-serif" font-size="11" text-anchor="middle">Model 2: Universal ΔU</text>
+                            <text x="365" y="63" fill="#00e676" font-family="sans-serif" font-size="10" text-anchor="middle">(Accounts for g ∝ 1/r²)</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 4: Comparative model setup testing $mgh$ validity at $500\text{ km}$ altitude.</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Approximate $\Delta E_p$ using $mgh$:</strong></p>
+                        $$\Delta E_p = m g h = (1000) \times (9.80) \times (500,000) = \mathbf{4.90 \times 10^9\text{ J}} \quad (4.90\text{ GJ})$$
+
+                        <p><strong>Part b) True Universal $\Delta U$:</strong></p>
+                        $$r_1 = 6.371 \times 10^6\text{ m}, \quad r_2 = 6.871 \times 10^6\text{ m}$$
+                        $$\Delta U = (6.67 \times 10^{-11})(5.97 \times 10^{24})(1000) \left( \frac{1}{6.371 \times 10^6} - \frac{1}{6.871 \times 10^6} \right)$$
+                        $$\Delta U = (3.98199 \times 10^{14}) \times (1.14243 \times 10^{-8}) = \mathbf{4.549 \times 10^9\text{ J}} \quad (4.55\text{ GJ})$$
+
+                        <p><strong>Part c) Percentage Error Calculation:</strong></p>
+                        $$\text{Percentage Error} = \frac{|\text{Approx} - \text{True}|}{\text{True}} \times 100\%$$
+                        $$\text{Percentage Error} = \frac{|4.90 - 4.549|}{4.549} \times 100\% = \frac{0.351}{4.549} \times 100\% = \mathbf{7.72\%}$$
+
+                        <p><em>Insight: At $500\text{ km}$, $mgh$ overestimates potential energy gain by almost $8\%$ because it ignores the weakening of gravity with height!</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension - Band 6 Separator): Multistage Lunar Ascent Energy</h4>
+                    <span class="marks-allocated">[Multi-body Well Transition]</span>
+                </div>
+                <div class="question-body">
+                    <p>A lunar ascent module ($m = 2500\text{ kg}$) sits on the Moon's surface ($M_M = 7.35 \times 10^{22}\text{ kg}, R_M = 1.737 \times 10^6\text{ m}$). It blasts off to enter a lunar parking orbit at altitude $h = 100\text{ km}$.</p>
+                    <p>Calculate the total change in potential energy $\Delta U$ and the binding energy required to completely remove the module from the Moon's gravitational well to infinity.</p>
+
+                    <!-- Scenario SVG Diagram for Example 4 -->
+                    <div class="vector-diagram-card">
+                        <svg width="480" height="200" viewBox="0 0 480 200" style="background: transparent;">
+                            <!-- Moon Circle -->
+                            <circle cx="120" cy="100" r="45" fill="rgba(255,255,255,0.15)" stroke="#ffffff" stroke-width="2"/>
+                            <text x="120" y="105" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Moon (M_M)</text>
+
+                            <!-- Surface Module -->
+                            <circle cx="165" cy="100" r="5" fill="#ef4444"/>
+                            <text x="165" y="85" fill="#ef4444" font-family="sans-serif" font-size="10" text-anchor="middle">Surface</text>
+
+                            <!-- Orbit Arc -->
+                            <circle cx="120" cy="100" r="70" fill="none" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3"/>
+                            <circle cx="190" cy="100" r="5" fill="#00e676"/>
+                            <text x="190" y="85" fill="#00e676" font-family="sans-serif" font-size="10" text-anchor="middle">Orbit (100km)</text>
+
+                            <!-- Escape Line to Infinity -->
+                            <line x1="190" y1="100" x2="430" y2="100" stroke="#ffd700" stroke-width="2"/>
+                            <polygon points="430,100 420,95 420,105" fill="#ffd700"/>
+                            <text x="310" y="90" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="12">To Infinity (U = 0)</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 5: Lunar ascent and escape trajectory path across Moon's potential well.</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Full Band 6 Solution:</h5>
+
+                        <p><strong>Step 1: Calculate surface potential energy $U_{\text{surf}}$:</strong></p>
+                        $$U_{\text{surf}} = -\frac{G M_M m}{R_M} = -\frac{(6.67 \times 10^{-11})(7.35 \times 10^{22})(2500)}{1.737 \times 10^6}$$
+                        $$U_{\text{surf}} = -\frac{1.2254 \times 10^{16}}{1.737 \times 10^6} = \mathbf{-7.055 \times 10^9\text{ J}} \quad (-7.055\text{ GJ})$$
+
+                        <p><strong>Step 2: Calculate orbit potential energy $U_{\text{orb}}$ ($r = 1.837 \times 10^6\text{ m}$):</strong></p>
+                        $$U_{\text{orb}} = -\frac{1.2254 \times 10^{16}}{1.837 \times 10^6} = \mathbf{-6.671 \times 10^9\text{ J}} \quad (-6.671\text{ GJ})$$
+
+                        <p><strong>Step 3: Potential energy gain during ascent ($\Delta U$):</strong></p>
+                        $$\Delta U = U_{\text{orb}} - U_{\text{surf}} = (-6.671 \times 10^9) - (-7.055 \times 10^9) = \mathbf{+3.84 \times 10^8\text{ J}} \quad (+384\text{ MJ})$$
+
+                        <p><strong>Step 4: Binding energy from orbit to infinity ($r \to \infty$ where $U = 0$):</strong></p>
+                        $$E_{\text{binding}} = 0 - U_{\text{orb}} = 0 - (-6.671 \times 10^9) = \mathbf{+6.67 \times 10^9\text{ J}} \quad (+6.67\text{ GJ})$$
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Four Practice Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Scenario Diagrams & Marking Criteria</h2>
+            <p>Attempt the practice questions below and log your marks into the self-assessment tracking system.</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-16-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Martian Surface Potential Energy</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A Mars rover of mass $m = 900\text{ kg}$ rests on the Martian surface ($M_{\text{Mars}} = 6.42 \times 10^{23}\text{ kg}$, $R_{\text{Mars}} = 3.39 \times 10^6\text{ m}$).</p>
+                    <p>Calculate the gravitational potential energy $U$ of the rover on Mars relative to zero at infinity.</p>
+
+                    <!-- Scenario SVG Diagram Q1 -->
+                    <div class="vector-diagram-card">
+                        <svg width="450" height="180" viewBox="0 0 450 180" style="background: transparent;">
+                            <circle cx="100" cy="90" r="50" fill="rgba(239,68,68,0.25)" stroke="#ef4444" stroke-width="2"/>
+                            <text x="100" y="95" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Mars (M_Mars)</text>
+
+                            <circle cx="150" cy="90" r="5" fill="#ffd700"/>
+                            <text x="150" y="75" fill="#ffd700" font-family="sans-serif" font-size="10" text-anchor="middle">Rover (900 kg)</text>
+
+                            <line x1="100" y1="90" x2="150" y2="90" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="125" y="110" fill="#ffffff" font-family="sans-serif" font-size="10" text-anchor="middle">R_Mars</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 6: Mars surface potential energy evaluation diagram.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-16-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-16-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-16-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Substitute Mars mass $M_{\text{Mars}}$ and radius $R_{\text{Mars}}$ directly into $U = -\frac{GMm}{r}$. Do not forget the negative sign!</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-16-easy" style="display: none;">
+                    <div class="worked-solution">
+                        $$U = -\frac{G M_{\text{Mars}} m}{R_{\text{Mars}}} = -\frac{(6.67 \times 10^{-11})(6.42 \times 10^{23})(900)}{3.39 \times 10^6}$$
+                        $$U = -\frac{3.8539 \times 10^{16}}{3.39 \times 10^6} = \mathbf{-1.14 \times 10^{10}\text{ J}} \quad (-11.4\text{ GJ})$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Using $U = -\frac{GMm}{r}$, substituting Mars parameters yields $U = -\frac{(6.67 \times 10^{-11})(6.42 \times 10^{23})(900)}{3.39 \times 10^6} = -1.14 \times 10^{10}\text{ J}$. The negative sign indicates the rover is gravitationally bound within Mars' potential well relative to zero at infinity."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Selects universal formula $U = -\frac{GMm}{r}$.</li>
+                            <li><strong>2 Marks:</strong> Substitutes values correctly including negative sign.</li>
+                            <li><strong>3 Marks:</strong> Obtains final answer $-1.14 \times 10^{10}\text{ J}$ with correct units and 3 sig figs.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-16-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-16-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('16-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-16-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-16-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Work to Launch Deep-Space Probe</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $1500\text{ kg}$ deep-space probe is launched from Earth's surface ($R_E = 6.371 \times 10^6\text{ m}$) to an altitude $h = 50,000\text{ km}$.</p>
+                    <p>Calculate the work done purely against gravity to move the probe from the surface to this altitude.</p>
+
+                    <!-- Scenario SVG Diagram Q2 -->
+                    <div class="vector-diagram-card">
+                        <svg width="450" height="180" viewBox="0 0 450 180" style="background: transparent;">
+                            <circle cx="80" cy="90" r="40" fill="rgba(0,240,255,0.2)" stroke="#00f0ff" stroke-width="2"/>
+                            <circle cx="120" cy="90" r="4" fill="#ef4444"/>
+                            <circle cx="360" cy="90" r="5" fill="#00e676"/>
+                            <line x1="120" y1="90" x2="350" y2="90" stroke="#ffd700" stroke-width="2"/>
+                            <polygon points="350,90 340,85 340,95" fill="#ffd700"/>
+                            <text x="230" y="80" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">h = 50,000 km</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 7: Deep space launch trajectory to $50,000\text{ km}$ altitude.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-16-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-16-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-16-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Final radial distance $r_2 = R_E + h = 6.371 \times 10^6 + 5.0 \times 10^7 = 5.6371 \times 10^7\text{ m}$. Use $W = \Delta U = U_2 - U_1$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-16-medium" style="display: none;">
+                    <div class="worked-solution">
+                        $$r_1 = 6.371 \times 10^6\text{ m}, \quad r_2 = 5.6371 \times 10^7\text{ m}$$
+                        $$W = GM_E m \left( \frac{1}{r_1} - \frac{1}{r_2} \right)$$
+                        $$W = (6.67 \times 10^{-11})(5.97 \times 10^{24})(1500) \left( \frac{1}{6.371 \times 10^6} - \frac{1}{5.6371 \times 10^7} \right)$$
+                        $$W = (5.97298 \times 10^{17}) \times (1.5696 \times 10^{-7} - 1.7740 \times 10^{-8}) = (5.97298 \times 10^{17}) \times (1.3922 \times 10^{-7})$$
+                        $$W = \mathbf{8.32 \times 10^{10}\text{ J}} \quad (83.2\text{ GJ})$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Work done equals potential energy change $W = \Delta U = -GM_E m (1/r_2 - 1/r_1)$. Setting $r_1 = 6.371 \times 10^6\text{ m}$ and $r_2 = 5.6371 \times 10^7\text{ m}$ yields $W = 8.32 \times 10^{10}\text{ J}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Calculates correct orbital radius $r_2 = 5.6371 \times 10^7\text{ m}$.</li>
+                            <li><strong>2 Marks:</strong> Applies work equation $W = U_2 - U_1$.</li>
+                            <li><strong>3 Marks:</strong> Substitutes numerical values correctly.</li>
+                            <li><strong>4 Marks:</strong> Obtains $8.32 \times 10^{10}\text{ J}$ with units and 3 sig figs.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-16-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-16-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('16-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-16-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard -->
+            <div class="practise-question" id="question-16-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard): Double Orbital Radius Energy Ratio</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A satellite moves from a circular orbit of radius $R$ to a higher circular orbit of radius $2R$.</p>
+                    <p>a) Express the initial potential energy $U_i$ and final potential energy $U_f$ in terms of $G, M, m, R$.<br>b) Show that the work done against gravity $\Delta U$ equals $-\frac{1}{2} U_i$.<br>c) Explain conceptually why moving to twice the radius does NOT require double the energy.</p>
+
+                    <!-- Scenario SVG Diagram Q3 -->
+                    <div class="vector-diagram-card">
+                        <svg width="450" height="180" viewBox="0 0 450 180" style="background: transparent;">
+                            <circle cx="225" cy="90" r="25" fill="rgba(0,240,255,0.3)"/>
+                            <circle cx="225" cy="90" r="55" fill="none" stroke="#ef4444" stroke-dasharray="3"/>
+                            <circle cx="225" cy="90" r="110" fill="none" stroke="#00e676" stroke-dasharray="3"/>
+                            <text x="285" y="85" fill="#ef4444" font-family="sans-serif" font-size="10">Radius R</text>
+                            <text x="340" y="85" fill="#00e676" font-family="sans-serif" font-size="10">Radius 2R</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 8: Doubling orbital radius transition geometry.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-16-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-16-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-16-hard" style="display: none;">
+                    <p><strong>Hint:</strong> $U_i = -\frac{GMm}{R}$ and $U_f = -\frac{GMm}{2R}$. Subtract $U_f - U_i$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-16-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Part a & b Derivation:</strong></p>
+                        $$U_i = -\frac{GMm}{R}$$
+                        $$U_f = -\frac{GMm}{2R} = \frac{1}{2} U_i$$
+                        $$\Delta U = U_f - U_i = -\frac{GMm}{2R} - \left( -\frac{GMm}{R} \right) = +\frac{GMm}{2R} = -\frac{1}{2} U_i \quad \blacksquare$$
+
+                        <p><strong>Part c Conceptual Explanation:</strong></p>
+                        <p>Because potential energy follows an inverse hyperbola ($U \propto -1/r$), the potential energy well flattens out at larger distances. Climbing from $R$ to $2R$ spans a steep gradient, gaining $\frac{GMm}{2R}$ Joules. Climbing another step from $2R$ to $3R$ would span a much flatter region, requiring only $\frac{GMm}{6R}$ Joules!</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Initial energy is $U_i = -GMm/R$. At radius $2R$, final energy is $U_f = -GMm/(2R) = 0.5 U_i$. The work done is $\Delta U = U_f - U_i = +GMm/(2R) = -0.5 U_i$. Doubling radius does not require double energy because gravitational field strength decreases inversely with distance squared ($g \propto 1/r^2$), causing the potential well curve to flatten out at higher altitudes."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly states $U_i = -GMm/R$ and $U_f = -GMm/(2R)$.</li>
+                            <li><strong>2 Marks:</strong> Executes algebraic subtraction $\Delta U = U_f - U_i$.</li>
+                            <li><strong>3 Marks:</strong> Proves $\Delta U = -0.5 U_i$.</li>
+                            <li><strong>4 Marks:</strong> Explains non-linear hyperbolic shape of potential well.</li>
+                            <li><strong>5 Marks:</strong> Links flattening slope to decreasing gravitational field strength ($1/r^2$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-16-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-16-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('16-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-16-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension -->
+            <div class="practise-question" id="question-16-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (JRAHS Extension): Jupiter Potential Well Binding Energy</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A space probe ($m = 800\text{ kg}$) is in orbit around Jupiter ($M_J = 1.90 \times 10^{27}\text{ kg}$) at distance $r = 5.00 \times 10^8\text{ m}$.</p>
+                    <p>a) Calculate its potential energy $U$ in Jupiter's well.<br>b) Calculate the work required to move it to a higher orbit at $r = 1.20 \times 10^9\text{ m}$.<br>c) Calculate the additional binding energy needed to escape Jupiter's gravity completely from the higher orbit.</p>
+
+                    <!-- Scenario SVG Diagram Q4 -->
+                    <div class="vector-diagram-card">
+                        <svg width="450" height="180" viewBox="0 0 450 180" style="background: transparent;">
+                            <circle cx="80" cy="90" r="45" fill="rgba(176,38,255,0.25)" stroke="#b026ff" stroke-width="2"/>
+                            <text x="80" y="95" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Jupiter</text>
+                            <circle cx="180" cy="90" r="5" fill="#00e676"/>
+                            <circle cx="320" cy="90" r="5" fill="#ffd700"/>
+                            <line x1="180" y1="90" x2="310" y2="90" stroke="#ffffff" stroke-width="1.5" stroke-dasharray="3"/>
+                            <polygon points="310,90 300,85 300,95" fill="#ffffff"/>
+                            <line x1="320" y1="90" x2="430" y2="90" stroke="#ffd700" stroke-width="2"/>
+                            <polygon points="430,90 420,85 420,95" fill="#ffd700"/>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 9: Jupiter multi-orbit potential well transition.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-16-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-16-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-16-extension" style="display: none;">
+                    <p><strong>Hint:</strong> Use Jupiter mass $M_J = 1.90 \times 10^{27}\text{ kg}$. Binding energy to escape from $r_2$ is $0 - U_2 = +GM_J m / r_2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-16-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Initial Potential Energy ($U_1$):</strong></p>
+                        $$U_1 = -\frac{(6.67 \times 10^{-11})(1.90 \times 10^{27})(800)}{5.00 \times 10^8} = \mathbf{-2.028 \times 10^{11}\text{ J}} \quad (-202.8\text{ GJ})$$
+
+                        <p><strong>b) Work to move to $r_2 = 1.20 \times 10^9\text{ m}$:</strong></p>
+                        $$U_2 = -\frac{(6.67 \times 10^{-11})(1.90 \times 10^{27})(800)}{1.20 \times 10^9} = \mathbf{-8.449 \times 10^{10}\text{ J}} \quad (-84.5\text{ GJ})$$
+                        $$W = U_2 - U_1 = (-8.449 \times 10^{10}) - (-2.028 \times 10^{11}) = \mathbf{+1.18 \times 10^{11}\text{ J}} \quad (+118\text{ GJ})$$
+
+                        <p><strong>c) Additional Binding Energy to Escape to Infinity ($U_\infty = 0$):</strong></p>
+                        $$E_{\text{escape}} = 0 - U_2 = 0 - (-8.449 \times 10^{10}) = \mathbf{+8.45 \times 10^{10}\text{ J}} \quad (+84.5\text{ GJ})$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Initial potential energy in Jupiter's well is $U_1 = -GM_J m/r_1 = -2.03 \times 10^{11}\text{ J}$. Moving to $r_2 = 1.20 \times 10^9\text{ m}$ gives $U_2 = -8.45 \times 10^{10}\text{ J}$, requiring work $W = U_2 - U_1 = 1.18 \times 10^{11}\text{ J}$. To escape completely from $r_2$ to infinity ($U=0$) requires additional energy $E_{\text{binding}} = 0 - U_2 = +8.45 \times 10^{10}\text{ J}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Calculates initial potential energy $U_1 = -2.03 \times 10^{11}\text{ J}$.</li>
+                            <li><strong>2 Marks:</strong> Calculates second potential energy $U_2 = -8.45 \times 10^{10}\text{ J}$.</li>
+                            <li><strong>3 Marks:</strong> Subtracts correctly to find work $W = 1.18 \times 10^{11}\text{ J}$.</li>
+                            <li><strong>4 Marks:</strong> Defines escape reference level $U_\infty = 0$.</li>
+                            <li><strong>5 Marks:</strong> Calculates binding energy $E = +8.45 \times 10^{10}\text{ J}$.</li>
+                            <li><strong>6 Marks:</strong> Correct significant figures, scientific notation, and units throughout.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-16-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-16-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('16-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-16-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="15-keplers-three-laws.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 15: Kepler's 3 Laws</a>
+                <a href="17-total-orbital-energy.html" class="btn-next">Proceed to Lesson 17: Total Orbital Energy &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        const PLANETS = {
+            earth: { name: "Earth", M: 5.97e24, R: 6.371e6 },
+            moon: { name: "Moon", M: 7.35e22, R: 1.737e6 },
+            jupiter: { name: "Jupiter", M: 1.90e27, R: 6.991e7 }
+        };
+
+        let currentPlanetKey = "earth";
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('16-easy');
+            checkIfQuestionAnswered('16-medium');
+            checkIfQuestionAnswered('16-hard');
+            checkIfQuestionAnswered('16-extension');
+            
+            initWellSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        function updateSimPlanet() {
+            const sel = document.getElementById('sim-planet');
+            currentPlanetKey = sel.value;
+            document.getElementById('disp-planet-name').innerText = PLANETS[currentPlanetKey].name;
+        }
+
+        /* --- Interactive Potential Well Simulator --- */
+        function initWellSimulator() {
+            const canvas = document.getElementById('wellCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const inMass = document.getElementById('sim-mass');
+            const inDist = document.getElementById('sim-dist');
+            const inSpeed = document.getElementById('sim-ke');
+
+            const dispMass = document.getElementById('disp-mass');
+            const dispDist = document.getElementById('disp-dist');
+            const dispSpeed = document.getElementById('disp-speed');
+
+            const outU = document.getElementById('out-sim-u');
+            const outK = document.getElementById('out-sim-k');
+            const outET = document.getElementById('out-sim-et');
+            const outVesc = document.getElementById('out-sim-vesc');
+            const outStatus = document.getElementById('out-sim-status');
+
+            const G = 6.67e-11;
+
+            function render() {
+                const p = PLANETS[currentPlanetKey];
+                const m = parseFloat(inMass.value);
+                const rMultiple = parseFloat(inDist.value);
+                const v = parseFloat(inSpeed.value) * 1000; // km/s to m/s
+
+                dispMass.innerText = m.toFixed(0) + ' kg';
+                dispDist.innerText = rMultiple.toFixed(2) + ' R_p';
+                dispSpeed.innerText = (v/1000).toFixed(2) + ' km/s';
+
+                const r = rMultiple * p.R;
+
+                const U = - (G * p.M * m) / r;
+                const K = 0.5 * m * v * v;
+                const ET = U + K;
+                const vEsc = Math.sqrt((2 * G * p.M) / r);
+
+                outU.innerText = (U / 1e9).toFixed(2) + ' GJ';
+                outK.innerText = (K / 1e9).toFixed(2) + ' GJ';
+                outET.innerText = (ET / 1e9).toFixed(2) + ' GJ';
+                outVesc.innerText = (vEsc / 1000).toFixed(2) + ' km/s';
+
+                if (ET < 0) {
+                    outStatus.innerText = "BOUND ORBIT (Trapped in Well)";
+                    outStatus.style.color = "#00e676";
+                } else {
+                    outStatus.innerText = "UNBOUND / ESCAPE TRAJECTORY";
+                    outStatus.style.color = "#ef4444";
+                }
+
+                // Render Canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Grid lines
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                // Axis U = 0
+                const zeroY = 80;
+                ctx.strokeStyle = '#00f0ff';
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(60, zeroY); ctx.lineTo(760, zeroY); ctx.stroke();
+                ctx.fillStyle = '#00f0ff';
+                ctx.font = '12px sans-serif';
+                ctx.fillText('U = 0 (Infinity Reference)', 70, zeroY - 10);
+
+                // Axis r
+                ctx.strokeStyle = '#ffffff';
+                ctx.beginPath(); ctx.moveTo(60, 40); ctx.lineTo(60, 400); ctx.stroke();
+
+                // Plot Well Curve U(r)
+                ctx.strokeStyle = '#b026ff';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+
+                const minR_px = 80;
+                const maxR_px = 740;
+
+                for (let px = minR_px; px <= maxR_px; px += 2) {
+                    const rNorm = 1.0 + (px - minR_px) / (maxR_px - minR_px) * 5.0; // 1.0 to 6.0
+                    const valU = - (G * p.M * m) / (rNorm * p.R);
+                    // Scale U to canvas Y
+                    const py = zeroY + (-valU / ( (G * p.M * m) / p.R )) * 280;
+                    if (px === minR_px) ctx.moveTo(px, py);
+                    else ctx.lineTo(px, py);
+                }
+                ctx.stroke();
+
+                // Current Satellite Dot
+                const satPx = minR_px + (rMultiple - 1.0) / 5.0 * (maxR_px - minR_px);
+                const satPy = zeroY + (-U / ( (G * p.M * m) / p.R )) * 280;
+
+                // Energy Bar
+                const kHeight = (K / ( (G * p.M * m) / p.R )) * 280;
+
+                ctx.fillStyle = 'rgba(0, 230, 118, 0.4)';
+                ctx.fillRect(satPx - 6, satPy - kHeight, 12, kHeight);
+                ctx.strokeStyle = '#00e676';
+                ctx.strokeRect(satPx - 6, satPy - kHeight, 12, kHeight);
+
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath(); ctx.arc(satPx, satPy, 8, 0, Math.PI * 2); ctx.fill();
+                ctx.strokeStyle = '#ffffff'; ctx.stroke();
+
+                requestAnimationFrame(render);
+            }
+
+            requestAnimationFrame(render);
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

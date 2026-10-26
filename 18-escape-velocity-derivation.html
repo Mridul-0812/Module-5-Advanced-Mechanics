@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>18. Launch Energy Conservation & Escape Velocity Derivation - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS Reset & Box Sizing Safeguards */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Responsive Layout & Container Enhancements */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border-radius: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-btn-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .sim-btn {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--glass-border);
+            color: #fff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .sim-btn:hover {
+            background: rgba(0, 240, 255, 0.2);
+            border-color: var(--accent-cyan);
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#escapeCanvas {
+            width: 100%;
+            height: 440px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        /* Callout & Beginner Boxes */
+        .beginner-box {
+            background: rgba(0, 230, 118, 0.06);
+            border-left: 4px solid #00e676;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.8rem 0;
+        }
+
+        .beginner-box h4 {
+            color: #69f0ae;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .beginner-box p {
+            color: #e8f5e9;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+            line-height: 1.6;
+        }
+
+        .concept-highlight-card, 
+        .worked-solution, 
+        .derivation-steps, 
+        .practise-question, 
+        .formula-callout-box, 
+        .misconception-box, 
+        .exam-warning-box, 
+        .extension-note-box {
+            max-width: 100%;
+            overflow-x: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .vector-diagram-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .formula-callout-box {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.12), rgba(0, 240, 255, 0.12));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            text-align: center;
+        }
+
+        .formula-callout-box h4 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .formula-callout-box p {
+            margin-bottom: 0;
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .misconception-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .misconception-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .misconception-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        /* MathJax Overflow Fixes */
+        .MathJax_Display, .mjx-chtml, .MathJax {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding: 0.3rem 0;
+            margin: 0.5rem 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html" class="active">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>18. Launch Energy Conservation & Escape Speed ($v_{\text{esc}} = \sqrt{\frac{2GM}{r}}$)</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 4: Energy & Orbital Motion</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Core Mechanics</h2>
+            <p><strong>Inquiry Question Focus:</strong> <em>How does energy conservation dictate the initial velocity required for a body to escape a gravitational field permanently?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus (calculus-free), students must demonstrate rigorous mathematical, conceptual, and graphical mastery over launch mechanics and escape velocity:</p>
+            <ul class="feature-list">
+                <li>Apply the Law of Conservation of Mechanical Energy to derive the universal escape velocity formula without calculus:
+                    $$v_{\text{esc}} = \sqrt{\frac{2GM}{r}}$$
+                </li>
+                <li>Define escape velocity as the minimum launch speed required for an unpowered projectile to reach an infinite distance ($r = \infty$) with zero remaining kinetic energy ($K_\infty = 0$).</li>
+                <li>Analyze why escape velocity depends solely on the mass ($M$) and radius ($r$) of the central body, and is completely independent of the mass ($m$) or angle of launch of the escaping projectile.</li>
+                <li>Distinguish between orbital velocity ($v_{\text{orbit}} = \sqrt{\frac{GM}{r}}$) and escape velocity ($v_{\text{esc}} = \sqrt{2} v_{\text{orbit}}$).</li>
+                <li>Calculate leftover kinetic energy and hyperbolic excess velocity ($v_\infty$) when launch speed exceeds escape velocity ($v_{\text{launch}} > v_{\text{esc}}$).</li>
+                <li>Evaluate the impact of atmospheric drag during real-world rocket launches vs ideal unpowered projectile launches.</li>
+            </ul>
+
+            <div class="extension-note-box">
+                <h4>Band 6 Exam Keyphrase Strategy: "Zero Total Energy at Infinity"</h4>
+                <p>When asked on an HSC exam to derive or explain escape velocity, always begin with the fundamental energy boundary condition: <em>"At the threshold of escape, the object reaches an infinite distance ($r \to \infty$) where potential energy is zero ($U_\infty = 0$) with zero remaining kinetic energy ($K_\infty = 0$). Therefore, total mechanical energy at infinity is zero ($E_\infty = 0$). By conservation of mechanical energy ($E_i = E_\infty$), initial kinetic energy must equal the magnitude of initial gravitational potential energy."</em></p>
+            </div>
+        </section>
+
+        <!-- 2. Part 1: Beginner-Friendly Intuitive Starter -->
+        <section class="content-section" id="beginner-intro">
+            <h2>Part 1: The Intuitive Idea — Throwing a Ball Out of a Gravity Hole</h2>
+
+            <div class="beginner-box">
+                <h4>Beginner Concept: Climbing Out of the Well</h4>
+                <p>Think back to the "gravity hole" analogy from Lesson 16. Earth sits at the bottom of a deep energy well.</p>
+                <p>Imagine throwing a baseball straight up into the air:</p>
+                <ul>
+                    <li>If you throw it gently ($v = 5\text{ m/s}$), gravity slows it down, it stops at a height of a few meters, and falls back to your hand.</li>
+                    <li>If you shoot it out of a cannon ($v = 1000\text{ m/s}$), it goes high up into the upper atmosphere, but gravity still wins and pulls it back down.</li>
+                    <li>What if you launch it with a massive speed burst of <strong>11.2 kilometers per second</strong> ($11,200\text{ m/s}$ or roughly $40,000\text{ km/h}$)?</li>
+                </ul>
+                <p>At this critical speed—called the <strong>Escape Velocity</strong> ($v_{\text{esc}}$)—the baseball has so much initial motion energy (kinetic energy) that gravity can never bring its speed down to zero until it reaches <strong>infinity</strong>! It escapes Earth's gravitational grip forever.</p>
+            </div>
+
+            <h3>1. The Surprising Fact: Rocket Mass Doesn't Matter!</h3>
+            <p>A common doubt for beginners is: <em>"Does a heavy rocket need a higher escape velocity than a tiny feather?"</em></p>
+            <p>The answer is <strong>NO</strong>! In the absence of air resistance, a $1$-gram pebble and a $100,000$-tonne starship require the exact same escape speed from Earth ($11.2\text{ km/s}$).</p>
+            <p>Why? Because while a heavier object requires more kinetic energy to move, gravity also pulls harder on it with a larger potential energy depth by the exact same mass factor ($m$). The mass $m$ cancels out cleanly on both sides of the energy equation!</p>
+
+            <div class="uvtaxy-table-container">
+                <table class="uvtaxy-grid-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Orbital Velocity ($v_{\text{orbit}}$)</th>
+                            <th>Escape Velocity ($v_{\text{esc}}$)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>Definition</th>
+                            <td>Speed required to maintain a stable circular path at radius $r$.</td>
+                            <td>Minimum speed to escape a gravitational field to infinity ($r = \infty$).</td>
+                        </tr>
+                        <tr>
+                            <th>Formula</th>
+                            <td>$$v_{\text{orbit}} = \sqrt{\frac{GM}{r}}$$</td>
+                            <td>$$v_{\text{esc}} = \sqrt{\frac{2GM}{r}}$$</td>
+                        </tr>
+                        <tr>
+                            <th>Total Energy ($E$)</th>
+                            <td>Negative ($E = -\frac{GMm}{2r}$). Trapped in orbit.</td>
+                            <td>Zero ($E = 0$). Unbound parabolic trajectory.</td>
+                        </tr>
+                        <tr>
+                            <th>Mathematical Ratio</th>
+                            <td colspan="2" style="text-anchor: center; font-weight: bold; color: var(--accent-cyan);">
+                                $$v_{\text{esc}} = \sqrt{2} \times v_{\text{orbit}} \approx 1.414 \times v_{\text{orbit}}$$
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">The Golden Rule of Orbital Escape ($\sqrt{2}$ Rule)</h4>
+                <p>If a satellite is already in a stable circular orbit at speed $v_{\text{orbit}}$, you only need to boost its speed by a factor of $\sqrt{2}$ (an increase of about <strong>41.4%</strong>) to transform its circular orbit into an open escape trajectory!</p>
+            </div>
+        </section>
+
+        <!-- 3. Part 2: Technical Mechanics — Step-by-Step Non-Calculus Derivation -->
+        <section class="content-section" id="deep-dive-mechanics">
+            <h2>Part 2: Stepping Up — Formal Energy Conservation Derivation</h2>
+
+            <p>To score full marks on HSC free-response questions, you must be able to perform the complete algebraic derivation from first principles using the Law of Conservation of Mechanical Energy.</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Derivation of $v_{\text{esc}} = \sqrt{\frac{2GM}{r}}$ (NESA Syllabus Standard)</h4>
+
+                <p><strong>Step 1: State the Law of Conservation of Mechanical Energy:</strong></p>
+                <p>In an isolated gravitational system with no non-conservative forces (like air resistance):</p>
+                $$E_{\text{initial}} = E_{\text{final}}$$
+                $$K_i + U_i = K_f + U_f$$
+
+                <p><strong>Step 2: Define initial conditions at launch (distance $r$):</strong></p>
+                <p>At launch from initial radial position $r$ (e.g., planet surface $r = R_E$):</p>
+                $$K_i = \frac{1}{2} m v_{\text{esc}}^2$$
+                $$U_i = -\frac{GMm}{r}$$
+
+                <p><strong>Step 3: Define boundary conditions at infinity ($r \to \infty$):</strong></p>
+                <p>By definition, escape velocity is the <em>minimum</em> initial speed needed to just reach infinity, meaning the object arrives at $r = \infty$ with zero leftover speed ($v_f = 0$):</p>
+                $$K_f = \frac{1}{2} m (0)^2 = 0$$
+                $$U_f = -\frac{GMm}{\infty} = 0$$
+                $$\implies E_{\text{final}} = K_f + U_f = 0 + 0 = 0$$
+
+                <p><strong>Step 4: Substitute energy terms into conservation equation:</strong></p>
+                $$\frac{1}{2} m v_{\text{esc}}^2 + \left( -\frac{GMm}{r} \right) = 0$$
+                $$\frac{1}{2} m v_{\text{esc}}^2 = \frac{GMm}{r}$$
+
+                <p><strong>Step 5: Cancel projectile mass $m$ and solve for $v_{\text{esc}}$:</strong></p>
+                <p>Divide both sides by mass $m$:</p>
+                $$\frac{1}{2} v_{\text{esc}}^2 = \frac{GM}{r}$$
+                $$v_{\text{esc}}^2 = \frac{2GM}{r}$$
+                $$v_{\text{esc}} = \sqrt{\frac{2GM}{r}} \quad \blacksquare$$
+            </div>
+
+            <!-- Vector Diagram Card: Energy & Escape Trajectories -->
+            <div class="vector-diagram-card">
+                <svg width="540" height="280" viewBox="0 0 540 280" style="background: transparent;">
+                    <!-- Planet Center -->
+                    <circle cx="80" cy="140" r="45" fill="rgba(0,240,255,0.2)" stroke="#00f0ff" stroke-width="2"/>
+                    <text x="80" y="145" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Planet (M)</text>
+
+                    <!-- Trajectory 1: Sub-escape (Bound Ellipse / Arc) v < v_esc -->
+                    <path d="M 125 140 Q 220 50, 180 180" fill="none" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="4"/>
+                    <circle cx="180" cy="180" r="4" fill="#ef4444"/>
+                    <text x="190" y="195" fill="#ef4444" font-family="sans-serif" font-size="11">v < v_esc (Falls back, E < 0)</text>
+
+                    <!-- Trajectory 2: Circular Orbit v = v_orbit -->
+                    <circle cx="80" cy="140" r="80" fill="none" stroke="#00e676" stroke-width="2"/>
+                    <text x="170" y="130" fill="#00e676" font-family="sans-serif" font-size="11">v = v_orbit (Circular, E < 0)</text>
+
+                    <!-- Trajectory 3: Parabolic Escape Trajectory v = v_esc -->
+                    <path d="M 125 140 Q 280 140, 500 40" fill="none" stroke="#ffd700" stroke-width="3"/>
+                    <text x="340" y="65" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="12">v = v_esc (Parabola, E = 0)</text>
+
+                    <!-- Trajectory 4: Hyperbolic Escape Trajectory v > v_esc -->
+                    <path d="M 125 140 Q 320 140, 520 90" fill="none" stroke="#b026ff" stroke-width="2.5" stroke-dasharray="5"/>
+                    <text x="350" y="115" fill="#b026ff" font-family="sans-serif" font-size="11">v > v_esc (Hyperbola, E > 0)</text>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 1: Trajectory types based on initial launch velocity relative to $v_{\text{esc}}$ and $v_{\text{orbit}}$.</p>
+            </div>
+
+            <div class="formula-callout-box">
+                <h4>Hyperbolic Excess Velocity ($v_\infty$) — What if $v_{\text{launch}} > v_{\text{esc}}$?</h4>
+                <p>If a spacecraft is launched with speed $v_0 > v_{\text{esc}}$, it will NOT come to a stop at infinity. It arrives at infinity with leftover kinetic energy!</p>
+                <p>Leftover Speed at Infinity: $$v_\infty = \sqrt{v_0^2 - v_{\text{esc}}^2}$$</p>
+            </div>
+
+            <div class="misconception-box">
+                <h4>HSC Real-World Reality Check: Do Rockets Need $11.2\text{ km/s}$ at Launch?</h4>
+                <p><strong>Common Confusion:</strong> Students often ask: <em>"If Saturn V rockets only travelled at a few km/s during launch in Earth's lower atmosphere, how did they escape Earth?"</em></p>
+                <p><strong>The Explanation:</strong> $v_{\text{esc}} = \sqrt{\frac{2GM}{r}}$ is the theoretical minimum speed for an <strong>unpowered projectile</strong> (like a cannonball fired instantaneously with no engines). Real rockets carry continuous fuel and burn engines over time (powered flight). A continuous thruster could theoretically climb out of Earth's gravity well at $1\text{ km/h}$, as long as fuel is burned continuously to provide thrust against gravity!</p>
+            </div>
+        </section>
+
+        <!-- 4. Dynamic Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Dynamic Interactive Workbench: Planetary Escape Velocity & Trajectory Launcher</h2>
+            <p>Select a celestial body, adjust the initial launch speed ($v_0$) and altitude ($h$), then fire the projectile. Observe the energy transformation graph and trajectory classification in real time!</p>
+
+            <div class="sim-container">
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-body">Celestial Body: <span id="disp-body-name" class="sim-value-display">Earth</span></label>
+                        <select id="sim-body" onchange="updateSimBody()">
+                            <option value="earth">Earth (M = 5.97 × 10²⁴ kg, R = 6,371 km)</option>
+                            <option value="moon">Moon (M = 7.35 × 10²² kg, R = 1,737 km)</option>
+                            <option value="mars">Mars (M = 6.42 × 10²³ kg, R = 3,390 km)</option>
+                            <option value="jupiter">Jupiter (M = 1.90 × 10²⁷ kg, R = 69,910 km)</option>
+                        </select>
+                    </div>
+
+                    <div class="sim-control-group">
+                        <label for="sim-vlaunch">Launch Speed ($v_0$): <span id="disp-vlaunch" class="sim-value-display">11.20 km/s</span></label>
+                        <input type="range" id="sim-vlaunch" min="1.0" max="60.0" value="11.2" step="0.2" oninput="updateSimData()">
+                    </div>
+
+                    <div class="sim-control-group">
+                        <label for="sim-alt">Launch Altitude ($h$): <span id="disp-alt" class="sim-value-display">0 km (Surface)</span></label>
+                        <input type="range" id="sim-alt" min="0" max="20000" value="0" step="200" oninput="updateSimData()">
+                    </div>
+                </div>
+
+                <div class="sim-btn-row">
+                    <button class="sim-btn" onclick="fireLaunch()">Launch Projectile!</button>
+                    <button class="sim-btn" onclick="setSpeedToEscape()">Set Speed to Exact Escape Velocity ($v_{\text{esc}}$)</button>
+                    <button class="sim-btn" onclick="setSpeedToOrbital()">Set Speed to Circular Orbital Velocity ($v_{\text{orbit}}$)</button>
+                </div>
+
+                <canvas id="escapeCanvas" width="800" height="440"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Required v_esc</div>
+                        <div class="value" id="out-sim-vesc">11.19 km/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Launch Speed (v₀)</div>
+                        <div class="value" id="out-sim-v0">11.20 km/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Total Specific Energy (E/m)</div>
+                        <div class="value" id="out-sim-spec-e">+0.11 MJ/kg</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Leftover Speed (v_∞)</div>
+                        <div class="value" id="out-sim-vinf">0.47 km/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Trajectory Classification</div>
+                        <div class="value" id="out-sim-status" style="color: var(--accent-cyan);">HYPERBOLIC ESCAPE</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): Earth Surface Escape Velocity</h4>
+                    <span class="marks-allocated">[Direct Formula Calculation]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the escape velocity from the surface of Earth ($M_E = 5.97 \times 10^{24}\text{ kg}$, $R_E = 6.371 \times 10^6\text{ m}$). Express your answer in $\text{km/s}$ to 3 significant figures.</p>
+
+                    <!-- Scenario SVG Diagram for Example 1 -->
+                    <div class="vector-diagram-card">
+                        <svg width="480" height="200" viewBox="0 0 480 200" style="background: transparent;">
+                            <circle cx="120" cy="100" r="50" fill="rgba(0,240,255,0.2)" stroke="#00f0ff" stroke-width="2"/>
+                            <text x="120" y="105" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Earth</text>
+
+                            <!-- Launch Vector -->
+                            <circle cx="170" cy="100" r="5" fill="#ffd700"/>
+                            <line x1="170" y1="100" x2="380" y2="100" stroke="#ffd700" stroke-width="2.5"/>
+                            <polygon points="380,100 370,95 370,105" fill="#ffd700"/>
+                            <text x="275" y="85" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">v_esc to Infinity (r = ∞)</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 2: Surface escape velocity calculation geometry.</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Step 1: Write down universal escape velocity equation:</strong></p>
+                        $$v_{\text{esc}} = \sqrt{\frac{2GM_E}{R_E}}$$
+
+                        <p><strong>Step 2: Substitute given constant values:</strong></p>
+                        $$v_{\text{esc}} = \sqrt{\frac{2 \times (6.67 \times 10^{-11}\text{ N}\cdot\text{m}^2/\text{kg}^2) \times (5.97 \times 10^{24}\text{ kg})}{6.371 \times 10^6\text{ m}}}$$
+
+                        <p><strong>Step 3: Calculate intermediate products:</strong></p>
+                        $$v_{\text{esc}} = \sqrt{\frac{7.964 \times 10^{14}}{6.371 \times 10^6}} = \sqrt{1.250 \times 10^8\text{ m}^2/\text{s}^2}$$
+
+                        <p><strong>Step 4: Solve for speed and convert to $\text{km/s}$:</strong></p>
+                        $$v_{\text{esc}} = 11,180\text{ m/s} = \mathbf{11.2\text{ km/s}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Escape Velocity from High-Altitude Orbit</h4>
+                    <span class="marks-allocated">[Altitude Correction]</span>
+                </div>
+                <div class="question-body">
+                    <p>A spacecraft is parked in a circular Low Earth Orbit at an altitude $h = 1000\text{ km}$ above Earth's surface ($R_E = 6.371 \times 10^6\text{ m}$).</p>
+                    <p>a) Calculate the orbital radius $r$.<br>b) Calculate the additional speed ($\Delta v$) needed to escape Earth from this altitude compared to its existing circular orbital speed.</p>
+
+                    <!-- Scenario SVG Diagram for Example 2 -->
+                    <div class="vector-diagram-card">
+                        <svg width="480" height="200" viewBox="0 0 480 200" style="background: transparent;">
+                            <circle cx="150" cy="100" r="40" fill="rgba(0,240,255,0.2)" stroke="#00f0ff" stroke-width="2"/>
+                            <circle cx="150" cy="100" r="75" fill="none" stroke="#00e676" stroke-width="1.5" stroke-dasharray="3"/>
+                            <circle cx="225" cy="100" r="5" fill="#ffd700"/>
+                            <text x="150" y="105" fill="#00f0ff" font-family="sans-serif" font-size="11" text-anchor="middle">Earth</text>
+                            <text x="225" y="85" fill="#ffd700" font-family="sans-serif" font-size="10" text-anchor="middle">Orbit (h = 1000 km)</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 3: Orbital radius including altitude $h = 1000\text{ km}$.</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Calculate total radial distance $r$:</strong></p>
+                        $$r = R_E + h = 6.371 \times 10^6 + 1.000 \times 10^6 = \mathbf{7.371 \times 10^6\text{ m}}$$
+
+                        <p><strong>Part b) Calculate existing circular orbital speed ($v_{\text{orbit}}$) and escape speed ($v_{\text{esc}}$):</strong></p>
+                        $$v_{\text{orbit}} = \sqrt{\frac{GM_E}{r}} = \sqrt{\frac{(6.67 \times 10^{-11})(5.97 \times 10^{24})}{7.371 \times 10^6}} = \sqrt{5.401 \times 10^7} = \mathbf{7349\text{ m/s}} \quad (7.35\text{ km/s})$$
+
+                        $$v_{\text{esc}} = \sqrt{2} \times v_{\text{orbit}} = 1.4142 \times 7349 = \mathbf{10,393\text{ m/s}} \quad (10.39\text{ km/s})$$
+
+                        <p><strong>Part c) Calculate additional speed boost ($\Delta v$):</strong></p>
+                        $$\Delta v = v_{\text{esc}} - v_{\text{orbit}} = 10,393 - 7349 = \mathbf{3044\text{ m/s}} \quad (3.04\text{ km/s})$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Comparing Planetary Surface Escape Velocities</h4>
+                    <span class="marks-allocated">[Ratio Analysis & Density Model]</span>
+                </div>
+                <div class="question-body">
+                    <p>Planet X has twice the mass ($M_X = 2 M_E$) and twice the radius ($R_X = 2 R_E$) of Earth.</p>
+                    <p>a) Derive an expression for the escape velocity of Planet X ($v_{\text{esc, X}}$) in terms of Earth's escape velocity ($v_{\text{esc, E}}$).<br>b) State whether a spacecraft requires more, less, or equal speed to escape Planet X compared to Earth.</p>
+
+                    <!-- Scenario SVG Diagram for Example 3 -->
+                    <div class="vector-diagram-card">
+                        <svg width="480" height="200" viewBox="0 0 480 200" style="background: transparent;">
+                            <!-- Earth -->
+                            <circle cx="120" cy="100" r="30" fill="rgba(0,240,255,0.2)" stroke="#00f0ff" stroke-width="2"/>
+                            <text x="120" y="105" fill="#00f0ff" font-family="sans-serif" font-size="11" text-anchor="middle">Earth (M, R)</text>
+
+                            <!-- Planet X -->
+                            <circle cx="320" cy="100" r="60" fill="rgba(176,38,255,0.2)" stroke="#b026ff" stroke-width="2"/>
+                            <text x="320" y="105" fill="#b026ff" font-family="sans-serif" font-size="11" text-anchor="middle">Planet X (2M, 2R)</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 4: Comparative planetary parameters for Earth vs Planet X.</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Algebraic Substitution into Escape Formula:</strong></p>
+                        $$v_{\text{esc, X}} = \sqrt{\frac{2 G M_X}{R_X}} = \sqrt{\frac{2 G (2 M_E)}{2 R_E}}$$
+
+                        <p>Cancel factor of 2 in numerator and denominator inside the square root:</p>
+                        $$v_{\text{esc, X}} = \sqrt{\frac{2 G M_E}{R_E}} = v_{\text{esc, E}} \quad \blacksquare$$
+
+                        <p><strong>Part b) Conclusion:</strong></p>
+                        <p>The escape velocity of Planet X is <strong>identical</strong> to Earth's escape velocity ($11.2\text{ km/s}$). Doubling the mass doubles the gravitational energy well depth, but doubling the surface radius places the launch point twice as far from the center, perfectly balancing out the factor of 2!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension - Band 6 Separator): Hyperbolic Excess Speed Calculation</h4>
+                    <span class="marks-allocated">[Energy Conservation with Leftover Speed]</span>
+                </div>
+                <div class="question-body">
+                    <p>An interplanetary probe is launched vertically from Earth's surface ($v_{\text{esc}} = 11.2\text{ km/s}$) with an initial launch velocity $v_0 = 15.0\text{ km/s}$.</p>
+                    <p>Calculate the leftover speed of the probe ($v_\infty$) after it has completely exited Earth's gravitational field into deep space.</p>
+
+                    <!-- Scenario SVG Diagram for Example 4 -->
+                    <div class="vector-diagram-card">
+                        <svg width="480" height="200" viewBox="0 0 480 200" style="background: transparent;">
+                            <circle cx="80" cy="100" r="35" fill="rgba(0,240,255,0.2)" stroke="#00f0ff" stroke-width="2"/>
+                            <line x1="115" y1="100" x2="420" y2="100" stroke="#b026ff" stroke-width="2.5"/>
+                            <polygon points="420,100 410,95 410,105" fill="#b026ff"/>
+                            <text x="170" y="85" fill="#00f0ff" font-family="sans-serif" font-size="11">Launch v₀ = 15 km/s</text>
+                            <text x="360" y="85" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="11">Leftover v_∞ at Infinity</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 5: Over-escape trajectory leaving residual velocity at infinity.</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Full Band 6 Solution:</h5>
+
+                        <p><strong>Step 1: Write initial and final energy conservation equation:</strong></p>
+                        $$E_i = E_f \implies \frac{1}{2} m v_0^2 - \frac{GM_E m}{R_E} = \frac{1}{2} m v_\infty^2 + 0$$
+
+                        <p><strong>Step 2: Recognize that $\frac{GM_E m}{R_E} = \frac{1}{2} m v_{\text{esc}}^2$:</strong></p>
+                        $$\frac{1}{2} m v_0^2 - \frac{1}{2} m v_{\text{esc}}^2 = \frac{1}{2} m v_\infty^2$$
+
+                        <p><strong>Step 3: Cancel $\frac{1}{2} m$ across all terms:</strong></p>
+                        $$v_0^2 - v_{\text{esc}}^2 = v_\infty^2 \implies v_\infty = \sqrt{v_0^2 - v_{\text{esc}}^2}$$
+
+                        <p><strong>Step 4: Substitute launch values ($v_0 = 15.0\text{ km/s}, v_{\text{esc}} = 11.2\text{ km/s}$):</strong></p>
+                        $$v_\infty = \sqrt{(15.0)^2 - (11.2)^2} = \sqrt{225 - 125.44} = \sqrt{99.56} = \mathbf{9.98\text{ km/s}}$$
+
+                        <p><em>Notice: Leftover speed ($9.98\text{ km/s}$) is NOT simply $15.0 - 11.2 = 3.8\text{ km/s}$ because energy depends on speed squared ($v^2$)!</em></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Four Practice Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Scenario Diagrams & Marking Criteria</h2>
+            <p>Attempt the practice questions below and log your marks into the self-assessment tracking system.</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-18-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Lunar Escape Velocity Calculation</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Calculate the escape velocity from the surface of the Moon ($M_M = 7.35 \times 10^{22}\text{ kg}$, $R_M = 1.737 \times 10^6\text{ m}$). Express your answer in $\text{km/s}$ to 3 significant figures.</p>
+
+                    <!-- Scenario SVG Diagram Q1 -->
+                    <div class="vector-diagram-card">
+                        <svg width="450" height="180" viewBox="0 0 450 180" style="background: transparent;">
+                            <circle cx="100" cy="90" r="45" fill="rgba(255,255,255,0.15)" stroke="#ffffff" stroke-width="2"/>
+                            <text x="100" y="95" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Moon</text>
+                            <circle cx="145" cy="90" r="5" fill="#ffd700"/>
+                            <line x1="145" y1="90" x2="360" y2="90" stroke="#ffd700" stroke-width="2"/>
+                            <polygon points="360,90 350,85 350,95" fill="#ffd700"/>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 6: Lunar surface launch diagram.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-18-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-18-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-18-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Substitute Moon parameters directly into $v_{\text{esc}} = \sqrt{\frac{2GM}{r}}$. Convert $\text{m/s}$ to $\text{km/s}$ by dividing by $1000$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-18-easy" style="display: none;">
+                    <div class="worked-solution">
+                        $$v_{\text{esc}} = \sqrt{\frac{2 \times (6.67 \times 10^{-11}) \times (7.35 \times 10^{22})}{1.737 \times 10^6}}$$
+                        $$v_{\text{esc}} = \sqrt{\frac{9.8049 \times 10^{12}}{1.737 \times 10^6}} = \sqrt{5.6447 \times 10^6} = \mathbf{2376\text{ m/s}} = \mathbf{2.38\text{ km/s}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Using $v_{\text{esc}} = \sqrt{\frac{2GM_M}{R_M}}$, substituting $M_M = 7.35 \times 10^{22}\text{ kg}$ and $R_M = 1.737 \times 10^6\text{ m}$ yields $v_{\text{esc}} = \sqrt{\frac{2(6.67 \times 10^{-11})(7.35 \times 10^{22})}{1.737 \times 10^6}} = 2376\text{ m/s} = 2.38\text{ km/s}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Selects correct formula $v_{\text{esc}} = \sqrt{\frac{2GM}{r}}$.</li>
+                            <li><strong>2 Marks:</strong> Substitutes Moon values correctly.</li>
+                            <li><strong>3 Marks:</strong> Obtains final answer $2.38\text{ km/s}$ with units and 3 sig figs.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-18-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-18-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('18-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-18-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-18-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Derivation of Mass Independence</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Explain why a heavy space station and a small wrench require the exact same escape velocity when launched from the same location in space. Support your response with a algebraic proof based on conservation of energy.</p>
+
+                    <!-- Scenario SVG Diagram Q2 -->
+                    <div class="vector-diagram-card">
+                        <svg width="450" height="180" viewBox="0 0 450 180" style="background: transparent;">
+                            <circle cx="100" cy="90" r="35" fill="rgba(0,240,255,0.2)" stroke="#00f0ff"/>
+                            <rect x="200" y="50" width="30" height="20" fill="#ffd700"/>
+                            <text x="215" y="40" fill="#ffd700" font-family="sans-serif" font-size="10" text-anchor="middle">Station (100,000 kg)</text>
+
+                            <circle cx="215" cy="130" r="3" fill="#00e676"/>
+                            <text x="215" y="150" fill="#00e676" font-family="sans-serif" font-size="10" text-anchor="middle">Wrench (0.5 kg)</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 7: Comparing escape dynamics for contrasting payload masses.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-18-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-18-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-18-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Write $K_i + U_i = 0$ and show that projectile mass $m$ appears in both $K = \frac{1}{2}mv^2$ and $U = -\frac{GMm}{r}$, allowing $m$ to be cancelled out.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-18-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Algebraic Proof:</strong></p>
+                        $$\frac{1}{2} m v_{\text{esc}}^2 - \frac{GMm}{r} = 0 \implies \frac{1}{2} m v_{\text{esc}}^2 = \frac{GMm}{r}$$
+                        <p>Dividing both sides by $m$ cancels the payload mass completely:</p>
+                        $$v_{\text{esc}} = \sqrt{\frac{2GM}{r}}$$
+                        <p>Since payload mass $m$ does not appear in the final formula, escape velocity is independent of mass.</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"By conservation of mechanical energy, escape occurs when initial kinetic energy equals initial potential energy magnitude: $\frac{1}{2} m v_{\text{esc}}^2 = \frac{GMm}{r}$. Because both kinetic energy and gravitational potential energy are directly proportional to payload mass $m$, dividing both sides by $m$ yields $v_{\text{esc}} = \sqrt{\frac{2GM}{r}}$. Since $m$ cancels out, the required escape velocity depends solely on central body mass $M$ and radius $r$, making it identical for both the space station and the wrench."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Equates initial energy terms to zero ($K_i + U_i = 0$).</li>
+                            <li><strong>2 Marks:</strong> Explicitly shows cancellation of payload mass $m$.</li>
+                            <li><strong>3 Marks:</strong> Obtains final formula $v_{\text{esc}} = \sqrt{\frac{2GM}{r}}$.</li>
+                            <li><strong>4 Marks:</strong> Connects formula absence of $m$ to physical independence of payload mass.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-18-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-18-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('18-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-18-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard -->
+            <div class="practise-question" id="question-18-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard): Orbital Speed vs Escape Speed Ratio Proof</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Prove algebraically that for any circular orbit around a central body, the escape velocity from that orbital radius is always $\sqrt{2}$ times the circular orbital velocity ($v_{\text{esc}} = \sqrt{2} v_{\text{orbit}}$). Explain the physical significance of this ratio for spacecraft trajectory maneuvers.</p>
+
+                    <!-- Scenario SVG Diagram Q3 -->
+                    <div class="vector-diagram-card">
+                        <svg width="450" height="180" viewBox="0 0 450 180" style="background: transparent;">
+                            <circle cx="225" cy="90" r="30" fill="rgba(0,240,255,0.2)"/>
+                            <circle cx="225" cy="90" r="70" fill="none" stroke="#00e676" stroke-dasharray="3"/>
+                            <circle cx="295" cy="90" r="5" fill="#ffd700"/>
+                            <text x="295" y="75" fill="#ffd700" font-family="sans-serif" font-size="10" text-anchor="middle">Ratio = √2 ≈ 1.414</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 8: Orbital vs escape velocity vector ratio visual.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-18-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-18-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-18-hard" style="display: none;">
+                    <p><strong>Hint:</strong> Write $v_{\text{orbit}} = \sqrt{\frac{GM}{r}}$ and $v_{\text{esc}} = \sqrt{\frac{2GM}{r}}$. Divide $v_{\text{esc}} / v_{\text{orbit}}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-18-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Mathematical Proof:</strong></p>
+                        $$v_{\text{orbit}} = \sqrt{\frac{GM}{r}}$$
+                        $$v_{\text{esc}} = \sqrt{\frac{2GM}{r}} = \sqrt{2 \times \frac{GM}{r}} = \sqrt{2} \times \sqrt{\frac{GM}{r}}$$
+                        $$\implies v_{\text{esc}} = \sqrt{2} \times v_{\text{orbit}} \quad \blacksquare$$
+
+                        <p><strong>Physical Significance:</strong></p>
+                        <p>To break out of a circular orbit into an open escape path, a satellite only needs to increase its speed by approximately $41.4\%$ ($\sqrt{2} - 1 = 0.414$). This means a satellite already in orbit has already paid half of the kinetic energy cost required to escape to infinity!</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Circular orbital speed is $v_{\text{orbit}} = \sqrt{GM/r}$. Escape speed is $v_{\text{esc}} = \sqrt{2GM/r} = \sqrt{2}\sqrt{GM/r} = \sqrt{2} v_{\text{orbit}}$. Physically, this shows that an orbiting satellite already possesses half the kinetic energy needed for escape ($K_{\text{orbit}} = \frac{1}{2} |U|$, whereas $K_{\text{esc}} = |U|$). Thus, a thruster boost of only $41.4\%$ additional velocity ($\Delta v = (\sqrt{2}-1)v_{\text{orbit}}$) is required to break orbit and escape to infinity."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Writes formulas for $v_{\text{orbit}}$ and $v_{\text{esc}}$.</li>
+                            <li><strong>2 Marks:</strong> Executes algebraic proof showing $v_{\text{esc}} = \sqrt{2} v_{\text{orbit}}$.</li>
+                            <li><strong>3 Marks:</strong> Connects speed ratio to kinetic energy double relationship ($K_{\text{esc}} = 2 K_{\text{orbit}}$).</li>
+                            <li><strong>4 Marks:</strong> Explains that speed must increase by $41.4\%$.</li>
+                            <li><strong>5 Marks:</strong> Highlights practical significance for spacecraft thruster burn requirements.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-18-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-18-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('18-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-18-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension -->
+            <div class="practise-question" id="question-18-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (JRAHS Extension): Super-Escape Velocity & Deep Space Kinetic Energy</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A deep-space probe ($m = 1200\text{ kg}$) is launched from Earth's surface ($v_{\text{esc}} = 11.2\text{ km/s}$) with a kinetic energy of $1.50 \times 10^{11}\text{ J}$.</p>
+                    <p>a) Calculate the launch velocity $v_0$.<br>b) Verify that the probe has enough energy to escape Earth.<br>c) Calculate the probe's residual velocity $v_\infty$ when it reaches deep space far beyond Earth's gravity.</p>
+
+                    <!-- Scenario SVG Diagram Q4 -->
+                    <div class="vector-diagram-card">
+                        <svg width="450" height="180" viewBox="0 0 450 180" style="background: transparent;">
+                            <circle cx="80" cy="90" r="35" fill="rgba(0,240,255,0.2)"/>
+                            <line x1="115" y1="90" x2="380" y2="90" stroke="#ffd700" stroke-width="2.5"/>
+                            <polygon points="380,90 370,85 370,95" fill="#ffd700"/>
+                            <text x="240" y="75" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle">Deep Space Residual Velocity Test</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 9: Residual velocity evaluation scenario diagram.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-18-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-18-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-18-extension" style="display: none;">
+                    <p><strong>Hint:</strong> Launch kinetic energy $K_0 = \frac{1}{2} m v_0^2 \implies v_0 = \sqrt{\frac{2 K_0}{m}}$. Potential energy magnitude $|U| = \frac{1}{2} m v_{\text{esc}}^2$. Leftover $v_\infty = \sqrt{v_0^2 - v_{\text{esc}}^2}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-18-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Part a) Calculate Launch Speed ($v_0$):</strong></p>
+                        $$K_0 = \frac{1}{2} m v_0^2 \implies v_0 = \sqrt{\frac{2 K_0}{m}} = \sqrt{\frac{2(1.50 \times 10^{11})}{1200}} = \sqrt{2.50 \times 10^8} = \mathbf{15,811\text{ m/s}} \quad (15.81\text{ km/s})$$
+
+                        <p><strong>Part b) Escape Energy Verification:</strong></p>
+                        <p>Minimum kinetic energy to escape ($K_{\text{esc}}$):</p>
+                        $$K_{\text{esc}} = \frac{1}{2} m v_{\text{esc}}^2 = \frac{1}{2}(1200)(11,200)^2 = 7.526 \times 10^{10}\text{ J} \quad (75.26\text{ GJ})$$
+                        <p>Since $K_0 = 150.0\text{ GJ} > 75.26\text{ GJ}$, the probe has more than enough energy to escape ($E_{\text{total}} > 0$).</p>
+
+                        <p><strong>Part c) Residual Velocity at Infinity ($v_\infty$):</strong></p>
+                        $$v_\infty = \sqrt{v_0^2 - v_{\text{esc}}^2} = \sqrt{(15.811)^2 - (11.200)^2} = \sqrt{250.0 - 125.44} = \sqrt{124.56} = \mathbf{11.16\text{ km/s}} \quad (11,160\text{ m/s})$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Launch speed is $v_0 = \sqrt{2K/m} = \sqrt{2(1.5 \times 10^{11})/1200} = 15.81\text{ km/s}$. Since $v_0 > 11.2\text{ km/s}$, escape is guaranteed. Using energy conservation $\frac{1}{2} m v_0^2 - \frac{1}{2} m v_{\text{esc}}^2 = \frac{1}{2} m v_\infty^2 \implies v_\infty = \sqrt{v_0^2 - v_{\text{esc}}^2} = \sqrt{15.811^2 - 11.2^2} = 11.16\text{ km/s}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Calculates launch velocity $v_0 = 15.81\text{ km/s}$.</li>
+                            <li><strong>2 Marks:</strong> Calculates minimum escape energy $K_{\text{esc}} = 7.53 \times 10^{10}\text{ J}$.</li>
+                            <li><strong>3 Marks:</strong> Verifies escape condition ($K_0 > K_{\text{esc}}$).</li>
+                            <li><strong>4 Marks:</strong> Applies energy conservation equation for $v_\infty$.</li>
+                            <li><strong>5 Marks:</strong> Substitutes values accurately into $v_\infty = \sqrt{v_0^2 - v_{\text{esc}}^2}$.</li>
+                            <li><strong>6 Marks:</strong> Obtains final answer $11.16\text{ km/s}$ with correct units and 3 sig figs.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-18-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-18-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('18-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-18-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="17-total-orbital-energy.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 17: Total Orbital Energy</a>
+                <a href="19-module5-summary.html" class="btn-next">Proceed to Lesson 19: Module 5 Formula Cheat-Sheet &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        const G = 6.67e-11;
+        const BODIES = {
+            earth: { name: "Earth", M: 5.97e24, R: 6.371e6 },
+            moon: { name: "Moon", M: 7.35e22, R: 1.737e6 },
+            mars: { name: "Mars", M: 6.42e23, R: 3.390e6 },
+            jupiter: { name: "Jupiter", M: 1.90e27, R: 6.991e7 }
+        };
+
+        let currentBodyKey = "earth";
+        let isAnimating = false;
+        let animProgress = 0;
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('18-easy');
+            checkIfQuestionAnswered('18-medium');
+            checkIfQuestionAnswered('18-hard');
+            checkIfQuestionAnswered('18-extension');
+            
+            initEscapeSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        function updateSimBody() {
+            const sel = document.getElementById('sim-body');
+            currentBodyKey = sel.value;
+            document.getElementById('disp-body-name').innerText = BODIES[currentBodyKey].name;
+            updateSimData();
+        }
+
+        function setSpeedToEscape() {
+            const b = BODIES[currentBodyKey];
+            const alt = parseFloat(document.getElementById('sim-alt').value) * 1000;
+            const r = b.R + alt;
+            const vesc = Math.sqrt((2 * G * b.M) / r) / 1000; // km/s
+            document.getElementById('sim-vlaunch').value = vesc.toFixed(2);
+            updateSimData();
+        }
+
+        function setSpeedToOrbital() {
+            const b = BODIES[currentBodyKey];
+            const alt = parseFloat(document.getElementById('sim-alt').value) * 1000;
+            const r = b.R + alt;
+            const vorb = Math.sqrt((G * b.M) / r) / 1000; // km/s
+            document.getElementById('sim-vlaunch').value = vorb.toFixed(2);
+            updateSimData();
+        }
+
+        function fireLaunch() {
+            isAnimating = true;
+            animProgress = 0;
+        }
+
+        function updateSimData() {
+            const b = BODIES[currentBodyKey];
+            const v0 = parseFloat(document.getElementById('sim-vlaunch').value) * 1000; // m/s
+            const alt = parseFloat(document.getElementById('sim-alt').value) * 1000; // m
+
+            document.getElementById('disp-vlaunch').innerText = (v0 / 1000).toFixed(2) + ' km/s';
+            document.getElementById('disp-alt').innerText = (alt / 1000).toFixed(0) + ' km';
+
+            const r = b.R + alt;
+            const vesc = Math.sqrt((2 * G * b.M) / r);
+            const specE = 0.5 * v0 * v0 - (G * b.M) / r; // E/m J/kg
+
+            document.getElementById('out-sim-vesc').innerText = (vesc / 1000).toFixed(2) + ' km/s';
+            document.getElementById('out-sim-v0').innerText = (v0 / 1000).toFixed(2) + ' km/s';
+            document.getElementById('out-sim-spec-e').innerText = (specE >= 0 ? '+' : '') + (specE / 1e6).toFixed(2) + ' MJ/kg';
+
+            const statusElem = document.getElementById('out-sim-status');
+            const vinfElem = document.getElementById('out-sim-vinf');
+
+            if (v0 >= vesc) {
+                const vinf = Math.sqrt(v0 * v0 - vesc * vesc);
+                vinfElem.innerText = (vinf / 1000).toFixed(2) + ' km/s';
+                if (Math.abs(v0 - vesc) < 50) {
+                    statusElem.innerText = "PARABOLIC ESCAPE (E = 0)";
+                    statusElem.style.color = "#ffd700";
+                } else {
+                    statusElem.innerText = "HYPERBOLIC ESCAPE (E > 0)";
+                    statusElem.style.color = "#b026ff";
+                }
+            } else {
+                vinfElem.innerText = "0.00 km/s (Captured)";
+                statusElem.innerText = "BOUND SUB-ESCAPE (E < 0)";
+                statusElem.style.color = "#ef4444";
+            }
+        }
+
+        /* --- Interactive Escape Canvas Simulator Engine --- */
+        function initEscapeSimulator() {
+            const canvas = document.getElementById('escapeCanvas');
+            const ctx = canvas.getContext('2d');
+
+            function render() {
+                const b = BODIES[currentBodyKey];
+                const v0 = parseFloat(document.getElementById('sim-vlaunch').value) * 1000;
+                const alt = parseFloat(document.getElementById('sim-alt').value) * 1000;
+                const r = b.R + alt;
+                const vesc = Math.sqrt((2 * G * b.M) / r);
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Background Grid
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                // Planet Center
+                const cx = 150;
+                const cy = 220;
+                const bodyPx = 40;
+
+                ctx.fillStyle = 'rgba(0, 240, 255, 0.25)';
+                ctx.strokeStyle = '#00f0ff';
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(cx, cy, bodyPx, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#00f0ff'; ctx.font = '11px sans-serif'; ctx.textAlign = 'center';
+                ctx.fillText(b.name, cx, cy + 4);
+
+                // Launch Altitude Ring
+                const launchPx = bodyPx + (alt / b.R) * 20;
+                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.setLineDash([3,3]);
+                ctx.beginPath(); ctx.arc(cx, cy, launchPx, 0, Math.PI * 2); ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Trajectory Curve Plotting
+                ctx.lineWidth = 3;
+                if (v0 >= vesc) {
+                    ctx.strokeStyle = (v0 === vesc) ? '#ffd700' : '#b026ff';
+                    ctx.beginPath();
+                    ctx.moveTo(cx + launchPx, cy);
+                    ctx.quadraticCurveTo(cx + launchPx + 150, cy, canvas.width - 50, 40);
+                    ctx.stroke();
+                } else {
+                    ctx.strokeStyle = '#ef4444';
+                    const apexPx = launchPx + (v0 / vesc) * 120;
+                    ctx.beginPath();
+                    ctx.moveTo(cx + launchPx, cy);
+                    ctx.quadraticCurveTo(cx + apexPx, cy - 80, cx + launchPx, cy + 80);
+                    ctx.stroke();
+                }
+
+                // Energy Component Bar (Right Side)
+                const barX = 580;
+                const zeroY = 220;
+                const K = 0.5 * v0 * v0;
+                const U = - (G * b.M) / r;
+                const maxScale = (G * b.M) / b.R;
+
+                ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(550, zeroY); ctx.lineTo(760, zeroY); ctx.stroke();
+
+                // K Bar (Green / Up)
+                const kH = (K / maxScale) * 120;
+                ctx.fillStyle = '#00e676';
+                ctx.fillRect(barX, zeroY - kH, 35, kH);
+                ctx.font = '11px sans-serif'; ctx.fillStyle = '#00e676'; ctx.fillText('K', barX + 17, zeroY - kH - 6);
+
+                // U Bar (Red / Down)
+                const uH = (-U / maxScale) * 120;
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(barX + 50, zeroY, 35, uH);
+                ctx.fillStyle = '#ef4444'; ctx.fillText('U', barX + 67, zeroY + uH + 15);
+
+                // Total E Bar (Cyan/Purple)
+                const E = K + U;
+                const eH = Math.abs(E / maxScale) * 120;
+                ctx.fillStyle = E >= 0 ? '#b026ff' : '#00f0ff';
+                if (E >= 0) {
+                    ctx.fillRect(barX + 100, zeroY - eH, 35, eH);
+                    ctx.fillText('E > 0', barX + 117, zeroY - eH - 6);
+                } else {
+                    ctx.fillRect(barX + 100, zeroY, 35, eH);
+                    ctx.fillText('E < 0', barX + 117, zeroY + eH + 15);
+                }
+
+                requestAnimationFrame(render);
+            }
+
+            requestAnimationFrame(render);
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>03. UVTAXY Kinematics Grid & Trajectory Functions - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Specific page enhancements for graphs, tables and interactive workbench */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .symbol-badge {
+            display: inline-block;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.12);
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            font-family: 'SF Mono', Consolas, monospace;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .graph-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .graph-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: var(--transition-smooth);
+        }
+
+        .graph-card:hover {
+            border-color: var(--accent-purple);
+            transform: translateY(-3px);
+        }
+
+        .graph-card h5 {
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        /* Simulator Styles */
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#projectileCanvas {
+            width: 100%;
+            height: 380px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        .exam-warning-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .exam-warning-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .exam-warning-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html" class="active">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>03. UVTAXY Kinematics Grid & Trajectory Functions</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 1</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Inquiry Question</h2>
+            <p><strong>Inquiry Question 1:</strong> <em>How can models that are used to explain projectile motion be used to analyse and make predictions?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus, students must master the following specific outcomes:</p>
+            <ul class="feature-list">
+                <li>Analyse the motion of projectiles by resolving initial velocity vectors into orthogonal horizontal ($u_x$) and vertical ($u_y$) components.</li>
+                <li>Derive, express, and apply time-dependent parametric functions for horizontal velocity ($v_x$), vertical velocity ($v_y$), horizontal displacement ($s_x$), and vertical displacement ($s_y$).</li>
+                <li>Eliminate the scalar time variable $t$ to construct the explicit spatial trajectory equation $y(x)$ representing the inverted parabolic path.</li>
+                <li>Construct and interpret graphical representations of motion ($a_x-t$, $a_y-t$, $v_x-t$, $v_y-t$, $s_x-t$, $s_y-t$, and $s_y-s_x$).</li>
+                <li>Apply uniform acceleration kinematic equations independently using systematic problem-solving frameworks (UVTAXY) to make quantitative predictions for flight time, maximum height, horizontal range, and final impact velocity vectors.</li>
+            </ul>
+        </section>
+
+        <!-- 2. What is Projectile Motion? Foundations -->
+        <section class="content-section" id="projectile-foundations">
+            <h2>What is Projectile Motion? Fundamental Physics Principles</h2>
+            
+            <h3>1. Physical Definition & Universal Characteristics</h3>
+            <p>A <strong>projectile</strong> is defined as any object launched into two-dimensional space that, once projected, continues in motion by its own inertia and is influenced <em>solely</em> by the force of gravity. Crucially, a projectile experiences no self-propulsion (such as a rocket motor) during its flight path, nor does it experience external contact forces after leaving its launcher.</p>
+
+            <p>Every ideal projectile trajectory exhibits three key physical characteristics:</p>
+            <ul class="feature-list">
+                <li><strong>Uniform Constant Horizontal Velocity:</strong> Because no horizontal forces act on the object ($\Sigma F_x = 0$), Newton's First Law of Motion dictates that the horizontal velocity vector component remains absolutely constant throughout the entire flight ($v_x = u_x$).</li>
+                <li><strong>Uniform Vertical Acceleration:</strong> Earth's gravitational force exerts a constant downward pull ($\Sigma F_y = m a_y = -mg$). This causes a uniform vertical acceleration downward at rate $a_y = -g = -9.80\text{ m/s}^2$ near Earth's surface.</li>
+                <li><strong>Symmetric Parabolic Trajectory:</strong> For ground-to-ground launches, the combination of uniform horizontal displacement and uniformly accelerated vertical displacement traces an symmetrical inverted parabolic curve in space.</li>
+            </ul>
+
+            <h3>2. Standard Physics Modelling Assumptions</h3>
+            <p>To mathematically model projectile dynamics at the Year 12 HSC Physics level, NESA mandates four foundational idealisations:</p>
+            <ol class="feature-list" style="padding-left: 1.5rem;">
+                <li><strong>Zero Aerodynamic Resistance:</strong> Air resistance, drag forces, rotational spin effects (Magnus effect), and atmospheric lift forces are assumed completely absent.</li>
+                <li><strong>Uniform Gravitational Acceleration:</strong> The acceleration due to gravity is treated as constant in both magnitude and direction ($g = 9.80\text{ m/s}^2$ downward) over the entire flight domain.</li>
+                <li><strong>Point-Mass Particle Model:</strong> The projectile is treated as an infinitely small point mass without physical dimensions, geometry, or internal rotational motion.</li>
+                <li><strong>Flat Earth Geometry:</strong> The Earth's surface is assumed flat, and atmospheric curvature alongside Coriolis effects are ignored over typical terrestrial ranges.</li>
+            </ol>
+        </section>
+
+        <!-- 3. Deriving Parametric SUVAT Equations -->
+        <section class="content-section" id="equation-derivations">
+            <h2>Deriving the Time-Dependent Parametric Kinematic Equations</h2>
+            <p>Rather than relying on memorised rules, a beginner must understand how the four fundamental $SUVAT$ equations from the NESA HSC Data Sheet derive time-dependent functions $v_x(t)$, $v_y(t)$, $s_x(t)$, and $s_y(t)$ for any launch speed $u$ and launch angle $\theta$.</p>
+
+            <h3>1. The Horizontal Motion Equations ($x$-axis)</h3>
+            <p>Because there is zero horizontal acceleration ($a_x = 0\text{ m/s}^2$):</p>
+
+            <div class="derivation-steps">
+                <h5>A. Horizontal Velocity Function $v_x(t)$:</h5>
+                <p>Applying $v = u + at$ to the horizontal axis:</p>
+                $$v_x(t) = u_x + a_x t = u_x + (0)t \implies \mathbf{v_x(t) = u \cos\theta}$$
+                <p><em>Physical Meaning:</em> Horizontal velocity is constant and completely independent of time $t$.</p>
+
+                <h5>B. Horizontal Displacement Function $s_x(t)$:</h5>
+                <p>Applying $s = ut + \frac{1}{2}at^2$ to the horizontal axis:</p>
+                $$s_x(t) = u_x t + \frac{1}{2}a_x t^2 = u_x t + \frac{1}{2}(0)t^2 \implies \mathbf{s_x(t) = (u \cos\theta)t}$$
+                <p><em>Physical Meaning:</em> Horizontal position increases linearly over time.</p>
+            </div>
+
+            <h3>2. The Vertical Motion Equations ($y$-axis)</h3>
+            <p>Because gravity causes constant downward acceleration ($a_y = -g = -9.80\text{ m/s}^2$):</p>
+
+            <div class="derivation-steps">
+                <h5>A. Vertical Velocity Function $v_y(t)$:</h5>
+                <p>Applying $v = u + at$ to the vertical axis:</p>
+                $$v_y(t) = u_y + a_y t \implies \mathbf{v_y(t) = u \sin\theta - gt}$$
+                <p><em>Physical Meaning:</em> Vertical velocity decreases linearly at a rate of $9.80\text{ m/s}$ every second, reaching $0\text{ m/s}$ at apex peak before turning negative during descent.</p>
+
+                <h5>B. Vertical Displacement Function $s_y(t)$:</h5>
+                <p>Applying $s = ut + \frac{1}{2}at^2$ to the vertical axis:</p>
+                $$s_y(t) = u_y t + \frac{1}{2}a_y t^2 \implies \mathbf{s_y(t) = (u \sin\theta)t - \frac{1}{2}gt^2}$$
+                <p><em>Physical Meaning:</em> Vertical displacement is a quadratic function of time, producing an inverted parabolic height profile.</p>
+
+                <h5>C. Vertical Velocity-Displacement Relation $v_y(s_y)$:</h5>
+                <p>Applying $v^2 = u^2 + 2as$ to the vertical axis:</p>
+                $$\mathbf{v_y^2 = (u \sin\theta)^2 - 2g s_y}$$
+                <p><em>Physical Meaning:</em> Allows direct calculation of vertical velocity at any height $s_y$ without needing time $t$.</p>
+            </div>
+
+            <h3>3. Deriving the Parabolic Trajectory Equation $y(x)$</h3>
+            <p>To find the spatial path of the projectile (the equation relating vertical height $s_y$ directly to horizontal displacement $s_x$ without time), we eliminate $t$:</p>
+
+            <div class="derivation-steps">
+                <p><strong>Step 1:</strong> Rearrange the horizontal displacement equation for $t$:</p>
+                $$s_x = (u \cos\theta)t \implies t = \frac{s_x}{u \cos\theta}$$
+
+                <p><strong>Step 2:</strong> Substitute this expression for $t$ into the vertical displacement function:</p>
+                $$s_y = (u \sin\theta)\left(\frac{s_x}{u \cos\theta}\right) - \frac{1}{2}g\left(\frac{s_x}{u \cos\theta}\right)^2$$
+
+                <p><strong>Step 3:</strong> Simplify using trigonometric identity $\frac{\sin\theta}{\cos\theta} = \tan\theta$:</p>
+                $$\mathbf{s_y(s_x) = s_x \tan\theta - \frac{g}{2 u^2 \cos^2\theta} s_x^2}$$
+
+                <p>Notice the mathematical form of this equation! Letting $A = \tan\theta$ and $B = \frac{g}{2 u^2 \cos^2\theta}$, the relation becomes:</p>
+                $$s_y = A s_x - B s_x^2$$
+                <p>This is the standard equation of a concave-downward inverted parabola passing through the origin $(0,0)$, mathematically proving that ideal projectiles follow parabolic paths!</p>
+            </div>
+        </section>
+
+        <!-- 4. Graphical Analysis of Projectile Motion -->
+        <section class="content-section" id="graphical-analysis">
+            <h2>Graphical Analysis of Projectile Motion</h2>
+            <p>HSC examination questions frequently evaluate student understanding through motion graphs. Below are the seven core kinematic graphs describing projectile behavior.</p>
+
+            <div class="graph-grid-container">
+                <!-- Graph 1: Horizontal Velocity vs Time -->
+                <div class="graph-card">
+                    <h5>Horizontal Velocity ($v_x$ vs $t$)</h5>
+                    <svg width="220" height="150" viewBox="0 0 220 150">
+                        <line x1="30" y1="120" x2="200" y2="120" stroke="#a0aec0" stroke-width="2"/>
+                        <line x1="30" y1="120" x2="30" y2="20" stroke="#a0aec0" stroke-width="2"/>
+                        <line x1="30" y1="50" x2="190" y2="50" stroke="#00f0ff" stroke-width="3"/>
+                        <text x="100" y="140" fill="#a0aec0" font-size="12">Time t (s)</text>
+                        <text x="10" y="45" fill="#00f0ff" font-size="12">v_x</text>
+                    </svg>
+                    <p style="font-size:0.85rem; color:var(--text-secondary);">Horizontal line ($a_x = 0$). Area under line equals range $s_x$.</p>
+                </div>
+
+                <!-- Graph 2: Vertical Velocity vs Time -->
+                <div class="graph-card">
+                    <h5>Vertical Velocity ($v_y$ vs $t$)</h5>
+                    <svg width="220" height="150" viewBox="0 0 220 150">
+                        <line x1="30" y1="75" x2="200" y2="75" stroke="#a0aec0" stroke-width="2"/>
+                        <line x1="30" y1="130" x2="30" y2="10" stroke="#a0aec0" stroke-width="2"/>
+                        <line x1="30" y1="25" x2="190" y2="125" stroke="#b026ff" stroke-width="3"/>
+                        <text x="100" y="145" fill="#a0aec0" font-size="12">Time t (s)</text>
+                        <text x="10" y="25" fill="#b026ff" font-size="12">+u_y</text>
+                        <text x="10" y="125" fill="#b026ff" font-size="12">-u_y</text>
+                    </svg>
+                    <p style="font-size:0.85rem; color:var(--text-secondary);">Linear negative gradient = $-9.80\text{ m/s}^2$. Crosses $v_y=0$ at apex peak.</p>
+                </div>
+
+                <!-- Graph 3: Horizontal Displacement vs Time -->
+                <div class="graph-card">
+                    <h5>Horizontal Position ($s_x$ vs $t$)</h5>
+                    <svg width="220" height="150" viewBox="0 0 220 150">
+                        <line x1="30" y1="120" x2="200" y2="120" stroke="#a0aec0" stroke-width="2"/>
+                        <line x1="30" y1="120" x2="30" y2="20" stroke="#a0aec0" stroke-width="2"/>
+                        <line x1="30" y1="120" x2="190" y2="30" stroke="#00e676" stroke-width="3"/>
+                        <text x="100" y="140" fill="#a0aec0" font-size="12">Time t (s)</text>
+                        <text x="10" y="30" fill="#00e676" font-size="12">s_x</text>
+                    </svg>
+                    <p style="font-size:0.85rem; color:var(--text-secondary);">Straight line starting from origin. Constant gradient = $u_x$.</p>
+                </div>
+
+                <!-- Graph 4: Vertical Displacement vs Time -->
+                <div class="graph-card">
+                    <h5>Vertical Position ($s_y$ vs $t$)</h5>
+                    <svg width="220" height="150" viewBox="0 0 220 150">
+                        <line x1="30" y1="120" x2="200" y2="120" stroke="#a0aec0" stroke-width="2"/>
+                        <line x1="30" y1="120" x2="30" y2="20" stroke="#a0aec0" stroke-width="2"/>
+                        <path d="M 30 120 Q 110 20 190 120" fill="none" stroke="#ffd700" stroke-width="3"/>
+                        <text x="100" y="140" fill="#a0aec0" font-size="12">Time t (s)</text>
+                        <text x="10" y="30" fill="#ffd700" font-size="12">s_y</text>
+                    </svg>
+                    <p style="font-size:0.85rem; color:var(--text-secondary);">Symmetric parabola. Peak occurs at $t_{\text{apex}} = \frac{1}{2}t_{\text{flight}}$.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. The UVTAXY Table Framework Guide -->
+        <section class="content-section" id="uvtaxy-methodology">
+            <h2>The UVTAXY Grid Framework: Systematic Exam Problem Solving</h2>
+            <p>The <strong>UVTAXY Table</strong> is a structured layout that isolates horizontal and vertical variables. By keeping $x$ and $y$ parameters strictly separated, you eliminate confusion and prevent catastrophic formula mixing in exam questions.</p>
+
+            <div class="uvtaxy-table-container">
+                <table class="uvtaxy-grid-table">
+                    <thead>
+                        <tr>
+                            <th>Variable Symbol</th>
+                            <th>Physical Meaning</th>
+                            <th>Horizontal Axis ($x$)</th>
+                            <th>Vertical Axis ($y$)</th>
+                            <th>Key Examination Rules</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="symbol-badge">U</span></td>
+                            <td>Initial Launch Velocity</td>
+                            <td>$u_x = u \cos\theta$</td>
+                            <td>$u_y = u \sin\theta$</td>
+                            <td>Resolve using trigonometry first</td>
+                        </tr>
+                        <tr>
+                            <td><span class="symbol-badge">V</span></td>
+                            <td>Final / Instantaneous Velocity</td>
+                            <td>$v_x = u_x$</td>
+                            <td>$v_y = u_y + a_y t$</td>
+                            <td>$v_x$ never changes; $v_y = 0$ at apex</td>
+                        </tr>
+                        <tr>
+                            <td><span class="symbol-badge">T</span></td>
+                            <td>Time Interval</td>
+                            <td>$t$</td>
+                            <td>$t$</td>
+                            <td><strong>Scalar Link:</strong> $t$ connects both axes</td>
+                        </tr>
+                        <tr>
+                            <td><span class="symbol-badge">A</span></td>
+                            <td>Acceleration Rate</td>
+                            <td>$a_x = 0\text{ m/s}^2$</td>
+                            <td>$a_y = -9.80\text{ m/s}^2$</td>
+                            <td>Always populated automatically</td>
+                        </tr>
+                        <tr>
+                            <td><span class="symbol-badge">X / Y</span></td>
+                            <td>Displacement</td>
+                            <td>$s_x = u_x t$</td>
+                            <td>$s_y = u_y t + \frac{1}{2}a_y t^2$</td>
+                            <td>$s_x$ = Range; $s_y$ = Height relative to origin</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h3>Step-by-Step Problem-Solving Procedure</h3>
+            <ol class="feature-list" style="padding-left: 1.5rem;">
+                <li><strong>Draw a Spatial Diagram:</strong> Sketch the launch vector $u$, angle $\theta$, origin $(0,0)$, and trajectory path.</li>
+                <li><strong>Construct & Fill the UVTAXY Grid:</strong> Write down the table and populate known constants ($a_x = 0$, $a_y = -9.80\text{ m/s}^2$). Insert question marks (<span class="symbol-badge">?</span>) for desired unknowns.</li>
+                <li><strong>Resolve Launch Velocity $u$:</strong> Compute $u_x = u\cos\theta$ and $u_y = u\sin\theta$.</li>
+                <li><strong>Solve for Time ($t$) via the Vertical Axis:</strong> Use $s_y = u_y t + \frac{1}{2}a_y t^2$ or $v_y = u_y + a_y t$ to calculate flight time $t$.</li>
+                <li><strong>Bridge Across to the Horizontal Axis:</strong> Substitute scalar time $t$ into $s_x = u_x t$ to find horizontal range.</li>
+                <li><strong>Recombine Vector Components if Required:</strong> If asked for final impact velocity, calculate $v_{\text{impact}} = \sqrt{v_x^2 + v_y^2}$ and direction $\phi = \tan^{-1}\left|\frac{v_y}{v_x}\right|$.</li>
+            </ol>
+
+            <div class="extension-note-box">
+                <h4>Extension 1 Mathematics vs HSC Physics Derivation Guidelines</h4>
+                <p>If you take Mathematics Extension 1 (3U), you are accustomed to integrating second derivatives ($\ddot{x}=0, \ddot{y}=-g$). In HSC Physics, calculus integration is completely unnecessary. Use the standard $SUVAT$ equations directly.</p>
+            </div>
+
+            <div class="exam-warning-box">
+                <h4>HSC Exam Strategy: Short-Answer Questions (SAQs) vs Multiple Choice Questions (MCQs)</h4>
+                <p><strong>MCQs:</strong> You are encouraged to use shortcut formulas like $R = \frac{u^2\sin(2\theta)}{g}$ or $s_{y,\text{max}} = \frac{u^2\sin^2\theta}{2g}$ to save time.</p>
+                <p><strong>SAQs:</strong> <strong>DO NOT use unsupplied shortcut formulas directly without derivation!</strong> They are not on the NESA Physics Formula Sheet. You must start from basic $SUVAT$ equations ($s_y = u_y t + \frac{1}{2}a_y t^2$) and derive your solution line-by-line to secure full marks from NESA markers.</p>
+            </div>
+        </section>
+
+        <!-- 6. Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Interactive Workbench: Trajectory & Vector Visualiser</h2>
+            <p>Adjust the launch parameters below to observe real-time vector breakdown, parabolic path rendering, and live UVTAXY variable tracking.</p>
+
+            <div class="sim-container">
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-speed">Launch Speed ($u$): <span id="disp-speed" class="sim-value-display">30 m/s</span></label>
+                        <input type="range" id="sim-speed" min="10" max="60" value="30" step="1">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-angle">Launch Angle ($\theta$): <span id="disp-angle" class="sim-value-display">45°</span></label>
+                        <input type="range" id="sim-angle" min="5" max="85" value="45" step="1">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-height">Initial Elevation ($h_0$): <span id="disp-height" class="sim-value-display">0 m</span></label>
+                        <input type="range" id="sim-height" min="0" max="40" value="0" step="1">
+                    </div>
+                </div>
+
+                <canvas id="projectileCanvas" width="800" height="380"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">u_x (Horizontal)</div>
+                        <div class="value" id="out-ux">21.21 m/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">u_y (Vertical)</div>
+                        <div class="value" id="out-uy">21.21 m/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Time of Flight</div>
+                        <div class="value" id="out-time">4.33 s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Max Height</div>
+                        <div class="value" id="out-height">22.96 m</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Total Range</div>
+                        <div class="value" id="out-range">91.84 m</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): Standard Ground-to-Ground Launch</h4>
+                    <span class="marks-allocated">[Syllabus Core Application]</span>
+                </div>
+                <div class="question-body">
+                    <p>A football is kicked from ground level with an initial launch speed of $35.0\text{ m/s}$ at an angle of $40.0^\circ$ above the horizontal. Assuming $g = 9.80\text{ m/s}^2$ and zero air resistance, construct a complete UVTAXY table and calculate:</p>
+                    <p>a) The total time of flight ($t$).<br>b) The maximum apex height achieved ($s_{y,\text{max}}$).<br>c) The horizontal range ($s_x$).</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step 1: Populate the UVTAXY Table</h5>
+                        <p>Resolve velocity components:</p>
+                        <p>$$u_x = 35.0 \cos(40.0^\circ) = 26.812\text{ m/s}$$</p>
+                        <p>$$u_y = 35.0 \sin(40.0^\circ) = 22.498\text{ m/s}$$</p>
+
+                        <div class="uvtaxy-table-container">
+                            <table class="uvtaxy-grid-table">
+                                <thead>
+                                    <tr>
+                                        <th>Variable</th>
+                                        <th>Horizontal Axis ($x$)</th>
+                                        <th>Vertical Axis ($y$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><strong>U</strong></td><td>$26.812\text{ m/s}$</td><td>$22.498\text{ m/s}$</td></tr>
+                                    <tr><td><strong>V</strong></td><td>$26.812\text{ m/s}$</td><td>$-22.498\text{ m/s}$ (at landing) / $0\text{ m/s}$ (at apex)</td></tr>
+                                    <tr><td><strong>T</strong></td><td>$t = ?$</td><td>$t = ?$</td></tr>
+                                    <tr><td><strong>A</strong></td><td>$0\text{ m/s}^2$</td><td>$-9.80\text{ m/s}^2$</td></tr>
+                                    <tr><td><strong>X / Y</strong></td><td>$s_x = ?$</td><td>$s_y = 0\text{ m}$ (ground landing)</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <p><strong>Part a) Total Time of Flight:</strong></p>
+                        <p>$$s_y = u_y t + \frac{1}{2}a_y t^2 \implies 0 = 22.498 t + \frac{1}{2}(-9.80)t^2$$</p>
+                        <p>$$4.90 t^2 = 22.498 t \implies t = \frac{22.498}{4.90} = \mathbf{4.59\text{ s}}\text{ (to 3 sig. figs.)}$$</p>
+
+                        <p><strong>Part b) Maximum Height:</strong></p>
+                        <p>At apex, $v_y = 0\text{ m/s}$:</p>
+                        <p>$$v_y^2 = u_y^2 + 2a_y s_y \implies 0^2 = (22.498)^2 + 2(-9.80)s_{y,\text{max}}$$</p>
+                        <p>$$19.6 s_{y,\text{max}} = 506.16 \implies s_{y,\text{max}} = \mathbf{25.8\text{ m}}\text{ (to 3 sig. figs.)}$$</p>
+
+                        <p><strong>Part c) Horizontal Range:</strong></p>
+                        <p>$$s_x = u_x t = 26.812 \times 4.5914 = \mathbf{123\text{ m}}\text{ (to 3 sig. figs.)}$$</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Mid-Flight Kinematics & Velocity Vector</h4>
+                    <span class="marks-allocated">[Parametric Time Evaluation]</span>
+                </div>
+                <div class="question-body">
+                    <p>A projectile is launched from ground level with $u = 40.0\text{ m/s}$ at $\theta = 50.0^\circ$. Construct a UVTAXY table and determine its displacement position vector $\vec{s}$ and instantaneous velocity vector $\vec{v}$ exactly $t = 2.50\text{ s}$ after launch.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step 1: Populate the UVTAXY Table for $t = 2.50\text{ s}$</h5>
+                        <p>$$u_x = 40.0 \cos(50.0^\circ) = 25.712\text{ m/s}$$</p>
+                        <p>$$u_y = 40.0 \sin(50.0^\circ) = 30.642\text{ m/s}$$</p>
+
+                        <div class="uvtaxy-table-container">
+                            <table class="uvtaxy-grid-table">
+                                <thead>
+                                    <tr>
+                                        <th>Variable</th>
+                                        <th>Horizontal Axis ($x$)</th>
+                                        <th>Vertical Axis ($y$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><strong>U</strong></td><td>$25.712\text{ m/s}$</td><td>$30.642\text{ m/s}$</td></tr>
+                                    <tr><td><strong>V</strong></td><td>$25.712\text{ m/s}$</td><td>$v_y = ?$ at $t = 2.50\text{ s}$</td></tr>
+                                    <tr><td><strong>T</strong></td><td>$2.50\text{ s}$</td><td>$2.50\text{ s}$</td></tr>
+                                    <tr><td><strong>A</strong></td><td>$0\text{ m/s}^2$</td><td>$-9.80\text{ m/s}^2$</td></tr>
+                                    <tr><td><strong>X / Y</strong></td><td>$s_x = ?$</td><td>$s_y = ?$</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <p><strong>Step 2: Calculate Coordinates $(s_x, s_y)$ at $t = 2.50\text{ s}$:</strong></p>
+                        <p>$$s_x = u_x t = 25.712 \times 2.50 = \mathbf{64.3\text{ m}}$$</p>
+                        <p>$$s_y = u_y t + \frac{1}{2}a_y t^2 = (30.642)(2.50) + \frac{1}{2}(-9.80)(2.50)^2 = 76.605 - 30.625 = \mathbf{46.0\text{ m}}$$</p>
+                        <p>Position: $(x, y) = \mathbf{(64.3\text{ m}, 46.0\text{ m})}$</p>
+
+                        <p><strong>Step 3: Calculate Instantaneous Velocity $\vec{v}$ at $t = 2.50\text{ s}$:</strong></p>
+                        <p>$$v_x = 25.712\text{ m/s}$$</p>
+                        <p>$$v_y = u_y + a_y t = 30.642 + (-9.80)(2.50) = 30.642 - 24.500 = +6.142\text{ m/s}$$</p>
+                        <p>$$v = \sqrt{v_x^2 + v_y^2} = \sqrt{(25.712)^2 + (6.142)^2} = \mathbf{26.4\text{ m/s}}$$</p>
+                        <p>$$\theta = \tan^{-1}\left(\frac{6.142}{25.712}\right) = \mathbf{13.4^\circ\text{ above horizontal}}$$</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Inverse Reconstructions from Experimental Data</h4>
+                    <span class="marks-allocated">[Algebraic Inverse Synthesis]</span>
+                </div>
+                <div class="question-body">
+                    <p>An unknown ground-level launch yields a maximum apex height $s_{y,\text{max}} = 20.0\text{ m}$ and a total horizontal range $R = 110\text{ m}$. Construct a UVTAXY framework and derive the launch speed $u$ and angle $\theta$.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step 1: Set up the UVTAXY Grid with Symbolic Parameters</h5>
+                        <div class="uvtaxy-table-container">
+                            <table class="uvtaxy-grid-table">
+                                <thead>
+                                    <tr>
+                                        <th>Variable</th>
+                                        <th>Horizontal Axis ($x$)</th>
+                                        <th>Vertical Axis ($y$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><strong>U</strong></td><td>$u_x = u\cos\theta$</td><td>$u_y = u\sin\theta$</td></tr>
+                                    <tr><td><strong>V</strong></td><td>$u_x$</td><td>$0\text{ m/s}$ (at apex)</td></tr>
+                                    <tr><td><strong>T</strong></td><td>$t_{\text{flight}} = ?$</td><td>$t_{\text{apex}} = \frac{1}{2}t_{\text{flight}}$</td></tr>
+                                    <tr><td><strong>A</strong></td><td>$0\text{ m/s}^2$</td><td>$-9.80\text{ m/s}^2$</td></tr>
+                                    <tr><td><strong>X / Y</strong></td><td>$s_x = 110\text{ m}$</td><td>$s_{y,\text{max}} = 20.0\text{ m}$</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <p><strong>Step 2: Relate Apex Height to $u_y$:</strong></p>
+                        <p>$$v_y^2 = u_y^2 + 2a_y s_y \implies 0 = u_y^2 - 2(9.80)(20.0) \implies u_y^2 = 392 \implies u_y = 19.799\text{ m/s}$$</p>
+
+                        <p><strong>Step 3: Determine Time of Flight:</strong></p>
+                        <p>$$v_y = u_y + a_y t_{\text{apex}} \implies 0 = 19.799 - 9.80 t_{\text{apex}} \implies t_{\text{apex}} = 2.0203\text{ s}$$</p>
+                        <p>$$t_{\text{flight}} = 2 \times 2.0203 = 4.0406\text{ s}$$</p>
+
+                        <p><strong>Step 4: Determine $u_x$ from Range:</strong></p>
+                        <p>$$s_x = u_x t_{\text{flight}} \implies 110 = u_x (4.0406) \implies u_x = 27.224\text{ m/s}$$</p>
+
+                        <p><strong>Step 5: Synthesise Launch Velocity Magnitude and Angle:</strong></p>
+                        <p>$$\tan\theta = \frac{u_y}{u_x} = \frac{19.799}{27.224} = 0.72726 \implies \mathbf{\theta = 36.0^\circ}$$</p>
+                        <p>$$u = \sqrt{u_x^2 + u_y^2} = \sqrt{(27.224)^2 + (19.799)^2} = \mathbf{33.7\text{ m/s}}$$</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension): Symmetrical Launch from Inclined Ramp</h4>
+                    <span class="marks-allocated">[Upper-Level HSC Synthesis]</span>
+                </div>
+                <div class="question-body">
+                    <p>A vehicle launches at speed $u$ off an inclined ramp of length $L = 12.0\text{ m}$ set at angle $\theta = 30.0^\circ$ at ground level. The ramp tip is elevated $h_0 = L\sin\theta = 6.00\text{ m}$. After exiting the ramp tip, the vehicle travels through the air and lands on ground level ($y = 0\text{ m}$) at a horizontal distance $D = 45.0\text{ m}$ measured from the ramp exit tip. Construct a UVTAXY table and calculate the required exit speed $u$.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step 1: Construct UVTAXY Table (Origin at Ramp Exit Tip)</h5>
+                        <p>Origin $(0,0)$ set at exit tip. Ground landing is at $s_y = -6.00\text{ m}$ and $s_x = +45.0\text{ m}$.</p>
+
+                        <div class="uvtaxy-table-container">
+                            <table class="uvtaxy-grid-table">
+                                <thead>
+                                    <tr>
+                                        <th>Variable</th>
+                                        <th>Horizontal Axis ($x$)</th>
+                                        <th>Vertical Axis ($y$)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><strong>U</strong></td><td>$u_x = u\cos(30^\circ) = 0.86603 u$</td><td>$u_y = u\sin(30^\circ) = 0.50000 u$</td></tr>
+                                    <tr><td><strong>V</strong></td><td>$0.86603 u$</td><td>$v_y = ?$</td></tr>
+                                    <tr><td><strong>T</strong></td><td>$t = ?$</td><td>$t = ?$</td></tr>
+                                    <tr><td><strong>A</strong></td><td>$0\text{ m/s}^2$</td><td>$-9.80\text{ m/s}^2$</td></tr>
+                                    <tr><td><strong>X / Y</strong></td><td>$s_x = +45.0\text{ m}$</td><td>$s_y = -6.00\text{ m}$</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <p><strong>Step 2: Express Time $t$ from Horizontal Axis:</strong></p>
+                        <p>$$s_x = u_x t \implies 45.0 = (0.86603 u) t \implies t = \frac{51.9615}{u}$$</p>
+
+                        <p><strong>Step 3: Substitute $t$ into Vertical Axis Equation:</strong></p>
+                        <p>$$s_y = u_y t + \frac{1}{2}a_y t^2$$</p>
+                        <p>$$-6.00 = (0.50000 u)\left(\frac{51.9615}{u}\right) - 4.90 \left(\frac{51.9615}{u}\right)^2$$</p>
+                        <p>$$-6.00 = 25.9808 - \frac{13230.0}{u^2}$$</p>
+                        <p>$$\frac{13230.0}{u^2} = 31.9808 \implies u^2 = 413.686 \implies \mathbf{u = 20.3\text{ m/s}}$$</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 8. Four Interactive Practise Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Marking Criteria</h2>
+            <p>Complete the questions below, construct UVTAXY tables, reveal the worked criteria, assign yourself a mark, and update your global Module 5 score.</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-03-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Basic Ground-to-Ground Launch</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A golf ball is hit with an initial speed of $30.0\text{ m/s}$ at an angle of $28.0^\circ$ above flat ground. Construct a complete UVTAXY table and calculate the total horizontal range ($s_x$) of the ball ($g = 9.80\text{ m/s}^2$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-03-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-03-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-03-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Resolve $u_x = 30\cos(28^\circ)$ and $u_y = 30\sin(28^\circ)$. Calculate $t$ when $s_y = 0$, then substitute $t$ into $s_x = u_x t$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-03-easy" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>UVTAXY Table:</h5>
+                        <div class="uvtaxy-table-container">
+                            <table class="uvtaxy-grid-table">
+                                <thead>
+                                    <tr><th>Variable</th><th>Horizontal ($x$)</th><th>Vertical ($y$)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><strong>U</strong></td><td>$26.488\text{ m/s}$</td><td>$14.084\text{ m/s}$</td></tr>
+                                    <tr><td><strong>V</strong></td><td>$26.488\text{ m/s}$</td><td>$-14.084\text{ m/s}$</td></tr>
+                                    <tr><td><strong>T</strong></td><td>$t = ?$</td><td>$t = ?$</td></tr>
+                                    <tr><td><strong>A</strong></td><td>$0\text{ m/s}^2$</td><td>$-9.80\text{ m/s}^2$</td></tr>
+                                    <tr><td><strong>X / Y</strong></td><td>$s_x = ?$</td><td>$s_y = 0\text{ m}$</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p>$$s_y = u_y t + \frac{1}{2}a_y t^2 \implies 0 = 14.084 t - 4.90 t^2 \implies t = 2.8743\text{ s}$$</p>
+                        <p>$$s_x = u_x t = 26.488 \times 2.8743 = \mathbf{76.1\text{ m}}\text{ (to 3 sig. figs.)}$$</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Constructs UVTAXY table and resolves velocity components correctly.</li>
+                            <li><strong>2 Marks:</strong> Calculates total time of flight $t = 2.87\text{ s}$.</li>
+                            <li><strong>3 Marks:</strong> Obtains final range of $76.1\text{ m}$ with correct SI units and significant figures.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-03-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-03-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('03-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-03-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-03-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Maximum Apex Height & Flight Time</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>An arrow is launched from ground level at $45.0\text{ m/s}$ at an angle of $60.0^\circ$ above horizontal. Construct a UVTAXY table and calculate its apex height $s_{y,\text{max}}$ and the total time it remains in the air above $s_y = 25.0\text{ m}$.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-03-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-03-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-03-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Calculate $u_y = 45\sin(60^\circ) = 38.97\text{ m/s}$. Find $s_{y,\text{max}}$ using $v_y = 0$. For time above $25\text{ m}$, solve $25 = 38.97 t - 4.90 t^2$ for both roots $t_1$ and $t_2$, then take $\Delta t = t_2 - t_1$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-03-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>UVTAXY Table:</h5>
+                        <div class="uvtaxy-table-container">
+                            <table class="uvtaxy-grid-table">
+                                <thead>
+                                    <tr><th>Variable</th><th>Horizontal ($x$)</th><th>Vertical ($y$)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><strong>U</strong></td><td>$22.50\text{ m/s}$</td><td>$38.971\text{ m/s}$</td></tr>
+                                    <tr><td><strong>V</strong></td><td>$22.50\text{ m/s}$</td><td>$0\text{ m/s}$ (at apex)</td></tr>
+                                    <tr><td><strong>T</strong></td><td>$t = ?$</td><td>$t = ?$</td></tr>
+                                    <tr><td><strong>A</strong></td><td>$0\text{ m/s}^2$</td><td>$-9.80\text{ m/s}^2$</td></tr>
+                                    <tr><td><strong>X / Y</strong></td><td>$s_x = ?$</td><td>$s_{y,\text{max}} = ?$</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p><strong>Apex Height:</strong></p>
+                        <p>$$v_y^2 = u_y^2 + 2a_y s_y \implies 0 = (38.971)^2 - 2(9.80)s_{y,\text{max}} \implies s_{y,\text{max}} = \mathbf{77.5\text{ m}}$$</p>
+                        <p><strong>Time above $25.0\text{ m}$:</strong></p>
+                        <p>$$25.0 = 38.971 t - 4.90 t^2 \implies 4.90 t^2 - 38.971 t + 25.0 = 0$$</p>
+                        <p>Using quadratic formula: $t_1 = 0.712\text{ s}$ and $t_2 = 7.241\text{ s}$</p>
+                        <p>$$\Delta t = t_2 - t_1 = 7.241 - 0.712 = \mathbf{6.53\text{ s}}$$</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Populates UVTAXY table and resolves $u_y = 38.97\text{ m/s}$.</li>
+                            <li><strong>2 Marks:</strong> Calculates maximum apex height $77.5\text{ m}$.</li>
+                            <li><strong>3 Marks:</strong> Sets up quadratic equation for height $25.0\text{ m}$ and finds roots $t_1, t_2$.</li>
+                            <li><strong>4 Marks:</strong> Computes correct time interval spent above $25\text{ m}$ ($\Delta t = 6.53\text{ s}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-03-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-03-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('03-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-03-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard -->
+            <div class="practise-question" id="question-03-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard): Target Clearance Evaluation</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A ball is kicked from ground level with initial speed $u = 24.0\text{ m/s}$ at launch angle $\theta = 35.0^\circ$. A defensive wall of height $h_w = 3.20\text{ m}$ is positioned $20.0\text{ m}$ downfield. Construct a UVTAXY table, determine whether the ball clears the wall, and state its clearance height.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-03-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-03-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-03-hard" style="display: none;">
+                    <p><strong>Hint:</strong> Resolve $u_x$ and $u_y$. Find time $t$ to cover horizontal distance $s_x = 20.0\text{ m}$. Calculate vertical displacement $s_y$ at that instant and compare to wall height $3.20\text{ m}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-03-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>UVTAXY Table:</h5>
+                        <div class="uvtaxy-table-container">
+                            <table class="uvtaxy-grid-table">
+                                <thead>
+                                    <tr><th>Variable</th><th>Horizontal ($x$)</th><th>Vertical ($y$)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><strong>U</strong></td><td>$19.659\text{ m/s}$</td><td>$13.766\text{ m/s}$</td></tr>
+                                    <tr><td><strong>V</strong></td><td>$19.659\text{ m/s}$</td><td>$v_y = ?$</td></tr>
+                                    <tr><td><strong>T</strong></td><td>$t = ?$</td><td>$t = ?$</td></tr>
+                                    <tr><td><strong>A</strong></td><td>$0\text{ m/s}^2$</td><td>$-9.80\text{ m/s}^2$</td></tr>
+                                    <tr><td><strong>X / Y</strong></td><td>$s_x = 20.0\text{ m}$</td><td>$s_y = ?$</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p>Time to reach $s_x = 20.0\text{ m}$:</p>
+                        <p>$$t = \frac{s_x}{u_x} = \frac{20.0}{19.659} = 1.0173\text{ s}$$</p>
+                        <p>Vertical height $s_y$ at $t = 1.0173\text{ s}$:</p>
+                        <p>$$s_y = u_y t + \frac{1}{2}a_y t^2 = (13.766)(1.0173) - 4.90(1.0173)^2 = 14.004 - 5.071 = \mathbf{8.93\text{ m}}$$</p>
+                        <p>Clearance margin above wall = $8.93\text{ m} - 3.20\text{ m} = \mathbf{5.73\text{ m}}$.</p>
+                        <p><strong>Conclusion:</strong> Yes, the ball clears the wall easily with a vertical clearance of $5.73\text{ m}$.</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Constructs UVTAXY table and resolves velocity components.</li>
+                            <li><strong>2 Marks:</strong> Calculates time taken to reach wall position $t = 1.02\text{ s}$.</li>
+                            <li><strong>3 Marks:</strong> Applies vertical kinematic equation to determine ball height $s_y = 8.93\text{ m}$.</li>
+                            <li><strong>4 Marks:</strong> Calculates clearance margin ($5.73\text{ m}$).</li>
+                            <li><strong>5 Marks:</strong> Provides clear explicit concluding statement.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-03-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-03-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('03-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-03-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension -->
+            <div class="practise-question" id="question-03-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (Extension): Symmetrical Launch with Parametric Obstacle Clearance</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A projectile launched from ground level at launch angle $\theta = 40.0^\circ$ must clear an elevated advertising hoard of height $h = 8.00\text{ m}$ located at horizontal distance $s_x = 30.0\text{ m}$. Construct a UVTAXY framework, determine the minimum launch speed $u$ required, and calculate its impact speed when landing back on ground level.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-03-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-03-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-03-extension" style="display: none;">
+                    <p><strong>Hint:</strong> Express $u_x = u\cos(40^\circ)$ and $u_y = u\sin(40^\circ)$. Substitute $t = \frac{30}{u_x}$ into $s_y = 8.00\text{ m}$ to solve for $u$. Since ground-to-ground motion is symmetric, landing impact speed equals initial launch speed $u$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-03-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>UVTAXY Table:</h5>
+                        <div class="uvtaxy-table-container">
+                            <table class="uvtaxy-grid-table">
+                                <thead>
+                                    <tr><th>Variable</th><th>Horizontal ($x$)</th><th>Vertical ($y$)</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td><strong>U</strong></td><td>$u\cos(40^\circ) = 0.76604 u$</td><td>$u\sin(40^\circ) = 0.64279 u$</td></tr>
+                                    <tr><td><strong>V</strong></td><td>$0.76604 u$</td><td>$v_y = ?$</td></tr>
+                                    <tr><td><strong>T</strong></td><td>$t = ?$</td><td>$t = ?$</td></tr>
+                                    <tr><td><strong>A</strong></td><td>$0\text{ m/s}^2$</td><td>$-9.80\text{ m/s}^2$</td></tr>
+                                    <tr><td><strong>X / Y</strong></td><td>$s_x = 30.0\text{ m}$</td><td>$s_y = 8.00\text{ m}$</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <p>Time expression: $t = \frac{30.0}{0.76604 u} = \frac{39.162}{u}$</p>
+                        <p>Substitute into vertical displacement equation:</p>
+                        <p>$$s_y = u_y t + \frac{1}{2}a_y t^2 \implies 8.00 = (0.64279 u)\left(\frac{39.162}{u}\right) - 4.90\left(\frac{39.162}{u}\right)^2$$</p>
+                        <p>$$8.00 = 25.173 - \frac{7514.9}{u^2} \implies \frac{7514.9}{u^2} = 17.173 \implies u^2 = 437.60 \implies \mathbf{u = 20.9\text{ m/s}}$$</p>
+                        <p>Because ground-to-ground launch under zero air drag is perfectly symmetric, final landing impact speed $v_{\text{impact}} = u = \mathbf{20.9\text{ m/s}}$.</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Constructs UVTAXY table with symbolic parameter $u$.</li>
+                            <li><strong>2 Marks:</strong> Formulates time expression $t = \frac{39.16}{u}$ from horizontal motion.</li>
+                            <li><strong>3 Marks:</strong> Substitutes $t$ into vertical kinematic equation.</li>
+                            <li><strong>4 Marks:</strong> Algebraically cancels $u$ and solves for minimum launch speed $u = 20.9\text{ m/s}$.</li>
+                            <li><strong>5 Marks:</strong> Applies symmetry principle to identify landing impact speed.</li>
+                            <li><strong>6 Marks:</strong> Expresses final answer with correct SI units and 3 significant figures.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-03-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-03-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('03-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-03-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="02-horizontal-vertical-motion.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 2: Motion Independence</a>
+                <a href="04-angled-and-height-launches.html" class="btn-next">Proceed to Lesson 4: Height & Angled Launches &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('03-easy');
+            checkIfQuestionAnswered('03-medium');
+            checkIfQuestionAnswered('03-hard');
+            checkIfQuestionAnswered('03-extension');
+            
+            initSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        /* --- Interactive Canvas Simulator Code --- */
+        function initSimulator() {
+            const canvas = document.getElementById('projectileCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const inSpeed = document.getElementById('sim-speed');
+            const inAngle = document.getElementById('sim-angle');
+            const inHeight = document.getElementById('sim-height');
+
+            const dispSpeed = document.getElementById('disp-speed');
+            const dispAngle = document.getElementById('disp-angle');
+            const dispHeight = document.getElementById('disp-height');
+
+            const outUx = document.getElementById('out-ux');
+            const outUy = document.getElementById('out-uy');
+            const outTime = document.getElementById('out-time');
+            const outHeight = document.getElementById('out-height');
+            const outRange = document.getElementById('out-range');
+
+            function updateAndRender() {
+                const u = parseFloat(inSpeed.value);
+                const deg = parseFloat(inAngle.value);
+                const h0 = parseFloat(inHeight.value);
+                const g = 9.80;
+
+                dispSpeed.innerText = u + ' m/s';
+                dispAngle.innerText = deg + '°';
+                dispHeight.innerText = h0 + ' m';
+
+                const rad = deg * Math.PI / 180;
+                const ux = u * Math.cos(rad);
+                const uy = u * Math.sin(rad);
+
+                const tFlight = (uy + Math.sqrt(uy * uy + 2 * g * h0)) / g;
+                const maxH = h0 + (uy * uy) / (2 * g);
+                const range = ux * tFlight;
+
+                outUx.innerText = ux.toFixed(2) + ' m/s';
+                outUy.innerText = uy.toFixed(2) + ' m/s';
+                outTime.innerText = tFlight.toFixed(2) + ' s';
+                outHeight.innerText = maxH.toFixed(2) + ' m';
+                outRange.innerText = range.toFixed(2) + ' m';
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const margin = 40;
+                const maxRenderX = Math.max(range * 1.15, 40);
+                const maxRenderY = Math.max(maxH * 1.25, 20);
+
+                const scaleX = (canvas.width - margin * 2) / maxRenderX;
+                const scaleY = (canvas.height - margin * 2) / maxRenderY;
+
+                const originX = margin;
+                const originY = canvas.height - margin;
+
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                ctx.strokeStyle = '#00f0ff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, originY);
+                ctx.lineTo(canvas.width, originY);
+                ctx.stroke();
+
+                if (h0 > 0) {
+                    const cliffPxH = h0 * scaleY;
+                    ctx.fillStyle = 'rgba(176, 38, 255, 0.2)';
+                    ctx.fillRect(0, originY - cliffPxH, originX, cliffPxH);
+                    ctx.strokeStyle = '#b026ff';
+                    ctx.strokeRect(0, originY - cliffPxH, originX, cliffPxH);
+                }
+
+                ctx.beginPath();
+                ctx.strokeStyle = '#00e676';
+                ctx.lineWidth = 3;
+
+                const startPxX = originX;
+                const startPxY = originY - (h0 * scaleY);
+
+                ctx.moveTo(startPxX, startPxY);
+
+                const steps = 100;
+                for (let i = 0; i <= steps; i++) {
+                    const t = (i / steps) * tFlight;
+                    const x = ux * t;
+                    const y = h0 + uy * t - 0.5 * g * t * t;
+
+                    const pxX = originX + x * scaleX;
+                    const pxY = originY - y * scaleY;
+
+                    ctx.lineTo(pxX, pxY);
+                }
+                ctx.stroke();
+
+                const tApex = uy / g;
+                const xApex = ux * tApex;
+                const pxApexX = originX + xApex * scaleX;
+                const pxApexY = originY - maxH * scaleY;
+
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath();
+                ctx.arc(pxApexX, pxApexY, 6, 0, Math.PI * 2);
+                ctx.fill();
+
+                ctx.fillStyle = '#ffffff';
+                ctx.font = '11px sans-serif';
+                ctx.fillText(`Apex: ${maxH.toFixed(1)}m`, pxApexX - 25, pxApexY - 12);
+            }
+
+            inSpeed.addEventListener('input', updateAndRender);
+            inAngle.addEventListener('input', updateAndRender);
+            inHeight.addEventListener('input', updateAndRender);
+
+            updateAndRender();
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

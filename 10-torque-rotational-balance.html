@@ -1,0 +1,1762 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>10. Torque & Rotational Equilibrium - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS Reset & Box Sizing Safeguards */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Responsive Layout & Container Enhancements */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border-radius: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .sim-mode-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-mode {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.65rem 1.3rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mode.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(176, 38, 255, 0.35));
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#torqueCanvas {
+            width: 100%;
+            height: 440px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        /* Callout & Beginner Boxes */
+        .beginner-box {
+            background: rgba(0, 230, 118, 0.06);
+            border-left: 4px solid #00e676;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 1.8rem 0;
+        }
+
+        .beginner-box h4 {
+            color: #69f0ae;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .beginner-box p {
+            color: #e8f5e9;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+            line-height: 1.6;
+        }
+
+        .concept-highlight-card, 
+        .worked-solution, 
+        .derivation-steps, 
+        .practise-question, 
+        .formula-callout-box, 
+        .misconception-box, 
+        .exam-warning-box, 
+        .extension-note-box {
+            max-width: 100%;
+            overflow-x: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .vector-diagram-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .formula-callout-box {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.12), rgba(0, 240, 255, 0.12));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            text-align: center;
+        }
+
+        .formula-callout-box h4 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .formula-callout-box p {
+            margin-bottom: 0;
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .misconception-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .misconception-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .misconception-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        /* MathJax Overflow Fixes */
+        .MathJax_Display, .mjx-chtml, .MathJax {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding: 0.3rem 0;
+            margin: 0.5rem 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html" class="active">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>10. Torque ($\tau = r F \sin\theta$) & Rotational Equilibrium</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 2 & IQ3 Integration</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Core Mechanics</h2>
+            <p><strong>Inquiry Question Focus:</strong> <em>How do linear forces and rotational moments interact to establish complete mechanical equilibrium?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus (calculus-free), students must achieve absolute mathematical and conceptual mastery over torque and static equilibrium dynamics:</p>
+            <ul class="feature-list">
+                <li>Quantify torque as the turning effect of a force about a specified axis or pivot point:
+                    $$\tau = r F \sin\theta = r F_\perp = r_\perp F$$
+                </li>
+                <li>Apply the two fundamental conditions for total static equilibrium in 2D systems:
+                    <ol>
+                        <li><strong>Translational Equilibrium:</strong> The vector sum of all external forces is zero ($\sum F_x = 0$ and $\sum F_y = 0$).</li>
+                        <li><strong>Rotational Equilibrium:</strong> The vector sum of all torques about <em>any arbitrary pivot point</em> is zero ($\sum \tau = 0 \implies \sum \tau_{\text{CCW}} = \sum \tau_{\text{CW}}$).</li>
+                    </ol>
+                </li>
+                <li>Resolve multi-force systems involving uniform and non-uniform extended bodies (seesaws, benches, bridges, cranes, wall-hinged beams, and leaning ladders).</li>
+                <li>Utilise strategic pivot selection to eliminate unknown reaction forces from torque equations.</li>
+            </ul>
+
+            <div class="extension-note-box">
+                <h4>Band 6 Distinction Insight: Strategic Pivot Selection</h4>
+                <p>In top-tier examinations, complex equilibrium problems often contain multiple unknown forces (such as hinge reaction forces $H_x, H_y$ or ground reaction forces $N_g, f_g$). Setting the pivot point directly along the line of action of an unknown force sets its lever arm $r = 0$, immediately eliminating it from the torque equation ($\tau = 0 \cdot F = 0$). This allows you to solve for remaining unknown forces directly!</p>
+            </div>
+        </section>
+
+        <!-- 2. Part 1: Beginner-Friendly Intuitive Starter -->
+        <section class="content-section" id="beginner-intro">
+            <h2>Part 1: The Intuitive Idea — What is Torque?</h2>
+
+            <div class="beginner-box">
+                <h4>Beginner Concept: Opening a Heavy Door</h4>
+                <p>Have you ever noticed where the handle is located on a heavy door? It is always placed at the far outer edge, as far away from the hinges (the pivot) as possible!</p>
+                <p>Why? If you try pushing a door right next to the hinge, you have to push with immense effort to make it open. But if you push at the outer handle, even a tiny push easily swings the door wide open. Furthermore, you intuitively push <em>at a right angle ($90^\circ$)</em> to the door. Pushing sideways along the door towards the hinge does nothing to open it!</p>
+                <p>This "turning effort" created by pushing at a distance is what physicists call <strong>Torque</strong> ($\tau$).</p>
+            </div>
+
+            <h3>1. The Three Equivalent Ways to Calculate Torque</h3>
+            <p>Depending on how a textbook or exam question presents a diagram, there are three completely equivalent ways to visualize and calculate torque ($\tau$):</p>
+
+            <div class="uvtaxy-table-container">
+                <table class="uvtaxy-grid-table">
+                    <thead>
+                        <tr>
+                            <th>Formulation</th>
+                            <th>Mathematical Formula</th>
+                            <th>When to Use It</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th>1. Angle Formula</th>
+                            <td>$$\tau = r F \sin\theta$$</td>
+                            <td>When you are given distance $r$, force $F$, and explicit angle $\theta$ between them.</td>
+                        </tr>
+                        <tr>
+                            <th>2. Perpendicular Force Component</th>
+                            <td>$$\tau = r \times F_\perp \quad (\text{where } F_\perp = F \sin\theta)$$</td>
+                            <td>When it is easiest to split the force vector into components parallel and perpendicular to the beam.</td>
+                        </tr>
+                        <tr>
+                            <th>3. Moment Arm (Perpendicular Distance)</th>
+                            <td>$$\tau = r_\perp \times F \quad (\text{where } r_\perp = r \sin\theta)$$</td>
+                            <td>When you can draw a perpendicular line from the pivot directly to the force's line of action.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Vector Diagram: Line of Action & Perpendicular Distance -->
+            <div class="vector-diagram-card">
+                <svg width="520" height="260" viewBox="0 0 520 260" style="background: transparent;">
+                    <!-- Rigid Wrench / Beam -->
+                    <rect x="70" y="120" width="280" height="24" rx="6" fill="rgba(0,240,255,0.08)" stroke="#00f0ff" stroke-width="2"/>
+
+                    <!-- Pivot Axis Point O -->
+                    <circle cx="80" cy="132" r="8" fill="#b026ff" stroke="#ffffff" stroke-width="2"/>
+                    <text x="68" y="162" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="14">Pivot (O)</text>
+
+                    <!-- Force Application Point P -->
+                    <circle cx="330" cy="132" r="5" fill="#00e676"/>
+                    <text x="320" y="162" fill="#00e676" font-family="sans-serif" font-size="12">Point P</text>
+
+                    <!-- Lever Arm Vector Line r -->
+                    <line x1="80" y1="132" x2="330" y2="132" stroke="#00f0ff" stroke-width="2" stroke-dasharray="4"/>
+                    <text x="195" y="115" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="14">Lever Arm (r)</text>
+
+                    <!-- Force Vector F at Angle Theta -->
+                    <line x1="330" y1="132" x2="440" y2="40" stroke="#ffd700" stroke-width="3.5"/>
+                    <polygon points="440,40 428,45 435,55" fill="#ffd700"/>
+                    <text x="445" y="35" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="15">Force (F)</text>
+
+                    <!-- Extension line of r -->
+                    <line x1="330" y1="132" x2="430" y2="132" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="3"/>
+
+                    <!-- Angle Theta Arc -->
+                    <path d="M 370 132 A 40 40 0 0 0 358 108" fill="none" stroke="#ffffff" stroke-width="2"/>
+                    <text x="382" y="120" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="14">θ</text>
+
+                    <!-- Perpendicular Component F_perp -->
+                    <line x1="330" y1="132" x2="270" y2="60" stroke="#ef4444" stroke-width="2.5" stroke-dasharray="4"/>
+                    <polygon points="270,60 273,72 282,66" fill="#ef4444"/>
+                    <text x="210" y="85" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="13">F_⊥ = F sin θ</text>
+
+                    <!-- Perpendicular Lever Arm r_perp -->
+                    <line x1="80" y1="132" x2="220" y2="30" stroke="#b026ff" stroke-width="2" stroke-dasharray="3"/>
+                    <text x="110" y="70" fill="#b026ff" font-family="sans-serif" font-size="12">r_⊥ = r sin θ</text>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 1: Visual representation of torque $\tau$. The force $F$ acts at angle $\theta$ to lever arm $r$. Only the perpendicular component $F_\perp = F \sin\theta$ causes rotation!</p>
+            </div>
+
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.5rem;">Direction of Torque: Counter-Clockwise vs Clockwise</h4>
+                <p>Torque tries to turn an object in one of two directions around a pivot:</p>
+                <ul class="feature-list" style="margin-bottom: 0;">
+                    <li><strong>Counter-Clockwise Torque ($\text{CCW}$):</strong> Turns the object against clock hands. By standard convention, CCW torques are treated as **positive (+)**.</li>
+                    <li><strong>Clockwise Torque ($\text{CW}$):</strong> Turns the object with clock hands. CW torques are treated as **negative (-)**.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 3. Part 2: The Rules of Balance & Simple Proof of Pivot Invariance -->
+        <section class="content-section" id="deep-dive-equilibrium">
+            <h2>Part 2: The Rules of Static Balance & Pivot Choice</h2>
+
+            <h3>1. The Two Conditions for Total Balance</h3>
+            <p>For an object (like a bridge, sign, or ladder) to remain completely still in <strong>static equilibrium</strong>, it must satisfy two distinct balance rules simultaneously:</p>
+
+            <div class="formula-callout-box">
+                <h4>The Dual Conditions of Static Equilibrium</h4>
+                <p>1. Translational Equilibrium: $$\sum F_x = 0 \quad \text{and} \quad \sum F_y = 0$$</p>
+                <p>2. Rotational Equilibrium: $$\sum \tau_{\text{CCW}} = \sum \tau_{\text{CW}} \quad (\text{or } \sum \tau = 0)$$</p>
+            </div>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">2. Simple Proof: Why Pivot Choice Does Not Change Net Torque</h4>
+                <p>Beginners often ask: <em>"How do I know where to place the pivot point when solving a problem? Will I get a different answer if I pick a different pivot?"</em></p>
+                <p>The answer is <strong>NO!</strong> If a system is in static balance ($\sum F = 0$), calculating net torque about ANY point in space gives the exact same result ($0$).</p>
+
+                <p><strong>Simple 1D Demonstration:</strong></p>
+                <p>Imagine a balanced beam with two upward support forces $F_1$ and $F_2$, and a downward load $W$. Since it is in force balance:</p>
+                $$F_1 + F_2 - W = 0 \implies F_1 + F_2 = W$$
+
+                <p>Now, calculate net torque about Pivot $A$ (located at $F_1$):</p>
+                $$\tau_A = (F_1 \cdot 0) + (F_2 \cdot L) - (W \cdot x) = F_2 L - W x = 0$$
+
+                <p>Now suppose we shift our pivot point to a new location $B$, which is a distance $d$ away from $A$. The new lever arms become $(0 + d)$, $(L + d)$, and $(x + d)$:</p>
+                $$\tau_B = F_1 d + F_2 (L + d) - W (x + d)$$
+                $$\tau_B = F_1 d + F_2 L + F_2 d - W x - W d$$
+                $$\tau_B = (F_2 L - W x) + d \cdot (F_1 + F_2 - W)$$
+
+                <p>Notice the term in the second set of brackets! Since force balance requires $F_1 + F_2 - W = 0$, that entire term becomes zero ($d \cdot 0 = 0$):</p>
+                $$\tau_B = (F_2 L - W x) + 0 = \tau_A = 0$$
+
+                <p><strong>Conclusion:</strong> You can place the pivot anywhere! Smart students choose the pivot at the location of an UNKNOWN force so that its lever arm is zero ($r = 0$), removing it from the torque equation entirely!</p>
+            </div>
+        </section>
+
+        <!-- 4. Part 3: Stepping Up — Center of Mass & 2D Systems -->
+        <section class="content-section" id="deep-dive-rigging">
+            <h2>Part 3: Stepping Up — Center of Mass, Cables & Leaning Ladders</h2>
+
+            <h3>1. Center of Mass ($x_{\text{com}}$)</h3>
+            <p>Where does gravity pull on an extended object? For a uniform beam, Earth pulls on every single atom, but mathematically, gravity acts as a single combined force ($m g$) acting at the **Center of Mass** ($x_{\text{com}}$), which is at the exact midpoint ($L/2$).</p>
+
+            <p>For non-uniform objects with multiple attached masses $m_1, m_2, \dots$ at positions $x_1, x_2, \dots$:</p>
+
+            $$x_{\text{com}} = \frac{m_1 x_1 + m_2 x_2 + \dots + m_n x_n}{m_1 + m_2 + \dots + m_n}$$
+
+            <h3>2. The Leaning Ladder System</h3>
+            <p>A classic exam scenario is a ladder leaning against a wall. The ladder experiences four distinct forces:</p>
+
+            <ul class="feature-list">
+                <li><strong>Gravity ($m g$):</strong> Acts downward at the ladder's center of mass ($L/2$).</li>
+                <li><strong>Ground Normal Force ($N_g$):</strong> Pushes straight up from the floor to support the weight.</li>
+                <li><strong>Ground Friction Force ($f_g$):</strong> Pushes horizontally towards the wall to prevent the base from slipping outwards.</li>
+                <li><strong>Wall Normal Force ($N_w$):</strong> Pushes horizontally away from the vertical wall.</li>
+            </ul>
+
+            <!-- Vector Diagram: Leaning Ladder -->
+            <div class="vector-diagram-card">
+                <svg width="440" height="320" viewBox="0 0 440 320" style="background: transparent;">
+                    <!-- Floor and Vertical Wall -->
+                    <line x1="40" y1="280" x2="400" y2="280" stroke="#ffffff" stroke-width="3"/>
+                    <line x1="80" y1="40" x2="80" y2="280" stroke="#ffffff" stroke-width="3"/>
+
+                    <!-- Leaning Ladder -->
+                    <line x1="80" y1="80" x2="320" y2="280" stroke="#00f0ff" stroke-width="6"/>
+
+                    <!-- Angle Theta with Ground -->
+                    <path d="M 280 280 A 40 40 0 0 0 260 252" fill="none" stroke="#ffd700" stroke-width="2"/>
+                    <text x="235" y="270" fill="#ffd700" font-family="sans-serif" font-size="14" font-weight="bold">θ</text>
+
+                    <!-- Forces at Ground (Normal N_g Up, Friction f_g Right) -->
+                    <circle cx="320" cy="280" r="5" fill="#00e676"/>
+                    <line x1="320" y1="280" x2="320" y2="200" stroke="#00e676" stroke-width="3"/>
+                    <polygon points="320,200 315,210 325,210" fill="#00e676"/>
+                    <text x="330" y="215" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="13">N_g (Ground Normal)</text>
+
+                    <line x1="320" y1="280" x2="240" y2="280" stroke="#ffd700" stroke-width="3"/>
+                    <polygon points="240,280 250,275 250,285" fill="#ffd700"/>
+                    <text x="180" y="300" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="13">f_g = μ N_g</text>
+
+                    <!-- Force at Wall (Normal N_w Left) -->
+                    <circle cx="80" cy="80" r="5" fill="#00f0ff"/>
+                    <line x1="80" y1="80" x2="160" y2="80" stroke="#00f0ff" stroke-width="3"/>
+                    <polygon points="160,80 150,75 150,85" fill="#00f0ff"/>
+                    <text x="110" y="65" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="13">N_w (Wall Normal)</text>
+
+                    <!-- Weight Forces (Ladder mg) -->
+                    <circle cx="200" cy="180" r="4" fill="#ef4444"/>
+                    <line x1="200" y1="180" x2="200" y2="240" stroke="#ef4444" stroke-width="2.5"/>
+                    <text x="208" y="225" fill="#ef4444" font-family="sans-serif" font-size="12">mg</text>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 2: Free-Body Diagram of a leaning ladder in static balance under interacting vertical, horizontal, and rotational forces.</p>
+            </div>
+        </section>
+
+        <!-- 5. Dynamic Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Dynamic Interactive Workbench: Rotational Balance & Torque Simulator</h2>
+            <p>Switch modes below to test **Multi-Load Seesaw Balance** or **Leaning Ladder Slip Stability**. Adjust masses, pivot placements, ladder angles, and friction coefficients in real-time!</p>
+
+            <div class="sim-container">
+                <div class="sim-mode-selector">
+                    <button id="btn-mode-seesaw" class="btn-mode active" onclick="setTorqueSimMode('seesaw')">Multi-Load Balance Beam</button>
+                    <button id="btn-mode-ladder" class="btn-mode" onclick="setTorqueSimMode('ladder')">Leaning Ladder Stability</button>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-m1">Left Mass ($m_1$): <span id="disp-m1" class="sim-value-display">20.0 kg</span></label>
+                        <input type="range" id="sim-m1" min="0.0" max="100.0" value="20.0" step="5.0">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-d1">Left Arm ($r_1$): <span id="disp-d1" class="sim-value-display">3.0 m</span></label>
+                        <input type="range" id="sim-d1" min="0.5" max="5.0" value="3.0" step="0.2">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-m2">Right Mass ($m_2$): <span id="disp-m2" class="sim-value-display">30.0 kg</span></label>
+                        <input type="range" id="sim-m2" min="0.0" max="100.0" value="30.0" step="5.0">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-d2">Right Arm ($r_2$): <span id="disp-d2" class="sim-value-display">2.0 m</span></label>
+                        <input type="range" id="sim-d2" min="0.5" max="5.0" value="2.0" step="0.2">
+                    </div>
+                    <div class="sim-control-group" id="group-angle" style="display: none;">
+                        <label for="sim-angle">Ladder Angle ($\theta$): <span id="disp-angle" class="sim-value-display">60.0°</span></label>
+                        <input type="range" id="sim-angle" min="20.0" max="85.0" value="60.0" step="1.0">
+                    </div>
+                    <div class="sim-control-group" id="group-friction" style="display: none;">
+                        <label for="sim-friction">Ground Friction ($\mu_s$): <span id="disp-friction" class="sim-value-display">0.40</span></label>
+                        <input type="range" id="sim-friction" min="0.05" max="0.90" value="0.40" step="0.05">
+                    </div>
+                </div>
+
+                <canvas id="torqueCanvas" width="800" height="440"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Counter-Clockwise Torque</div>
+                        <div class="value" id="out-tau-ccw">588.0 N·m</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Clockwise Torque</div>
+                        <div class="value" id="out-tau-cw">588.0 N·m</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Net Torque (Στ)</div>
+                        <div class="value" id="out-tau-net">0.0 N·m</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Pivot Reaction Force</div>
+                        <div class="value" id="out-pivot-f">490.0 N</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Equilibrium Status</div>
+                        <div class="value" id="out-status" style="color: var(--success-green);">PERFECT BALANCE</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 6. Four Fully Worked Examples (Smooth Beginner-to-Advanced Ramp with Dedicated Diagrams) -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy (Beginner See-saw) -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): Standard See-saw Balance</h4>
+                    <span class="marks-allocated">[Basic Moment Equation]</span>
+                </div>
+                <div class="question-body">
+                    <p>A uniform $15.0\text{ kg}$ wooden plank of total length $L = 6.00\text{ m}$ is supported by a central fulcrum. Child A ($m_1 = 35.0\text{ kg}$) sits $r_1 = 2.40\text{ m}$ to the left of the pivot.</p>
+                    <p>a) Calculate where Child B ($m_2 = 42.0\text{ kg}$) must sit to achieve exact balance.<br>b) Calculate the upward normal force $N$ exerted by the central fulcrum ($g = 9.80\text{ m/s}^2$).</p>
+
+                    <!-- Scenario SVG Diagram for Worked Example 1 -->
+                    <div class="vector-diagram-card">
+                        <svg width="500" height="220" viewBox="0 0 500 220" style="background: transparent;">
+                            <!-- Fulcrum Triangle at x=250 -->
+                            <polygon points="250,140 230,180 270,180" fill="#b026ff" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="250" y="200" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Central Fulcrum (Pivot)</text>
+
+                            <!-- Wooden Plank Beam -->
+                            <rect x="50" y="128" width="400" height="12" rx="3" fill="rgba(0,240,255,0.15)" stroke="#00f0ff" stroke-width="2"/>
+
+                            <!-- Child A (Left, x = 250 - 2.4*50 = 130) -->
+                            <circle cx="130" cy="115" r="13" fill="#00e676" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="130" y="119" fill="#000" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle">A</text>
+                            <line x1="130" y1="128" x2="130" y2="180" stroke="#00e676" stroke-width="2.5"/>
+                            <polygon points="130,180 125,170 135,170" fill="#00e676"/>
+                            <text x="130" y="195" fill="#00e676" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">W_A = m_1 g</text>
+
+                            <!-- Plank Center of Mass (x = 250) -->
+                            <line x1="250" y1="128" x2="250" y2="90" stroke="#ef4444" stroke-width="2"/>
+                            <polygon points="250,128 245,118 255,118" fill="#ef4444"/>
+                            <text x="250" y="80" fill="#ef4444" font-family="sans-serif" font-size="11" text-anchor="middle">W_plank = m_p g (r=0)</text>
+
+                            <!-- Upward Normal Force from Fulcrum -->
+                            <line x1="250" y1="140" x2="250" y2="40" stroke="#00f0ff" stroke-width="2.5"/>
+                            <polygon points="250,40 245,50 255,50" fill="#00f0ff"/>
+                            <text x="260" y="55" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="12">Normal Force (N)</text>
+
+                            <!-- Child B (Right, x = 250 + 2.0*50 = 350) -->
+                            <circle cx="350" cy="115" r="13" fill="#ffd700" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="350" y="119" fill="#000" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle">B</text>
+                            <line x1="350" y1="128" x2="350" y2="180" stroke="#ffd700" stroke-width="2.5"/>
+                            <polygon points="350,180 345,170 355,170" fill="#ffd700"/>
+                            <text x="350" y="195" fill="#ffd700" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">W_B = m_2 g</text>
+
+                            <!-- Distance Dimension Lines -->
+                            <line x1="130" y1="30" x2="250" y2="30" stroke="#ffffff" stroke-width="1" stroke-dasharray="3"/>
+                            <text x="190" y="24" fill="#ffffff" font-family="sans-serif" font-size="11" text-anchor="middle">r_1 = 2.40 m</text>
+                            <line x1="250" y1="30" x2="350" y2="30" stroke="#ffffff" stroke-width="1" stroke-dasharray="3"/>
+                            <text x="300" y="24" fill="#ffffff" font-family="sans-serif" font-size="11" text-anchor="middle">r_2 = ?</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 3: Free-body setup for Worked Example 1. Rotational balance occurs when $\tau_{\text{CCW}} = \tau_{\text{CW}}$.</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Finding Child B's Position ($r_2$):</strong></p>
+                        <p>Because the wooden plank is uniform, its weight acts at the midpoint, directly over the fulcrum ($r = 0$). Thus plank weight contributes zero torque!</p>
+
+                        <p>Applying Rotational Equilibrium ($\sum \tau_{\text{CCW}} = \sum \tau_{\text{CW}}$):</p>
+                        $$m_1 g r_1 = m_2 g r_2$$
+
+                        <p>Cancelling $g$:</p>
+                        $$35.0 \times 2.40 = 42.0 \times r_2 \implies 84.0 = 42.0 \times r_2 \implies r_2 = \mathbf{2.00\text{ m to the right of the pivot}}$$
+
+                        <p><strong>Part b) Fulcrum Normal Reaction Force ($N$):</strong></p>
+                        <p>Applying Vertical Force Balance ($\sum F_y = 0$):</p>
+                        $$N - m_{\text{plank}} g - m_1 g - m_2 g = 0$$
+                        $$N = (15.0 + 35.0 + 42.0) \times 9.80 = 92.0 \times 9.80 = \mathbf{901.6\text{ N}} \approx \mathbf{902\text{ N}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium-Easy (Beginner Bridge / Two Supports) -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium-Easy): Two-Support Bench Bridge</h4>
+                    <span class="marks-allocated">[Bridging 1D to 2D Systems]</span>
+                </div>
+                <div class="question-body">
+                    <p>A uniform wooden bench of mass $m = 20.0\text{ kg}$ and length $L = 4.00\text{ m}$ rests on two vertical legs at its ends (Leg A at $x = 0$, Leg B at $x = 4.00\text{ m}$). A person of mass $M = 60.0\text{ kg}$ sits on the bench at distance $x = 1.00\text{ m}$ from Leg A.</p>
+                    <p>Calculate the vertical support forces $F_A$ and $F_B$ exerted by Leg A and Leg B.</p>
+
+                    <!-- Scenario SVG Diagram for Worked Example 2 -->
+                    <div class="vector-diagram-card">
+                        <svg width="500" height="220" viewBox="0 0 500 220" style="background: transparent;">
+                            <!-- Bench Beam -->
+                            <rect x="60" y="100" width="380" height="16" rx="4" fill="rgba(0,240,255,0.15)" stroke="#00f0ff" stroke-width="2"/>
+
+                            <!-- Ground Line -->
+                            <line x1="40" y1="180" x2="460" y2="180" stroke="#ffffff" stroke-width="2"/>
+
+                            <!-- Leg A (Left, x = 60) -->
+                            <rect x="60" y="116" width="12" height="64" fill="rgba(255,255,255,0.2)"/>
+                            <line x1="66" y1="180" x2="66" y2="40" stroke="#00e676" stroke-width="2.5"/>
+                            <polygon points="66,40 61,50 71,50" fill="#00e676"/>
+                            <text x="66" y="30" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">F_A</text>
+
+                            <!-- Leg B (Right, x = 440) -->
+                            <rect x="428" y="116" width="12" height="64" fill="rgba(255,255,255,0.2)"/>
+                            <line x1="434" y1="180" x2="434" y2="40" stroke="#00e676" stroke-width="2.5"/>
+                            <polygon points="434,40 429,50 439,50" fill="#00e676"/>
+                            <text x="434" y="30" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">F_B</text>
+
+                            <!-- Person Load (x = 60 + 1.0*95 = 155) -->
+                            <circle cx="155" cy="85" r="12" fill="#ffd700" stroke="#ffffff" stroke-width="1.5"/>
+                            <line x1="155" y1="100" x2="155" y2="160" stroke="#ffd700" stroke-width="2.5"/>
+                            <polygon points="155,160 150,150 160,150" fill="#ffd700"/>
+                            <text x="155" y="175" fill="#ffd700" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">M g (60 kg)</text>
+
+                            <!-- Bench Center of Mass (x = 60 + 2.0*95 = 250) -->
+                            <line x1="250" y1="100" x2="250" y2="160" stroke="#ef4444" stroke-width="2.5"/>
+                            <polygon points="250,160 245,150 255,150" fill="#ef4444"/>
+                            <text x="250" y="175" fill="#ef4444" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">m g (20 kg)</text>
+
+                            <!-- Distance Dimension Lines -->
+                            <line x1="66" y1="200" x2="155" y2="200" stroke="#ffffff" stroke-width="1" stroke-dasharray="3"/>
+                            <text x="110" y="215" fill="#ffffff" font-family="sans-serif" font-size="10" text-anchor="middle">1.0 m</text>
+                            <line x1="66" y1="200" x2="250" y2="200" stroke="#ffffff" stroke-width="1" stroke-dasharray="3"/>
+                            <text x="200" y="215" fill="#ffffff" font-family="sans-serif" font-size="10" text-anchor="middle">2.0 m</text>
+                            <line x1="66" y1="200" x2="434" y2="200" stroke="#ffffff" stroke-width="1" stroke-dasharray="3"/>
+                            <text x="340" y="215" fill="#ffffff" font-family="sans-serif" font-size="10" text-anchor="middle">Total L = 4.0 m</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 4: Free-body diagram for Worked Example 2. Setting pivot at Leg A isolates support force $F_B$.</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Step 1: Calculate $F_B$ by placing the pivot at Leg A ($x = 0$):</strong></p>
+                        <p>Placing pivot at Leg A sets $r_A = 0$, eliminating $F_A$ from our torque equation!</p>
+
+                        $$\sum \tau_A = 0 \implies F_B \times 4.00 - m g \times 2.00 - M g \times 1.00 = 0$$
+                        $$4.00 F_B = (20.0 \times 9.80 \times 2.00) + (60.0 \times 9.80 \times 1.00)$$
+                        $$4.00 F_B = 392 + 588 = 980 \implies F_B = \mathbf{245\text{ N Upward}}$$
+
+                        <p><strong>Step 2: Calculate $F_A$ using Vertical Force Balance ($\sum F_y = 0$):</strong></p>
+
+                        $$F_A + F_B = (m + M) g = (20.0 + 60.0) \times 9.80 = 784\text{ N}$$
+                        $$F_A = 784 - 245 = \mathbf{539\text{ N Upward}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Medium-Hard (Wall Boom with Angled Cable) -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Medium-Hard): Hinged Wall Boom with Angled Cable</h4>
+                    <span class="marks-allocated">[Hinged Boom & Angled Tension]</span>
+                </div>
+                <div class="question-body">
+                    <p>A uniform horizontal steel beam of mass $m = 45.0\text{ kg}$ and length $L = 3.20\text{ m}$ is hinged to a wall at Point A. A heavy sign ($M = 85.0\text{ kg}$) hangs from the outer end (Point B). A support cable connects Point B to the wall at an angle $\theta = 35.0^\circ$ above the beam.</p>
+                    <p>a) Calculate the tension force $T$ in the support cable.<br>b) Calculate the horizontal and vertical hinge forces ($H_x, H_y$) at Point A.</p>
+
+                    <!-- Scenario SVG Diagram for Worked Example 3 -->
+                    <div class="vector-diagram-card">
+                        <svg width="500" height="240" viewBox="0 0 500 240" style="background: transparent;">
+                            <!-- Vertical Wall -->
+                            <line x1="80" y1="20" x2="80" y2="220" stroke="#ffffff" stroke-width="3"/>
+
+                            <!-- Hinge A at (80, 160) -->
+                            <circle cx="80" cy="160" r="7" fill="#b026ff" stroke="#ffffff" stroke-width="2"/>
+                            <text x="60" y="165" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="12">A (Hinge)</text>
+
+                            <!-- Horizontal Steel Beam (L = 3.2m -> 320px) -->
+                            <rect x="80" y="154" width="320" height="12" rx="3" fill="rgba(0,240,255,0.15)" stroke="#00f0ff" stroke-width="2"/>
+                            <text x="410" y="165" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="12">B</text>
+
+                            <!-- Support Cable at 35 degrees -->
+                            <line x1="400" y1="160" x2="80" y2="40" stroke="#ffd700" stroke-width="3"/>
+                            <text x="240" y="90" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="12">Tension (T)</text>
+
+                            <!-- Cable Angle Arc -->
+                            <path d="M 350 160 A 50 50 0 0 1 360 142" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="330" y="152" fill="#ffffff" font-family="sans-serif" font-size="11">35°</text>
+
+                            <!-- Beam Weight mg at center (x = 240) -->
+                            <line x1="240" y1="160" x2="240" y2="210" stroke="#ef4444" stroke-width="2.5"/>
+                            <polygon points="240,210 235,200 245,200" fill="#ef4444"/>
+                            <text x="245" y="200" fill="#ef4444" font-family="sans-serif" font-size="11">m g (45 kg)</text>
+
+                            <!-- Sign Weight Mg at end B (x = 400) -->
+                            <line x1="400" y1="160" x2="400" y2="220" stroke="#ef4444" stroke-width="2.5"/>
+                            <polygon points="400,220 395,210 405,210" fill="#ef4444"/>
+                            <text x="410" y="215" fill="#ef4444" font-family="sans-serif" font-size="11" font-weight="bold">M g (85 kg)</text>
+
+                            <!-- Hinge Reaction Arrows at A -->
+                            <line x1="80" y1="160" x2="130" y2="160" stroke="#00e676" stroke-width="2.5"/>
+                            <polygon points="130,160 120,155 120,165" fill="#00e676"/>
+                            <text x="100" y="150" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="11">H_x</text>
+
+                            <line x1="80" y1="160" x2="80" y2="110" stroke="#00e676" stroke-width="2.5"/>
+                            <polygon points="80,110 75,120 85,120" fill="#00e676"/>
+                            <text x="90" y="125" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="11">H_y</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 5: Scenario setup for Worked Example 3 showing hinge reaction forces, cable tension angle, and loads.</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Cable Tension Force ($T$):</strong></p>
+                        <p>Set pivot at Hinge A ($r_A = 0$) to eliminate unknown hinge forces $H_x, H_y$:</p>
+
+                        $$\sum \tau_A = 0 \implies (T \sin 35.0^\circ) L - m g \left( \frac{L}{2} \right) - M g L = 0$$
+                        <p>Dividing by $L$:</p>
+                        $$T \sin 35.0^\circ = 9.80 \times (0.5 \times 45.0 + 85.0) = 9.80 \times 107.5 = 1053.5\text{ N}$$
+                        $$T = \frac{1053.5}{\sin 35.0^\circ} = \frac{1053.5}{0.57358} = \mathbf{1837\text{ N}} \approx \mathbf{1.84\text{ kN}}$$
+
+                        <p><strong>Part b) Hinge Reaction Forces ($H_x, H_y$):</strong></p>
+                        <p>1. Horizontal Balance ($\sum F_x = 0$): $H_x - T \cos 35.0^\circ = 0 \implies H_x = 1836.7 \times \cos 35.0^\circ = \mathbf{1505\text{ N}}$</p>
+                        <p>2. Vertical Balance ($\sum F_y = 0$): $H_y + T \sin 35.0^\circ - m g - M g = 0 \implies H_y = 1274.0 - 1053.5 = \mathbf{220.5\text{ N Upward}}$</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension (JRAHS Style Leaning Ladder) -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension - Band 6 Separator): Leaning Ladder Slip Threshold</h4>
+                    <span class="marks-allocated">[2D Friction & Torque Synthesis]</span>
+                </div>
+                <div class="question-body">
+                    <p>A uniform ladder of length $L = 5.00\text{ m}$ and mass $m = 20.0\text{ kg}$ leans against a smooth vertical wall ($f_w = 0$) and rests on a rough floor ($\mu_s = 0.400$) at an angle $\theta = 60.0^\circ$ to the floor. A person of mass $M = 80.0\text{ kg}$ climbs up the ladder.</p>
+                    <p>Calculate how far up the ladder ($x$ metres) the person can climb before the base begins to slip.</p>
+
+                    <!-- Scenario SVG Diagram for Worked Example 4 -->
+                    <div class="vector-diagram-card">
+                        <svg width="450" height="280" viewBox="0 0 450 280" style="background: transparent;">
+                            <!-- Floor & Smooth Wall -->
+                            <line x1="40" y1="240" x2="410" y2="240" stroke="#ffffff" stroke-width="3"/>
+                            <line x1="80" y1="30" x2="80" y2="240" stroke="#ffffff" stroke-width="3"/>
+                            <text x="40" y="130" fill="#888" font-family="sans-serif" font-size="11" transform="rotate(-90 40 130)">Smooth Wall (f_w = 0)</text>
+
+                            <!-- Ladder Beam -->
+                            <line x1="80" y1="67" x2="380" y2="240" stroke="#00f0ff" stroke-width="6"/>
+
+                            <!-- Angle Theta = 60 degrees -->
+                            <path d="M 330 240 A 50 50 0 0 0 310 205" fill="none" stroke="#ffd700" stroke-width="2"/>
+                            <text x="290" y="230" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="13">θ = 60°</text>
+
+                            <!-- Climber Mass M at position x -->
+                            <circle cx="158" cy="112" r="11" fill="#ffd700" stroke="#ffffff" stroke-width="1.5"/>
+                            <line x1="158" y1="112" x2="158" y2="172" stroke="#ffd700" stroke-width="2.5"/>
+                            <polygon points="158,172 153,162 163,162" fill="#ffd700"/>
+                            <text x="168" y="150" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="11">M g (80 kg)</text>
+
+                            <!-- Ladder Center of Mass mg at midpoint (x=230, y=153.5) -->
+                            <line x1="230" y1="153" x2="230" y2="213" stroke="#ef4444" stroke-width="2"/>
+                            <polygon points="230,213 225,203 235,203" fill="#ef4444"/>
+                            <text x="238" y="190" fill="#ef4444" font-family="sans-serif" font-size="11">m g (20 kg)</text>
+
+                            <!-- Wall Normal Force N_w -->
+                            <line x1="80" y1="67" x2="150" y2="67" stroke="#00f0ff" stroke-width="2.5"/>
+                            <polygon points="150,67 140,62 140,72" fill="#00f0ff"/>
+                            <text x="100" y="55" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="12">N_w</text>
+
+                            <!-- Ground Normal N_g & Friction f_g at Base (380, 240) -->
+                            <line x1="380" y1="240" x2="380" y2="170" stroke="#00e676" stroke-width="2.5"/>
+                            <polygon points="380,170 375,180 385,180" fill="#00e676"/>
+                            <text x="390" y="185" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="12">N_g</text>
+
+                            <line x1="380" y1="240" x2="310" y2="240" stroke="#ffd700" stroke-width="2.5"/>
+                            <polygon points="310,240 320,235 320,245" fill="#ffd700"/>
+                            <text x="260" y="260" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="11">f_g = μ N_g</text>
+
+                            <!-- Dimension line for climber height x -->
+                            <line x1="380" y1="265" x2="158" y2="265" stroke="#ffffff" stroke-width="1" stroke-dasharray="3"/>
+                            <text x="260" y="278" fill="#ffffff" font-family="sans-serif" font-size="10" text-anchor="middle">Distance x along ladder</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 6: Complete Free-Body diagram for Worked Example 4 showing slip threshold force interactions.</p>
+                    </div>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Full Band 6 JRAHS Solution:</h5>
+
+                        <p><strong>Step 1: Vertical Force Balance ($\sum F_y = 0$):</strong></p>
+                        $$N_g = (m + M) g = (20.0 + 80.0) \times 9.80 = 980\text{ N}$$
+
+                        <p><strong>Step 2: Maximum Available Ground Static Friction ($f_{g,\max}$):</strong></p>
+                        $$f_{g,\max} = \mu_s N_g = 0.400 \times 980 = 392\text{ N}$$
+
+                        <p><strong>Step 3: Horizontal Force Balance ($\sum F_x = 0$):</strong></p>
+                        $$N_w = f_{g,\max} = 392\text{ N}$$
+
+                        <p><strong>Step 4: Torque Balance about Ground Base Pivot ($\sum \tau_{\text{base}} = 0$):</strong></p>
+                        $$N_w (L \sin 60.0^\circ) - m g \left( \frac{L}{2} \cos 60.0^\circ \right) - M g (x \cos 60.0^\circ) = 0$$
+
+                        <p>Substituting numerical values:</p>
+                        $$392 \times (5.00 \times 0.8660) - (20.0 \times 9.80 \times 2.50 \times 0.50) - (80.0 \times 9.80 \times 0.50) x = 0$$
+                        $$1697.4 - 245.0 - 392.0 x = 0$$
+                        $$1452.4 = 392.0 x \implies x = \frac{1452.4}{392.0} = \mathbf{3.70\text{ m up the ladder}}$$
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. Four Practice Questions with Scenario Diagrams -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Scenario Diagrams & Marking Criteria</h2>
+            <p>Attempt the practice questions below and log your marks into the self-assessment tracking system.</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-10-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Tower Crane Counterweight Balance</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A tower crane jib extends horizontally $r_1 = 25.0\text{ m}$ to the right of its central tower, holding a load of $M = 2500\text{ kg}$. The counterweight arm extends $r_2 = 8.00\text{ m}$ to the left.</p>
+                    <p>Calculate the counterweight mass $m_c$ required to achieve exact rotational balance, ignoring jib structural mass.</p>
+
+                    <!-- Scenario SVG Diagram for Practise Q1 -->
+                    <div class="vector-diagram-card">
+                        <svg width="500" height="220" viewBox="0 0 500 220" style="background: transparent;">
+                            <!-- Central Support Tower -->
+                            <rect x="180" y="80" width="30" height="120" fill="rgba(255,255,255,0.1)" stroke="#ffffff" stroke-width="2"/>
+                            <line x1="180" y1="80" x2="210" y2="200" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+                            <line x1="210" y1="80" x2="180" y2="200" stroke="rgba(255,255,255,0.2)" stroke-width="1.5"/>
+
+                            <!-- Horizontal Crane Arm -->
+                            <rect x="60" y="70" width="380" height="12" rx="3" fill="rgba(0,240,255,0.15)" stroke="#00f0ff" stroke-width="2"/>
+
+                            <!-- Counterweight Mass m_c (Left, x = 60) -->
+                            <rect x="60" y="45" width="40" height="25" fill="#ffd700" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="80" y="62" fill="#000" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle">m_c</text>
+                            <line x1="80" y1="82" x2="80" y2="140" stroke="#ffd700" stroke-width="2.5"/>
+                            <polygon points="80,140 75,130 85,130" fill="#ffd700"/>
+                            <text x="80" y="155" fill="#ffd700" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">m_c g</text>
+
+                            <!-- Hanging Load M (Right, x = 430) -->
+                            <rect x="415" y="100" width="30" height="30" fill="#00e676" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="430" y="120" fill="#000" font-family="sans-serif" font-weight="bold" font-size="11" text-anchor="middle">M</text>
+                            <line x1="430" y1="82" x2="430" y2="100" stroke="#ffffff" stroke-width="1.5"/>
+                            <line x1="430" y1="130" x2="430" y2="180" stroke="#00e676" stroke-width="2.5"/>
+                            <polygon points="430,180 425,170 435,170" fill="#00e676"/>
+                            <text x="430" y="195" fill="#00e676" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">M g (2500 kg)</text>
+
+                            <!-- Dimension Arrows -->
+                            <line x1="80" y1="25" x2="195" y2="25" stroke="#ffffff" stroke-width="1" stroke-dasharray="3"/>
+                            <text x="137" y="18" fill="#ffffff" font-family="sans-serif" font-size="11" text-anchor="middle">r_2 = 8.00 m</text>
+
+                            <line x1="195" y1="25" x2="430" y2="25" stroke="#ffffff" stroke-width="1" stroke-dasharray="3"/>
+                            <text x="312" y="18" fill="#ffffff" font-family="sans-serif" font-size="11" text-anchor="middle">r_1 = 25.0 m</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 7: Diagram for Practise Question 1 illustrating tower crane counterweight balance.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-10-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-10-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-10-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Apply $\tau_{\text{CCW}} = \tau_{\text{CW}} \implies m_c g r_2 = M g r_1$. Mass of counterweight $m_c = M r_1 / r_2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-10-easy" style="display: none;">
+                    <div class="worked-solution">
+                        <p>Applying rotational equilibrium about the central tower axis ($\sum \tau = 0$):</p>
+
+                        $$m_c g r_2 = M g r_1 \implies m_c r_2 = M r_1$$
+                        $$m_c \times 8.00 = 2500 \times 25.0 = 62500 \implies m_c = \frac{62500}{8.00} = \mathbf{7812.5\text{ kg}} \approx \mathbf{7.81 \times 10^3\text{ kg}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"For rotational equilibrium about the tower axis, $\sum \tau = 0 \implies m_c g r_2 = M g r_1$. Substituting values gives $m_c (8.00) = (2500)(25.0) = 62500$, yielding required counterweight mass $m_c = 7810\text{ kg}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Sets up the moment balance principle $\tau_{\text{CCW}} = \tau_{\text{CW}}$.</li>
+                            <li><strong>2 Marks:</strong> Correctly substitutes distances ($25.0\text{ m}$ and $8.00\text{ m}$).</li>
+                            <li><strong>3 Marks:</strong> Obtains final answer $7810\text{ kg}$ with correct units and 3 significant figures.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-10-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-10-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('10-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-10-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-10-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Hinged Wall Boom with Angled Tie-Cable</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A horizontal boom of length $L = 4.00\text{ m}$ and mass $m = 60.0\text{ kg}$ is hinged to a wall. A tie-rod cable connects the outer end of the boom to the wall at an angle $\theta = 40.0^\circ$ above the boom. A load $M = 150.0\text{ kg}$ hangs from the end of the boom.</p>
+                    <p>a) Calculate the tension force $T$ in the tie-rod cable.<br>b) Calculate the horizontal reaction force $H_x$ exerted by the hinge on the boom.</p>
+
+                    <!-- Scenario SVG Diagram for Practise Q2 -->
+                    <div class="vector-diagram-card">
+                        <svg width="500" height="230" viewBox="0 0 500 230" style="background: transparent;">
+                            <!-- Vertical Wall -->
+                            <line x1="80" y1="20" x2="80" y2="210" stroke="#ffffff" stroke-width="3"/>
+
+                            <!-- Hinge -->
+                            <circle cx="80" cy="150" r="7" fill="#b026ff" stroke="#ffffff" stroke-width="2"/>
+                            <text x="50" y="155" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="12">Hinge</text>
+
+                            <!-- Horizontal Boom (L = 4.0 m -> 340px) -->
+                            <rect x="80" y="144" width="340" height="12" rx="3" fill="rgba(0,240,255,0.15)" stroke="#00f0ff" stroke-width="2"/>
+
+                            <!-- Tie Cable at 40 degrees -->
+                            <line x1="420" y1="150" x2="80" y2="30" stroke="#ffd700" stroke-width="3"/>
+                            <text x="250" y="80" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="12">Cable Tension T</text>
+
+                            <!-- Angle Arc -->
+                            <path d="M 370 150 A 50 50 0 0 1 382 130" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+                            <text x="350" y="142" fill="#ffffff" font-family="sans-serif" font-size="11">40°</text>
+
+                            <!-- Boom COM mg at x = 250 -->
+                            <line x1="250" y1="150" x2="250" y2="200" stroke="#ef4444" stroke-width="2.5"/>
+                            <polygon points="250,200 245,190 255,190" fill="#ef4444"/>
+                            <text x="255" y="195" fill="#ef4444" font-family="sans-serif" font-size="11">m g (60 kg)</text>
+
+                            <!-- Load Mg at x = 420 -->
+                            <line x1="420" y1="150" x2="420" y2="210" stroke="#ef4444" stroke-width="2.5"/>
+                            <polygon points="420,210 415,200 425,200" fill="#ef4444"/>
+                            <text x="425" y="205" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="11">M g (150 kg)</text>
+
+                            <!-- Horizontal Hinge Reaction Force -->
+                            <line x1="80" y1="150" x2="130" y2="150" stroke="#00e676" stroke-width="2.5"/>
+                            <polygon points="130,150 120,145 120,155" fill="#00e676"/>
+                            <text x="95" y="138" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="11">H_x</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 8: Diagram for Practise Question 2 representing hinged wall boom with angled tie-cable.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-10-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-10-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-10-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Take moments about the wall hinge: $(T \sin 40^\circ) L = m g (L/2) + M g L$. Then $H_x = T \cos 40^\circ$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-10-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Cable Tension ($T$):</strong></p>
+                        <p>Taking moments about the hinge ($\sum \tau_{\text{hinge}} = 0$):</p>
+
+                        $$(T \sin 40.0^\circ) L = m g \left( \frac{L}{2} \right) + M g L$$
+                        $$T \sin 40.0^\circ = 0.5 m g + M g = 9.80 \times (30.0 + 150.0) = 1764\text{ N}$$
+                        $$T = \frac{1764}{\sin 40.0^\circ} = \frac{1764}{0.64279} = \mathbf{2744\text{ N}} \approx \mathbf{2.74\text{ kN}}$$
+
+                        <p><strong>b) Horizontal Hinge Force ($H_x$):</strong></p>
+                        <p>By horizontal equilibrium ($\sum F_x = 0$):</p>
+
+                        $$H_x = T \cos 40.0^\circ = 2744.3 \times \cos 40.0^\circ = \mathbf{2102\text{ N}} \approx \mathbf{2.10\text{ kN}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Taking moments about the hinge eliminates hinge reaction forces: $(T \sin 40^\circ) L = m g (L/2) + M g L$. Dividing by $L$ gives $T \sin 40^\circ = 9.80(30 + 150) = 1764\text{ N}$, yielding tension $T = 2740\text{ N}$. Horizontal equilibrium requires $H_x = T \cos 40^\circ = 2744 \cos 40^\circ = 2100\text{ N}$ directed away from the wall."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Sets pivot at hinge to eliminate unknown reaction forces.</li>
+                            <li><strong>2 Marks:</strong> Correctly decomposes cable tension into vertical component $T \sin 40^\circ$.</li>
+                            <li><strong>3 Marks:</strong> Solves correctly for cable tension $T = 2740\text{ N}$.</li>
+                            <li><strong>4 Marks:</strong> Calculates horizontal hinge force $H_x = 2100\text{ N}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-10-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-10-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('10-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-10-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard -->
+            <div class="practise-question" id="question-10-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard): Asymmetric Bridge Support Loading</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A non-uniform footbridge beam of length $L = 10.0\text{ m}$ and mass $M = 800\text{ kg}$ has its center of mass located $x_{\text{com}} = 4.00\text{ m}$ from Pier A ($x = 0$). Pier B is at $x = 10.0\text{ m}$. A group of pedestrians weighing $m_{\text{group}} = 500\text{ kg}$ stands at $x = 7.00\text{ m}$.</p>
+                    <p>a) Calculate the vertical support force $F_A$ exerted by Pier A.<br>b) Calculate the vertical support force $F_B$ exerted by Pier B.<br>c) Determine where the pedestrians must stand so that both piers exert equal support forces ($F_A = F_B$).</p>
+
+                    <!-- Scenario SVG Diagram for Practise Q3 -->
+                    <div class="vector-diagram-card">
+                        <svg width="500" height="220" viewBox="0 0 500 220" style="background: transparent;">
+                            <!-- Footbridge Beam -->
+                            <rect x="60" y="100" width="380" height="16" rx="4" fill="rgba(0,240,255,0.15)" stroke="#00f0ff" stroke-width="2"/>
+
+                            <!-- Ground/Piers -->
+                            <!-- Pier A (x = 60) -->
+                            <rect x="52" y="116" width="16" height="50" fill="rgba(255,255,255,0.2)"/>
+                            <line x1="60" y1="166" x2="60" y2="40" stroke="#00e676" stroke-width="2.5"/>
+                            <polygon points="60,40 55,50 65,50" fill="#00e676"/>
+                            <text x="60" y="30" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">F_A (Pier A)</text>
+
+                            <!-- Pier B (x = 440) -->
+                            <rect x="432" y="116" width="16" height="50" fill="rgba(255,255,255,0.2)"/>
+                            <line x1="440" y1="166" x2="440" y2="40" stroke="#00e676" stroke-width="2.5"/>
+                            <polygon points="440,40 435,50 445,50" fill="#00e676"/>
+                            <text x="440" y="30" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">F_B (Pier B)</text>
+
+                            <!-- Non-uniform Beam COM (x = 60 + 0.4*380 = 212) -->
+                            <circle cx="212" cy="108" r="5" fill="#ef4444"/>
+                            <line x1="212" y1="116" x2="212" y2="176" stroke="#ef4444" stroke-width="2.5"/>
+                            <polygon points="212,176 207,166 217,166" fill="#ef4444"/>
+                            <text x="212" y="190" fill="#ef4444" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">Beam COM (800 kg)</text>
+
+                            <!-- Pedestrians at x = 7.0m -> (60 + 0.7*380 = 326) -->
+                            <circle cx="326" cy="85" r="10" fill="#ffd700" stroke="#ffffff" stroke-width="1.5"/>
+                            <line x1="326" y1="100" x2="326" y2="160" stroke="#ffd700" stroke-width="2.5"/>
+                            <polygon points="326,160 321,150 331,150" fill="#ffd700"/>
+                            <text x="326" y="175" fill="#ffd700" font-family="sans-serif" font-size="11" font-weight="bold" text-anchor="middle">Pedestrians (500 kg)</text>
+
+                            <!-- Distance Dimension Markers -->
+                            <line x1="60" y1="205" x2="212" y2="205" stroke="#ffffff" stroke-width="1" stroke-dasharray="3"/>
+                            <text x="136" y="217" fill="#ffffff" font-family="sans-serif" font-size="10" text-anchor="middle">4.0 m</text>
+                            <line x1="60" y1="205" x2="326" y2="205" stroke="#ffffff" stroke-width="1" stroke-dasharray="3"/>
+                            <text x="260" y="217" fill="#ffffff" font-family="sans-serif" font-size="10" text-anchor="middle">7.0 m</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 9: Diagram for Practise Question 3 illustrating non-uniform beam COM and asymmetric pedestrian loading.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-10-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-10-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-10-hard" style="display: none;">
+                    <p><strong>Hint:</strong> Take moments about Pier B to find $F_A$. For part c, equal support forces mean $F_A = F_B = (M + m_{\text{group}}) g / 2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-10-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Support Force at Pier A ($F_A$):</strong></p>
+                        <p>Taking moments about Pier B ($x = 10.0\text{ m}$):</p>
+
+                        $$F_A \times 10.0 - M g \times (10.0 - 4.00) - m_{\text{group}} g \times (10.0 - 7.00) = 0$$
+                        $$10.0 F_A = (800 \times 9.80 \times 6.00) + (500 \times 9.80 \times 3.00) = 47040 + 14700 = 61740 \implies F_A = \mathbf{6174\text{ N}}$$
+
+                        <p><strong>b) Support Force at Pier B ($F_B$):</strong></p>
+                        $$F_B = (800 + 500) \times 9.80 - 6174 = 12740 - 6174 = \mathbf{6566\text{ N}}$$
+
+                        <p><strong>c) Pedestrian Position $x_{\text{ped}}$ for $F_A = F_B$:</strong></p>
+                        <p>For equal loads, $F_A = F_B = 6370\text{ N}$. Taking moments about Pier A ($x = 0$):</p>
+
+                        $$6370 \times 10.0 - (800 \times 9.80 \times 4.00) - (500 \times 9.80) x_{\text{ped}} = 0$$
+                        $$63700 - 31360 = 4900 x_{\text{ped}} \implies 32340 = 4900 x_{\text{ped}} \implies x_{\text{ped}} = \mathbf{6.60\text{ m from Pier A}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Taking moments about Pier B gives $10 F_A = 800(9.80)(6.0) + 500(9.80)(3.0) = 61740\text{ N}\cdot\text{m} \implies F_A = 6170\text{ N}$. By vertical balance $F_B = (1300)(9.80) - 6174 = 6570\text{ N}$. For equal loads $F_A = F_B = 6370\text{ N}$, moments about Pier A gives $6370(10.0) - 800(9.80)(4.0) - 500(9.80) x_{\text{ped}} = 0$, yielding pedestrian position $x_{\text{ped}} = 6.60\text{ m}$ from Pier A."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Sets up moment balance accounting for non-uniform COM at $4.00\text{ m}$.</li>
+                            <li><strong>2 Marks:</strong> Calculates force at Pier A $F_A = 6170\text{ N}$.</li>
+                            <li><strong>3 Marks:</strong> Calculates force at Pier B $F_B = 6570\text{ N}$.</li>
+                            <li><strong>4 Marks:</strong> Sets $F_A = F_B = 6370\text{ N}$ for equal pier loading.</li>
+                            <li><strong>5 Marks:</strong> Solves correctly for pedestrian position $x = 6.60\text{ m}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-10-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-10-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('10-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-10-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension (JRAHS Distinction Separator) -->
+            <div class="practise-question" id="question-10-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (JRAHS Extension): Critical Inclination Angle for Uniform Rod Leaning on Smooth Peg</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A uniform rod of length $L$ and mass $m$ rests with its lower end on a rough floor ($\mu_s = 0.500$) and leans against a smooth horizontal peg at height $h = 0.600 L$ above the floor.</p>
+                    <p>a) Draw a complete Free-Body Diagram indicating all contact forces ($N_f, f_f, N_{\text{peg}}, m g$).<br>b) Derive an expression for the normal reaction force $N_{\text{peg}}$ as a function of angle $\theta$.<br>c) Calculate the minimum inclination angle $\theta_{\min}$ to the horizontal for which the rod remains in static equilibrium without slipping.</p>
+
+                    <!-- Scenario SVG Diagram for Practise Q4 -->
+                    <div class="vector-diagram-card">
+                        <svg width="450" height="280" viewBox="0 0 450 280" style="background: transparent;">
+                            <!-- Rough Floor -->
+                            <line x1="40" y1="240" x2="410" y2="240" stroke="#ffffff" stroke-width="3"/>
+
+                            <!-- Height Marker Line h = 0.6 L -->
+                            <line x1="120" y1="240" x2="120" y2="100" stroke="rgba(255,255,255,0.25)" stroke-width="1.5" stroke-dasharray="3"/>
+                            <text x="110" y="170" fill="#ffffff" font-family="sans-serif" font-size="11" text-anchor="end">h = 0.600 L</text>
+
+                            <!-- Smooth Peg Circle at (120, 100) -->
+                            <circle cx="120" cy="100" r="8" fill="#ffd700" stroke="#ffffff" stroke-width="2"/>
+                            <text x="120" y="80" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="12" text-anchor="middle">Smooth Peg</text>
+
+                            <!-- Leaning Uniform Rod -->
+                            <line x1="280" y1="240" x2="70" y2="55" stroke="#00f0ff" stroke-width="6"/>
+
+                            <!-- Angle Theta at Base -->
+                            <path d="M 240 240 A 40 40 0 0 0 226 208" fill="none" stroke="#ffd700" stroke-width="2"/>
+                            <text x="210" y="230" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="13">θ</text>
+
+                            <!-- Normal Reaction from Peg N_peg (Perpendicular to Rod!) -->
+                            <line x1="120" y1="100" x2="160" y2="55" stroke="#00f0ff" stroke-width="2.5"/>
+                            <polygon points="160,55 148,58 155,68" fill="#00f0ff"/>
+                            <text x="170" y="50" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="12">N_peg (Perpendicular!)</text>
+
+                            <!-- Gravity mg at Rod Midpoint (x=175, y=147.5) -->
+                            <line x1="175" y1="147" x2="175" y2="207" stroke="#ef4444" stroke-width="2.5"/>
+                            <polygon points="175,207 170,197 180,197" fill="#ef4444"/>
+                            <text x="182" y="185" fill="#ef4444" font-family="sans-serif" font-size="11">m g</text>
+
+                            <!-- Ground Forces at Base (280, 240) -->
+                            <line x1="280" y1="240" x2="280" y2="180" stroke="#00e676" stroke-width="2.5"/>
+                            <polygon points="280,180 275,190 285,190" fill="#00e676"/>
+                            <text x="290" y="195" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="12">N_f</text>
+
+                            <line x1="280" y1="240" x2="210" y2="240" stroke="#ffd700" stroke-width="2.5"/>
+                            <polygon points="210,240 220,235 220,245" fill="#ffd700"/>
+                            <text x="170" y="260" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="11">f_f = μ N_f</text>
+                        </svg>
+                        <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.5rem; text-align: center;">Figure 10: Complete Free-Body diagram for Practise Question 4 showing perpendicular peg normal force.</p>
+                    </div>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-10-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-10-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-10-extension" style="display: none;">
+                    <p><strong>Hint:</strong> Peg distance along rod is $d = h / \sin\theta$. Take moments about base: $N_{\text{peg}} (h / \sin\theta) = m g (L/2) \cos\theta$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-10-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Full Band 6 JRAHS Solution:</h5>
+
+                        <p><strong>a) Free-Body Force Breakdown:</strong></p>
+                        <ul class="feature-list">
+                            <li>Ground Normal $N_f$ (Vertically Upward at base).</li>
+                            <li>Ground Static Friction $f_f$ (Horizontally Towards Wall at base).</li>
+                            <li>Peg Reaction Normal $N_{\text{peg}}$ (Perpendicular to rod at distance $d = h / \sin\theta$).</li>
+                            <li>Gravity $m g$ (Vertically Downward at midpoint $L/2$).</li>
+                        </ul>
+
+                        <p><strong>b) Deriving $N_{\text{peg}}(\theta)$:</strong></p>
+                        <p>Taking moments about base pivot ($\sum \tau_{\text{base}} = 0$):</p>
+                        $$N_{\text{peg}} \times \left( \frac{h}{\sin\theta} \right) - m g \left( \frac{L}{2} \cos\theta \right) = 0 \implies N_{\text{peg}} = \frac{m g L \sin\theta \cos\theta}{2 h}$$
+                        <p>For $h = 0.600 L$:</p>
+                        $$N_{\text{peg}} = \frac{m g \sin\theta \cos\theta}{2 (0.600)} = \mathbf{\frac{5}{6} m g \sin\theta \cos\theta}$$
+
+                        <p><strong>c) Minimum Angle $\theta_{\min}$:</strong></p>
+                        <p>Resolving forces horizontally and vertically:</p>
+                        $$\Sigma F_x = 0 \implies f_f = N_{\text{peg}} \sin\theta$$
+                        $$\Sigma F_y = 0 \implies N_f = m g - N_{\text{peg}} \cos\theta$$
+
+                        <p>At slip threshold ($f_f = \mu_s N_f = 0.500 N_f$):</p>
+                        $$N_{\text{peg}} \sin\theta = 0.500 (m g - N_{\text{peg}} \cos\theta) \implies N_{\text{peg}} (\sin\theta + 0.500 \cos\theta) = 0.500 m g$$
+
+                        <p>Substituting $N_{\text{peg}} = \frac{5}{6} m g \sin\theta \cos\theta$ and dividing by $m g$:</p>
+                        $$\frac{5}{6} \sin\theta \cos\theta (\sin\theta + 0.500 \cos\theta) = 0.500$$
+                        $$5 \sin\theta \cos\theta (\sin\theta + 0.500 \cos\theta) = 3.00$$
+
+                        <p>Solving numerically for $\theta_{\min}$ gives $\mathbf{\theta_{\min} = 48.6^\circ}$.</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Moments about the base yield $N_{\text{peg}} (h / \sin\theta) = m g (L/2) \cos\theta \implies N_{\text{peg}} = \frac{m g L \sin\theta \cos\theta}{2 h} = \frac{5}{6} m g \sin\theta \cos\theta$. Resolving horizontal and vertical forces gives $f_f = N_{\text{peg}} \sin\theta$ and $N_f = m g - N_{\text{peg}} \cos\theta$. Applying slip condition $f_f = \mu_f N_f$ yields equation $\frac{5}{6} \sin\theta \cos\theta (\sin\theta + 0.5 \cos\theta) = 0.5$. Solving numerically yields minimum stable inclination angle $\theta_{\min} = 48.6^\circ$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly draws free-body diagram showing perpendicular peg normal force.</li>
+                            <li><strong>2 Marks:</strong> Expresses peg distance along rod $d = h / \sin\theta$.</li>
+                            <li><strong>3 Marks:</strong> Derives expression for $N_{\text{peg}} = \frac{5}{6} m g \sin\theta \cos\theta$.</li>
+                            <li><strong>4 Marks:</strong> Sets up force balance equations $\sum F_x = 0$ and $\sum F_y = 0$.</li>
+                            <li><strong>5 Marks:</strong> Applies static friction slip threshold condition $f_f = \mu_s N_f$.</li>
+                            <li><strong>6 Marks:</strong> Solves trigonometric relation to obtain $\theta_{\min} = 48.6^\circ$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-10-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-10-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('10-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-10-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="09-work-energy-circular.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 9: Work & Energy in UCM</a>
+                <a href="11-newtons-law-gravitation.html" class="btn-next">Proceed to Lesson 11: Universal Gravitation &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let torqueSimMode = 'seesaw'; // 'seesaw' or 'ladder'
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('10-easy');
+            checkIfQuestionAnswered('10-medium');
+            checkIfQuestionAnswered('10-hard');
+            checkIfQuestionAnswered('10-extension');
+            
+            initTorqueSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        function setTorqueSimMode(mode) {
+            torqueSimMode = mode;
+            document.getElementById('btn-mode-seesaw').classList.toggle('active', mode === 'seesaw');
+            document.getElementById('btn-mode-ladder').classList.toggle('active', mode === 'ladder');
+
+            const groupAngle = document.getElementById('group-angle');
+            const groupFriction = document.getElementById('group-friction');
+
+            if (mode === 'ladder') {
+                groupAngle.style.display = 'flex';
+                groupFriction.style.display = 'flex';
+            } else {
+                groupAngle.style.display = 'none';
+                groupFriction.style.display = 'none';
+            }
+        }
+
+        /* --- Interactive Canvas Torque Simulator Engine --- */
+        function initTorqueSimulator() {
+            const canvas = document.getElementById('torqueCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const inM1 = document.getElementById('sim-m1');
+            const inD1 = document.getElementById('sim-d1');
+            const inM2 = document.getElementById('sim-m2');
+            const inD2 = document.getElementById('sim-d2');
+            const inAngle = document.getElementById('sim-angle');
+            const inFriction = document.getElementById('sim-friction');
+
+            const dispM1 = document.getElementById('disp-m1');
+            const dispD1 = document.getElementById('disp-d1');
+            const dispM2 = document.getElementById('disp-m2');
+            const dispD2 = document.getElementById('disp-d2');
+            const dispAngle = document.getElementById('disp-angle');
+            const dispFriction = document.getElementById('disp-friction');
+
+            const outTauCCW = document.getElementById('out-tau-ccw');
+            const outTauCW = document.getElementById('out-tau-cw');
+            const outTauNet = document.getElementById('out-tau-net');
+            const outPivotF = document.getElementById('out-pivot-f');
+            const outStatus = document.getElementById('out-status');
+
+            let lastTime = performance.now();
+
+            function animate(now) {
+                const dt = (now - lastTime) / 1000;
+                lastTime = now;
+
+                const m1 = parseFloat(inM1.value);
+                const d1 = parseFloat(inD1.value);
+                const m2 = parseFloat(inM2.value);
+                const d2 = parseFloat(inD2.value);
+                const thetaDeg = parseFloat(inAngle.value);
+                const mu = parseFloat(inFriction.value);
+
+                dispM1.innerText = m1.toFixed(1) + ' kg';
+                dispD1.innerText = d1.toFixed(1) + ' m';
+                dispM2.innerText = m2.toFixed(1) + ' kg';
+                dispD2.innerText = d2.toFixed(1) + ' m';
+                dispAngle.innerText = thetaDeg.toFixed(1) + '°';
+                dispFriction.innerText = mu.toFixed(2);
+
+                const g = 9.80;
+
+                if (torqueSimMode === 'seesaw') {
+                    const tauCCW = m1 * g * d1;
+                    const tauCW = m2 * g * d2;
+                    const tauNet = tauCCW - tauCW;
+                    const Nfulcrum = (m1 + m2 + 15.0) * g;
+
+                    outTauCCW.innerText = tauCCW.toFixed(1) + ' N·m';
+                    outTauCW.innerText = tauCW.toFixed(1) + ' N·m';
+                    outTauNet.innerText = tauNet.toFixed(1) + ' N·m';
+                    outPivotF.innerText = Nfulcrum.toFixed(1) + ' N';
+
+                    if (Math.abs(tauNet) < 1.0) {
+                        outStatus.innerText = "PERFECT ROTATIONAL EQUILIBRIUM";
+                        outStatus.style.color = "#00e676";
+                    } else if (tauNet > 0) {
+                        outStatus.innerText = "UNBALANCED (CCW Rotation Left)";
+                        outStatus.style.color = "#ef4444";
+                    } else {
+                        outStatus.innerText = "UNBALANCED (CW Rotation Right)";
+                        outStatus.style.color = "#ffd700";
+                    }
+
+                    // Render Seesaw
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Grid
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                    ctx.lineWidth = 1;
+                    for (let x = 0; x < canvas.width; x += 40) {
+                        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                    }
+                    for (let y = 0; y < canvas.height; y += 40) {
+                        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                    }
+
+                    const pivotX = 400;
+                    const pivotY = 280;
+                    const tiltAngle = Math.max(-0.25, Math.min(0.25, -tauNet * 0.0005));
+
+                    // Draw Fulcrum Triangle
+                    ctx.fillStyle = '#b026ff';
+                    ctx.beginPath();
+                    ctx.moveTo(pivotX, pivotY);
+                    ctx.lineTo(pivotX - 25, pivotY + 45);
+                    ctx.lineTo(pivotX + 25, pivotY + 45);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Beam
+                    ctx.save();
+                    ctx.translate(pivotX, pivotY);
+                    ctx.rotate(tiltAngle);
+
+                    ctx.fillStyle = 'rgba(0, 240, 255, 0.15)';
+                    ctx.strokeStyle = '#00f0ff';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.roundRect(-300, -10, 600, 20, 6);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Mass 1 (Left)
+                    const px1 = -d1 * 55;
+                    ctx.fillStyle = '#00e676';
+                    ctx.fillRect(px1 - 20, -10 - (15 + m1 * 0.3), 40, 15 + m1 * 0.3);
+                    ctx.strokeStyle = '#ffffff'; ctx.strokeRect(px1 - 20, -10 - (15 + m1 * 0.3), 40, 15 + m1 * 0.3);
+
+                    // Mass 2 (Right)
+                    const px2 = d2 * 55;
+                    ctx.fillStyle = '#ffd700';
+                    ctx.fillRect(px2 - 20, -10 - (15 + m2 * 0.3), 40, 15 + m2 * 0.3);
+                    ctx.strokeStyle = '#ffffff'; ctx.strokeRect(px2 - 20, -10 - (15 + m2 * 0.3), 40, 15 + m2 * 0.3);
+
+                    ctx.restore();
+
+                    // Force Vectors
+                    // Weight 1 Arrow
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    ctx.moveTo(pivotX - d1 * 55, pivotY);
+                    ctx.lineTo(pivotX - d1 * 55, pivotY + 50);
+                    ctx.stroke();
+
+                    // Weight 2 Arrow
+                    ctx.beginPath();
+                    ctx.moveTo(pivotX + d2 * 55, pivotY);
+                    ctx.lineTo(pivotX + d2 * 55, pivotY + 50);
+                    ctx.stroke();
+
+                } else {
+                    // --- Ladder Mode Engine ---
+                    const thetaRad = thetaDeg * Math.PI / 180;
+                    const mLadder = 20.0;
+                    const mClimber = m1; // repurpose slider m1 as climber mass
+                    const xClimber = d1; // repurpose slider d1 as climber height
+                    const L = 5.0;
+
+                    const Nw = ((mLadder / 2 + mClimber * (xClimber / L)) * g * Math.cos(thetaRad)) / Math.sin(thetaRad);
+                    const Ng = (mLadder + mClimber) * g;
+                    const fgReq = Nw;
+                    const fgMax = mu * Ng;
+
+                    const tauCCW = Nw * L * Math.sin(thetaRad);
+                    const tauCW = mLadder * g * (L / 2) * Math.cos(thetaRad) + mClimber * g * xClimber * Math.cos(thetaRad);
+
+                    outTauCCW.innerText = tauCCW.toFixed(1) + ' N·m';
+                    outTauCW.innerText = tauCW.toFixed(1) + ' N·m';
+                    outTauNet.innerText = (fgReq <= fgMax ? "0.0" : (fgReq - fgMax).toFixed(1)) + ' N·m';
+                    outPivotF.innerText = Ng.toFixed(1) + ' N';
+
+                    if (fgReq <= fgMax) {
+                        outStatus.innerText = "STATIC EQUILIBRIUM (Safe)";
+                        outStatus.style.color = "#00e676";
+                    } else {
+                        outStatus.innerText = "CRITICAL SLIP (Friction Exceeded!)";
+                        outStatus.style.color = "#ef4444";
+                    }
+
+                    // Render Ladder
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                    // Grid
+                    ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                    ctx.lineWidth = 1;
+                    for (let x = 0; x < canvas.width; x += 40) {
+                        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                    }
+                    for (let y = 0; y < canvas.height; y += 40) {
+                        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                    }
+
+                    const wallX = 160;
+                    const floorY = 360;
+                    const ladderPx = 300;
+
+                    const topX = wallX;
+                    const topY = floorY - ladderPx * Math.sin(thetaRad);
+                    const baseX = wallX + ladderPx * Math.cos(thetaRad);
+
+                    // Wall and Floor
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(wallX, 40); ctx.lineTo(wallX, floorY); ctx.lineTo(600, floorY); ctx.stroke();
+
+                    // Ladder
+                    ctx.strokeStyle = (fgReq > fgMax) ? '#ef4444' : '#00f0ff';
+                    ctx.lineWidth = 6;
+                    ctx.beginPath(); ctx.moveTo(baseX, floorY); ctx.lineTo(topX, topY); ctx.stroke();
+
+                    // Climber dot
+                    const climberRatio = xClimber / L;
+                    const cX = baseX + (topX - baseX) * climberRatio;
+                    const cY = floorY + (topY - floorY) * climberRatio;
+
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath(); ctx.arc(cX, cY, 10, 0, Math.PI * 2); ctx.fill();
+
+                    // Force Arrows
+                    // Wall Normal Nw
+                    ctx.strokeStyle = '#00f0ff';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath(); ctx.moveTo(topX, topY); ctx.lineTo(topX + Nw * 0.5, topY); ctx.stroke();
+
+                    // Ground Friction fg
+                    ctx.strokeStyle = '#ffd700';
+                    ctx.beginPath(); ctx.moveTo(baseX, floorY); ctx.lineTo(baseX - fgReq * 0.5, floorY); ctx.stroke();
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

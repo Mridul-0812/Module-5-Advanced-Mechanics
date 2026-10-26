@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Module 5: Advanced Mechanics - Home</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax Configuration MUST be defined BEFORE loading the MathJax script -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['[', ']']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html" class="active">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <main id="main-content">
+        <header class="page-header">
+            <h1>Welcome to Advanced Mechanics</h1>
+            <p class="subtitle">Year 12 HSC Physics - Module 5</p>
+        </header>
+
+        <section class="content-section" id="introduction">
+            <h2>The Physics of Motion in Two Dimensions</h2>
+            <p>Welcome to Module 5! Advanced Mechanics expands standard 1D linear Newtonian dynamics into two-dimensional motion, rotational systems, and cosmic gravitational fields. Rather than relying on simple linear formulas, this module equips you with trigonometric vector resolution, radial force modeling, and universal potential energy concepts.</p>
+            <p>This course covers all three core NESA Inquiry Questions: <strong>Projectile Motion</strong>, <strong>Circular Motion & Torque</strong>, and <strong>Motion in Gravitational Fields</strong>. Mastery of these fundamentals is essential for your Year 12 HSC Physics examination.</p>
+        </section>
+
+        <section class="content-section" id="extension-maths-note">
+            <h2>Note for Mathematics Extension 1 Students</h2>
+            <p>If you take <strong>HSC Mathematics Extension 1 (3U)</strong>, you may already be familiar with projectile motion derived via vector calculus and second derivatives ($\ddot{x} = 0, \ddot{y} = -g$).</p>
+            <p><strong>Crucial NESA Physics Rules to keep in mind:</strong></p>
+            <ul class="feature-list">
+                <li><strong>No Calculus Required in HSC Physics:</strong> NESA HSC Physics strictly assesses algebraic and trigonometric solutions ($s = ut + \frac{1}{2}at^2$, $u_x = u\cos\theta$, $u_y = u\sin\theta$). Calculus-based derivations are not required and will gain no additional marks over algebraic methods.</li>
+                <li><strong>Explicit Vector Direction & Units:</strong> Physics questions heavily penalise missing directional vectors, improper significant figures (typically 3 s.f. based on $g = 9.80\text{ m/s}^2$), or missing SI units ($\text{m/s}$, $\text{m/s}^2$, $\text{N}\cdot\text{m}$, $\text{J}$).</li>
+                <li><strong>Working Scientifically:</strong> You will be assessed on experimental assumptions (e.g., zero air resistance, point-mass approximations) and numerical finite-difference modeling ($\Delta t$ spreadsheet calculations) alongside theoretical problem solving.</li>
+            </ul>
+        </section>
+
+        <section class="content-section" id="how-to-use">
+            <h2>How to Use This Platform</h2>
+            <p>To prevent cognitive overload, this platform breaks the module down into strictly focused, bite-sized lessons. Navigation is simple:</p>
+            <ul class="feature-list">
+                <li><strong>Sidebar:</strong> Use the left-hand menu to jump between specific topics across all 6 Phases. They are ordered chronologically.</li>
+                <li><strong>Content & Worked Solutions:</strong> Each page begins with brief theory, followed by four worked solutions (Easy, Medium, Hard, and Extension).</li>
+                <li><strong>Interactive Practise:</strong> At the bottom of each lesson page, you will find NESA-style practise questions with instant self-marking capability.</li>
+            </ul>
+            
+            <h3>The Self-Marking Engine</h3>
+            <p>Honesty is the best policy! When you complete a practise question, you can access hints and ultimately reveal the NESA-style marking criteria. You will then assign yourself a mark based on that criteria. Your total marks are tracked across the entire site and will be printed on your final completion certificate.</p>
+        </section>
+
+        <hr class="section-divider">
+
+        <section class="content-section" id="demo-area">
+            <h2>Demonstration: Interactive Interface</h2>
+            <p>Below is a functional example of how the practise questions on all subsequent pages will appear and operate. Give it a try to see how the system tracks your marks.</p>
+
+            <div class="practise-question" id="question-demo-1">
+                <div class="question-header">
+                    <h4>Practise Question: Projectile Component Analysis (Demo)</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A projectile is launched from ground level with an initial speed of $20.0\text{ m/s}$ at an angle of $30.0^\circ$ above the horizontal. Assuming $g = 9.80\text{ m/s}^2$ and ignoring air resistance, calculate the vertical component of the initial velocity ($u_y$) and the maximum height reached ($s_{y,\text{max}}$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-demo-1')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-demo-1')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-demo-1" style="display: none;">
+                    <p><strong>Hint:</strong> Resolve the initial vertical velocity using $u_y = u \sin\theta$. At maximum height, the vertical velocity becomes zero ($v_y = 0\text{ m/s}$). Apply the kinematic equation $v_y^2 = u_y^2 + 2a_y s_y$ with $a_y = -9.80\text{ m/s}^2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-demo-1" style="display: none;">
+                    <div class="worked-solution">
+                        <h5>Worked Solution:</h5>
+                        <p><strong>Step 1: Calculate initial vertical velocity component ($u_y$)</strong></p>
+                        <p>$$u_y = u \sin\theta = 20.0 \sin(30.0^\circ) = 10.0\text{ m/s}$$</p>
+                        <p><strong>Step 2: Calculate maximum height ($s_{y,\text{max}}$)</strong></p>
+                        <p>$$v_y^2 = u_y^2 + 2a_y s_y$$</p>
+                        <p>$$0^2 = (10.0)^2 + 2(-9.80)s_{y,\text{max}}$$</p>
+                        <p>$$19.6 s_{y,\text{max}} = 100$$</p>
+                        <p>$$s_{y,\text{max}} = 5.10\text{ m}\text{ (to 3 sig. figs.)}$$</p>
+                    </div>
+                    
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates the initial vertical velocity $u_y = 10.0\text{ m/s}$.</li>
+                            <li><strong>2 Marks:</strong> Correctly substitutes $v_y = 0\text{ m/s}$ and $a_y = -9.80\text{ m/s}^2$ into a valid kinematic equation.</li>
+                            <li><strong>3 Marks:</strong> Obtains the correct maximum height of $5.10\text{ m}$ with correct SI units and significant figures.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-demo-1">Assign yourself a mark:</label>
+                        <select id="mark-selector-demo-1" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('demo-1')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-demo-1"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <div class="footer-nav">
+                <a href="01-vector-fundamentals.html" class="btn-next">Proceed to Lesson 1: Vector Fundamentals &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <script>
+        /**
+         * INITIALISATION
+         * Runs when the page loads to display saved marks and trigger MathJax rendering.
+         */
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('demo-1');
+            
+            // Ensure MathJax renders static math blocks on initial DOM load
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        /**
+         * Toggles the visibility of a hint element.
+         * @param {string} hintId - The HTML ID of the hint container.
+         */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            if (hintElement.style.display === "none") {
+                hintElement.style.display = "block";
+            } else {
+                hintElement.style.display = "none";
+            }
+        }
+
+        /**
+         * Toggles the visibility of a solution and marking criteria element.
+         * @param {string} solutionId - The HTML ID of the solution container.
+         */
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                
+                // Trigger MathJax to typeset the newly revealed equations
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        /**
+         * Handles the submission of a student's self-assessed mark.
+         * Saves the mark to standard browser localStorage.
+         * @param {string} questionId - The unique identifier for the question.
+         */
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            // Construct a unique storage key for this specific physics question
+            const storageKey = 'physics_mod5_q_' + questionId;
+
+            // Retrieve previous mark if updating (to adjust total score accurately)
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            // Save the new mark
+            localStorage.setItem(storageKey, selectedMark);
+
+            // Provide user feedback
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            // Update the global score
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        /**
+         * Updates the global score in localStorage and refreshes the UI.
+         * @param {number} previousMark - The mark previously saved for a question.
+         * @param {number} newMark - The newly submitted mark.
+         */
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            
+            // Subtract the old mark and add the new one to prevent infinite accumulation
+            totalScore = totalScore - previousMark + newMark;
+            
+            // Save and update display
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        /**
+         * Reads the total score from localStorage and updates the sidebar.
+         */
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        /**
+         * Checks if a question was previously answered and updates the dropdown.
+         * @param {string} questionId - The unique identifier for the question.
+         */
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+
+</body>
+</html>

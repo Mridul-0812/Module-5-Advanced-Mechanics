@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>06. Speed, Period, Frequency & Angular Velocity - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Specific page enhancements for circular motion graphs, tables and interactive engine */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .symbol-badge {
+            display: inline-block;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            background: rgba(0, 240, 255, 0.12);
+            padding: 0.25rem 0.65rem;
+            border-radius: 6px;
+            font-family: 'SF Mono', Consolas, monospace;
+            border: 1px solid rgba(0, 240, 255, 0.2);
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#ucmCanvas {
+            width: 100%;
+            height: 420px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .vector-diagram-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .formula-callout-box {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.12), rgba(0, 240, 255, 0.12));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            text-align: center;
+        }
+
+        .formula-callout-box h4 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .formula-callout-box p {
+            margin-bottom: 0;
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html" class="active">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>06. Speed, Period, Frequency & Angular Velocity</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 2</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Inquiry Question</h2>
+            <p><strong>Inquiry Question 2:</strong> <em>Why do objects move in circles?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus, students must master the following specific outcomes regarding rotational kinematics and uniform circular motion:</p>
+            <ul class="feature-list">
+                <li>Conduct a quantitative analysis of practical situations involving uniform circular motion to evaluate the relationships between orbital radius ($r$), linear speed ($v$), period ($T$), frequency ($f$), and angular velocity ($\omega$).</li>
+                <li>Express angular displacement ($\Delta \theta$) in dimensionless radians ($\text{rad}$) and convert fluently between angular measure units (degrees, radians, revolutions).</li>
+                <li>Derive, explain, and apply the primary mathematical expressions relating linear tangential speed and angular velocity: $v = \frac{2\pi r}{T}$ and $\omega = \frac{\Delta \theta}{\Delta t} = \frac{2\pi}{T} = 2\pi f$.</li>
+                <li>Distinguish between constant scalar speed ($v$) and continuously changing vector velocity ($\vec{v}$) in uniform circular motion.</li>
+                <li>Analyse coupled rotational systems (such as connected gears, sprockets, and belt-driven pulleys) where tangential speed is conserved across boundary contacts.</li>
+            </ul>
+        </section>
+
+        <!-- 2. Deep Dive: Fundamentals of Uniform Circular Motion -->
+        <section class="content-section" id="deep-dive-ucm">
+            <h2>Deep Dive: Rotational Kinematics & Scalar vs Vector Dynamics</h2>
+
+            <h3>1. Defining Uniform Circular Motion (UCM)</h3>
+            <p>When an object traces a circular path of fixed radius $r$ at a constant scalar speed $v$, it is executing <strong>Uniform Circular Motion (UCM)</strong>. Examples abound in nature and technology: a satellite in a circular Earth orbit, a marble rolling around a circular track, a point on a spinning hard drive platter, or a rider on a fairground carousel.</p>
+
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.8rem;">The Paradox of UCM: Constant Speed, Changing Velocity!</h4>
+                <p>In linear mechanics, "constant speed" often implies zero acceleration. In circular motion, however, this intuition fails completely!</p>
+                <ul class="feature-list" style="margin-bottom: 0;">
+                    <li><strong>Scalar Speed ($v$):</strong> The distance covered along the circular arc per unit time is constant. If a car completes one circular lap every $10\text{ s}$ at $15\text{ m/s}$, its scalar speed never fluctuates.</li>
+                    <li><strong>Vector Velocity ($\vec{v}$):</strong> Velocity is a vector quantity possessing both magnitude and spatial direction. At every instantaneous point along the circular arc, the direction of motion is directed <em>tangentially</em> to the circle. Because the direction of motion continuously rotates as the particle moves, the velocity vector $\vec{v}$ is <strong>continuously changing at every instant</strong>!</li>
+                    <li><strong>Physical Implication:</strong> Because velocity $\vec{v}$ changes direction continuously, an object in uniform circular motion is <strong>permanently accelerating</strong>, even though its speed is 100% constant! (We will explore the nature of this centripetal acceleration in Lesson 7).</li>
+                </ul>
+            </div>
+
+            <!-- SVG Vector Diagram: Tangential Velocity -->
+            <div class="vector-diagram-card">
+                <svg width="360" height="260" viewBox="0 0 360 260" style="background: transparent;">
+                    <!-- Circular Orbit Path -->
+                    <circle cx="180" cy="130" r="90" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2" stroke-dasharray="4"/>
+                    
+                    <!-- Centre Point -->
+                    <circle cx="180" cy="130" r="4" fill="#00f0ff"/>
+                    <text x="185" y="145" fill="#00f0ff" font-family="sans-serif" font-size="12">Centre (O)</text>
+                    
+                    <!-- Radius Line -->
+                    <line x1="180" y1="130" x2="270" y2="130" stroke="#b026ff" stroke-width="2"/>
+                    <text x="220" y="122" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="13">Radius r</text>
+                    
+                    <!-- Position 1 (Right Point: 3 o'clock) -->
+                    <circle cx="270" cy="130" r="7" fill="#00e676"/>
+                    <!-- Velocity Vector 1 (Pointing UP) -->
+                    <line x1="270" y1="130" x2="270" y2="50" stroke="#ffd700" stroke-width="3"/>
+                    <polygon points="270,50 265,60 275,60" fill="#ffd700"/>
+                    <text x="278" y="70" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="14">v_1 (Tangential)</text>
+                    
+                    <!-- Position 2 (Top Point: 12 o'clock) -->
+                    <circle cx="180" cy="40" r="7" fill="#00e676"/>
+                    <!-- Velocity Vector 2 (Pointing LEFT) -->
+                    <line x1="180" y1="40" x2="100" y2="40" stroke="#ffd700" stroke-width="3"/>
+                    <polygon points="100,40 110,35 110,45" fill="#ffd700"/>
+                    <text x="110" y="25" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="14">v_2 (Tangential)</text>
+
+                    <!-- Position 3 (Bottom Point: 6 o'clock) -->
+                    <circle cx="180" cy="220" r="7" fill="#00e676"/>
+                    <!-- Velocity Vector 3 (Pointing RIGHT) -->
+                    <line x1="180" y1="220" x2="260" y2="220" stroke="#ffd700" stroke-width="3"/>
+                    <polygon points="260,220 250,215 250,225" fill="#ffd700"/>
+                    <text x="210" y="240" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="14">v_3 (Tangential)</text>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 1: Tangential velocity vectors $\vec{v}_1, \vec{v}_2, \vec{v}_3$ at various points along a uniform circular path. Magnitude $|\vec{v}|$ is constant, but direction rotates continuously.</p>
+            </div>
+
+            <h3>2. Time Parameters: Period ($T$) and Frequency ($f$)</h3>
+            <p>To quantify the repetition rate of circular motion, we define two inversely related scalar time parameters:</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">1. Period ($T$):</h4>
+                <p>The <strong>period</strong> ($T$) is defined as the time taken for an object to complete one full circular revolution ($360^\circ$ or $2\pi\text{ radians}$).</p>
+                $$\text{SI Unit of Period } T = \text{seconds (s)}$$
+                <p>If an object completes $N$ total revolutions in time $t_{\text{total}}$, its period is:</p>
+                $$T = \frac{t_{\text{total}}}{N}$$
+
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem; margin-top: 1.2rem;">2. Frequency ($f$):</h4>
+                <p>The <strong>frequency</strong> ($f$) is defined as the number of complete revolutions executed per unit time (per second).</p>
+                $$\text{SI Unit of Frequency } f = \text{hertz (Hz)} = \text{revolutions per second (s}^{-1}\text{)}$$
+                $$f = \frac{N}{t_{\text{total}}}$$
+
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.8rem; margin-top: 1.2rem;">Fundamental Inverse Relationship:</h4>
+                <p>Period and frequency are exact mathematical reciprocals of each other:</p>
+
+                <div class="formula-callout-box">
+                    <h4>Period-Frequency Reciprocal Relation</h4>
+                    <p>$$T = \frac{1}{f} \quad \iff \quad f = \frac{1}{T}$$</p>
+                </div>
+            </div>
+
+            <h3>3. Angular Measure: The Radians Scale vs Degrees</h3>
+            <p>In secondary school geometry, angles are traditionally measured in degrees ($360^\circ$ per full circle). However, in physics and rotational mechanics, measuring angles in degrees is clumsy because it introduces arbitrary factors of 360 into distance calculations.</p>
+
+            <p>Instead, NESA HSC Physics measures angular displacement $\Delta \theta$ in <strong>radians ($\text{rad}$)</strong>. A radian is defined as the central angle subtended by a circular arc length $s$ that is exactly equal in length to the radius $r$ of the circle.</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.8rem;">Arc Length & Radian Definition Formula</h4>
+                <p>The angular displacement $\theta$ in radians is defined as the dimensionless ratio of arc length $s$ to radius $r$:</p>
+                $$\theta (\text{in radians}) = \frac{\text{Arc Length } s}{\text{Radius } r} \implies \mathbf{s = r \theta}$$
+
+                <p>Because the total circumference of a circle of radius $r$ is $s_{\text{full}} = 2\pi r$, one complete revolution ($360^\circ$) corresponds to:</p>
+                $$\theta_{\text{full}} = \frac{2\pi r}{r} = 2\pi\text{ radians}$$
+
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem; margin-top: 1.2rem;">Unit Conversion Benchmarks:</h4>
+                <ul class="feature-list" style="margin-bottom: 0;">
+                    <li><strong>Full Circle ($360^\circ$):</strong> $360^\circ = 2\pi\text{ rad} \approx 6.2832\text{ rad}$</li>
+                    <li><strong>Half Circle ($180^\circ$):</strong> $180^\circ = \pi\text{ rad} \approx 3.1416\text{ rad}$</li>
+                    <li><strong>Right Angle ($90^\circ$):</strong> $90^\circ = \frac{\pi}{2}\text{ rad} \approx 1.5708\text{ rad}$</li>
+                    <li><strong>One Radian ($1\text{ rad}$):</strong> $1\text{ rad} = \frac{180^\circ}{\pi} \approx 57.30^\circ$</li>
+                    <li><strong>Degrees to Radians Conversion Factor:</strong> Multiply by $\frac{\pi}{180^\circ}$</li>
+                    <li><strong>Radians to Degrees Conversion Factor:</strong> Multiply by $\frac{180^\circ}{\pi}$</li>
+                </ul>
+            </div>
+
+            <h3>4. Angular Velocity ($\omega$) and Tangential Linear Speed ($v$)</h3>
+            <p>Just as linear velocity is the rate of change of linear displacement ($v = \frac{\Delta s}{\Delta t}$), <strong>angular velocity ($\omega$)</strong> is defined as the rate of change of angular displacement over time:</p>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.8rem;">1. Angular Velocity ($\omega$) Formulations</h4>
+                <p>The average angular velocity $\omega$ is defined as:</p>
+                $$\omega = \frac{\Delta \theta}{\Delta t}$$
+                $$\text{SI Unit of Angular Velocity } \omega = \text{radians per second (rad/s or s}^{-1}\text{)}$$
+
+                <p>For one complete revolution, the angular displacement is $\Delta \theta = 2\pi\text{ rad}$ and the time taken is one period $\Delta t = T$. Substituting these values gives the fundamental NESA formulas:</p>
+
+                <div class="formula-callout-box">
+                    <h4>Core NESA Angular Velocity Equations</h4>
+                    <p>$$\omega = \frac{2\pi}{T} = 2\pi f$$</p>
+                </div>
+
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem; margin-top: 1.5rem;">2. Deriving the Relation Between Linear Speed $v$ and Angular Velocity $\omega$</h4>
+                <p>Consider an object travelling along a circular path of radius $r$. In one period $T$, the total linear distance travelled along the circumference is $s = 2\pi r$.</p>
+                <p>Using the standard definition of linear speed $v = \frac{\text{Distance}}{\text{Time}}$:</p>
+                $$v = \frac{2\pi r}{T}$$
+
+                <p>By substituting $\omega = \frac{2\pi}{T}$ directly into this expression, we obtain the crucial bridge equation connecting linear tangential speed $v$ to angular velocity $\omega$:</p>
+
+                <div class="formula-callout-box">
+                    <h4>Tangential Linear Speed & Angular Velocity Relation</h4>
+                    <p>$$v = \omega r$$</p>
+                </div>
+
+                <p><strong>Physical Interpretation of $v = \omega r$:</strong> For a rigid rotating body (such as a spinning wheel or record turntable), <em>every point on the body shares the exact same angular velocity $\omega$</em> (completing the same number of radians per second). However, points further from the central pivot axis (larger radius $r$) must travel a greater physical arc distance in the same time frame, and therefore possess a proportionally larger linear tangential speed $v$!</p>
+            </div>
+
+            <h3>5. Unit Conversion: Revolutions Per Minute (RPM) to SI Units</h3>
+            <p>HSC examination questions frequently state rotational rates in engineering units such as <strong>Revolutions Per Minute (RPM)</strong>. Converting RPM to SI units ($\text{rad/s}$ and $\text{Hz}$) is a mandatory skill:</p>
+
+            <div class="concept-highlight-card">
+                <h5 style="color: var(--accent-cyan);">Standard Conversion Algorithm for RPM</h5>
+                <p>To convert $N\text{ RPM}$ into angular velocity $\omega\text{ (in rad/s)}$:</p>
+                <ol class="feature-list" style="margin-bottom: 0; padding-left: 1.2rem;">
+                    <li>Convert revolutions to radians: Multiply by $2\pi\text{ rad/rev}$.</li>
+                    <li>Convert minutes to seconds: Divide by $60\text{ s/min}$.</li>
+                </ol>
+                $$\omega (\text{rad/s}) = N \text{ RPM} \times \frac{2\pi \text{ rad}}{60 \text{ s}} = N \times \frac{\pi}{30}$$
+                <p style="margin-top:0.8rem;">To convert $N\text{ RPM}$ into frequency $f\text{ (in Hz)}$:</p>
+                $$f (\text{Hz}) = \frac{N \text{ RPM}}{60}$$
+            </div>
+
+            <h3>6. Coupled Rotational Systems: Gears, Belt Drives & Sprockets</h3>
+            <p>In multi-component mechanical systems (such as a bicycle chain connecting front and rear sprockets, or meshed gear trains), the boundary conditions dictate how rotational parameters transmit:</p>
+
+            <div class="uvtaxy-table-container">
+                <table class="uvtaxy-grid-table">
+                    <thead>
+                        <tr>
+                            <th>Coupling Type</th>
+                            <th>Physical Mechanism</th>
+                            <th>Conserved Dynamic Parameter</th>
+                            <th>Governing Mathematical Ratio</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>1. Co-Axial Rotation</strong> (Same Shaft)</td>
+                            <td>Two disks or wheels locked on the same central spinning axle (e.g. inner and outer tracks of a record, or car wheel and axle).</td>
+                            <td><strong>Angular Velocity is Conserved:</strong><br>$\omega_1 = \omega_2$</td>
+                            <td>$$\frac{v_1}{r_1} = \frac{v_2}{r_2} \implies v_2 = v_1 \left(\frac{r_2}{r_1}\right)$$<br>Outer radius points travel faster linearly.</td>
+                        </tr>
+                        <tr>
+                            <td><strong>2. Tangential Coupling</strong> (Meshed Gears / Belt Drive)</td>
+                            <td>Two wheels connected by a non-slip chain/belt, or interlocked gear teeth pushing against each other at their outer rims.</td>
+                            <td><strong>Linear Tangential Speed is Conserved:</strong><br>$v_1 = v_2$</td>
+                            <td>$$\omega_1 r_1 = \omega_2 r_2 \implies \frac{\omega_2}{\omega_1} = \frac{r_1}{r_2}$$<br>Smaller wheel rotates at a higher angular velocity!</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- 3. Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Interactive Workbench: Uniform Circular Motion Visualiser</h2>
+            <p>Use the interactive simulator below to explore uniform circular motion. Adjust radius $r$, rotation frequency $f$, and toggle vector displays to observe real-time relationships between angular displacement $\theta$, angular velocity $\omega$, and tangential linear velocity $\vec{v}$.</p>
+
+            <div class="sim-container">
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-radius">Radius ($r$): <span id="disp-radius" class="sim-value-display">2.0 m</span></label>
+                        <input type="range" id="sim-radius" min="0.5" max="5.0" value="2.0" step="0.1">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-freq">Frequency ($f$): <span id="disp-freq" class="sim-value-display">0.50 Hz</span></label>
+                        <input type="range" id="sim-freq" min="0.10" max="2.00" value="0.50" step="0.05">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-vectors">Vector Overlay:</label>
+                        <select id="sim-vectors">
+                            <option value="both">Show Velocity Vector & Radius</option>
+                            <option value="velocity">Show Tangential Velocity (v) Only</option>
+                            <option value="radius">Show Radius Vector (r) Only</option>
+                            <option value="none">Hide All Vectors</option>
+                        </select>
+                    </div>
+                </div>
+
+                <canvas id="ucmCanvas" width="800" height="420"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Period (T)</div>
+                        <div class="value" id="out-period">2.00 s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Angular Velocity (ω)</div>
+                        <div class="value" id="out-omega">3.14 rad/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Tangential Speed (v)</div>
+                        <div class="value" id="out-speed">6.28 m/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Angular Displacement (θ)</div>
+                        <div class="value" id="out-theta">0.00 rad</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">RPM Equivalent</div>
+                        <div class="value" id="out-rpm">30.0 RPM</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): RPM Conversion & Carousel Kinematics</h4>
+                    <span class="marks-allocated">[Rotational Unit Conversion & Basic Mechanics]</span>
+                </div>
+                <div class="question-body">
+                    <p>A fairground carousel rotates at a steady rate of $18.0\text{ RPM}$ (revolutions per minute). A child sits on a wooden horse positioned at a radial distance $r = 4.20\text{ m}$ from the central pivot axis. Calculate:</p>
+                    <p>a) The rotation frequency $f$ in hertz ($\text{Hz}$) and period $T$ in seconds ($\text{s}$).<br>b) The angular velocity $\omega$ of the carousel in radians per second ($\text{rad/s}$).<br>c) The linear tangential speed $v$ of the child.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Mathematical Solution:</h5>
+
+                        <p><strong>Part a) Frequency ($f$) and Period ($T$):</strong></p>
+                        <p>Frequency is the number of revolutions per second:</p>
+                        $$f = \frac{N \text{ RPM}}{60} = \frac{18.0}{60} = \mathbf{0.300\text{ Hz}}$$
+                        <p>Period $T$ is the reciprocal of frequency:</p>
+                        $$T = \frac{1}{f} = \frac{1}{0.300} = \mathbf{3.33\text{ s}}\quad (\text{to 3 sig. figs.})$$
+
+                        <p><strong>Part b) Angular Velocity ($\omega$):</strong></p>
+                        <p>Apply the NESA formula $\omega = 2\pi f$:</p>
+                        $$\omega = 2\pi f = 2 \times \pi \times 0.300 = 0.600 \pi = \mathbf{1.88\text{ rad/s}}\quad (\text{to 3 sig. figs.})$$
+
+                        <p><strong>Part c) Linear Tangential Speed ($v$):</strong></p>
+                        <p>Apply the bridge formula $v = \omega r$:</p>
+                        $$v = \omega r = (1.8850) \times 4.20 = \mathbf{7.92\text{ m/s}}\quad (\text{to 3 sig. figs.})$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Planetary Rotation & Equatorial Speed</h4>
+                    <span class="marks-allocated">[Geophysics Rotational Application]</span>
+                </div>
+                <div class="question-body">
+                    <p>Earth rotates on its axis once every $23\text{ hours, } 56\text{ minutes, and } 4.0\text{ seconds}$ (one sidereal day = $86164\text{ s}$). Assuming Earth is a perfect sphere of mean radius $R_E = 6.371 \times 10^6\text{ m}$, calculate:</p>
+                    <p>a) Earth's axial angular velocity $\omega_E$ in $\text{rad/s}$.<br>b) The linear tangential speed $v_{\text{eq}}$ of a person standing on the equator.<br>c) The linear tangential speed $v_{60}$ of a research station located at $60.0^\circ\text{ North latitude}$ (where radial distance to the rotation axis is $r = R_E \cos(60.0^\circ)$).</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Mathematical Solution:</h5>
+
+                        <p><strong>Part a) Angular Velocity of Earth ($\omega_E$):</strong></p>
+                        <p>Period $T = 86164\text{ s}$. Apply $\omega = \frac{2\pi}{T}$:</p>
+                        $$\omega_E = \frac{2\pi}{86164} = \mathbf{7.292 \times 10^{-5}\text{ rad/s}}\quad (\text{to 4 sig. figs.})$$
+
+                        <p><strong>Part b) Equatorial Linear Speed ($v_{\text{eq}}$):</strong></p>
+                        <p>At the equator, radial distance from the spin axis equals full Earth radius $r = R_E = 6.371 \times 10^6\text{ m}$.</p>
+                        $$v_{\text{eq}} = \omega_E R_E = (7.2921 \times 10^{-5}) \times (6.371 \times 10^6) = \mathbf{464.6\text{ m/s}}\quad (\approx 1673\text{ km/h}!)$$
+
+                        <p><strong>Part c) Linear Speed at $60.0^\circ\text{ North Latitude}$ ($v_{60}$):</strong></p>
+                        <p>Calculate radial distance $r_{60}$ perpendicular to the Earth's rotation axis:</p>
+                        $$r_{60} = R_E \cos(60.0^\circ) = (6.371 \times 10^6) \times 0.5000 = 3.1855 \times 10^6\text{ m}$$
+                        <p>Apply $v = \omega r$ using the same axial angular velocity $\omega_E$:</p>
+                        $$v_{60} = \omega_E r_{60} = (7.2921 \times 10^{-5}) \times (3.1855 \times 10^6) = \mathbf{232.3\text{ m/s}}$$
+                        <p><em>Notice that because the research station is closer to the spin axis, its linear speed is exactly half its equatorial value!</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Coupled Bicycle Drive Sprocket Analysis</h4>
+                    <span class="marks-allocated">[Tangential Coupling & Ratio Analysis]</span>
+                </div>
+                <div class="question-body">
+                    <p>A racing bicycle drive train consists of a front chainring (radius $r_1 = 11.0\text{ cm}$) connected by a non-slip steel chain to a rear wheel cog (radius $r_2 = 4.50\text{ cm}$). The rear cog is fixed co-axially to the rear bicycle wheel (radius $R_W = 34.0\text{ cm}$). A cyclist pedals the front chainring at a steady cadence of $90.0\text{ RPM}$.</p>
+
+                    <p>a) Calculate the angular velocity $\omega_1$ of the front chainring in $\text{rad/s}$.<br>b) Calculate the linear speed $v_{\text{chain}}$ of the connecting drive chain.<br>c) Calculate the angular velocity $\omega_2$ of the rear cog/wheel assembly.<br>d) Calculate the forward speed $v_{\text{bike}}$ of the bicycle along the road surface.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Mechanical System Analysis:</h5>
+
+                        <p><strong>Part a) Angular Velocity of Front Chainring ($\omega_1$):</strong></p>
+                        $$\omega_1 = 90.0 \text{ RPM} \times \frac{2\pi}{60} = 3.00 \pi = \mathbf{9.425\text{ rad/s}}$$
+
+                        <p><strong>Part b) Chain Linear Speed ($v_{\text{chain}}$):</strong></p>
+                        <p>Convert $r_1 = 11.0\text{ cm} = 0.110\text{ m}$. Applying $v = \omega r$ at the front chainring rim:</p>
+                        $$v_{\text{chain}} = \omega_1 r_1 = (9.4248) \times 0.110 = \mathbf{1.037\text{ m/s}}$$
+
+                        <p><strong>Part c) Angular Velocity of Rear Cog ($\omega_2$):</strong></p>
+                        <p>Because the chain does not slip, the tangential speed at the rim of the rear cog equals the chain speed ($v_2 = v_{\text{chain}} = 1.037\text{ m/s}$). Convert $r_2 = 4.50\text{ cm} = 0.0450\text{ m}$.</p>
+                        $$v_2 = \omega_2 r_2 \implies \omega_2 = \frac{v_{\text{chain}}}{r_2} = \frac{1.0367}{0.0450} = \mathbf{23.04\text{ rad/s}}$$
+                        <p><em>Alternative Gear Ratio Method:</em> $\omega_2 = \omega_1 \left(\frac{r_1}{r_2}\right) = 9.4248 \times \left(\frac{11.0}{4.50}\right) = 23.04\text{ rad/s}$.</p>
+
+                        <p><strong>Part d) Forward Bicycle Road Speed ($v_{\text{bike}}$):</strong></p>
+                        <p>The rear wheel rotates co-axially with the rear cog, sharing the exact same angular velocity ($\omega_{\text{wheel}} = \omega_2 = 23.037\text{ rad/s}$). Convert wheel radius $R_W = 34.0\text{ cm} = 0.340\text{ m}$. Assuming zero tire slip on the road, forward speed equals tangential rim speed:</p>
+                        $$v_{\text{bike}} = \omega_{\text{wheel}} R_W = 23.037 \times 0.340 = \mathbf{7.83\text{ m/s}}\quad (\approx 28.2\text{ km/h}!)$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension): Relativistic Satellite Speed & Angular Frequency Shift</h4>
+                    <span class="marks-allocated">[Upper-Level HSC Spatial Mechanics]</span>
+                </div>
+                <div class="question-body">
+                    <p>A satellite moves in a circular Low Earth Orbit (LEO) at an altitude $h = 400\text{ km}$ above Earth's surface ($R_E = 6371\text{ km}$). Its orbital period is measured to be $T = 92.6\text{ minutes}$.</p>
+                    <p>a) Calculate the total orbital radius $r$ from Earth's centre in metres.<br>b) Calculate the orbital angular velocity $\omega_{\text{sat}}$ in $\text{rad/s}$.<br>c) Calculate the orbital linear speed $v_{\text{orbit}}$ in $\text{m/s}$ and $\text{km/h}$.<br>d) Determine the angle $\theta_{\text{sweep}}$ (in degrees) swept out by the satellite in a time interval of $\Delta t = 15.0\text{ minutes}$.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Orbital Solutions:</h5>
+
+                        <p><strong>Part a) Total Orbital Radius ($r$):</strong></p>
+                        $$r = R_E + h = 6371\text{ km} + 400\text{ km} = 6771\text{ km} = \mathbf{6.771 \times 10^6\text{ m}}$$
+
+                        <p><strong>Part b) Angular Velocity ($\omega_{\text{sat}}$):</strong></p>
+                        <p>Convert period $T$ from minutes to seconds:</p>
+                        $$T = 92.6\text{ minutes} \times 60\text{ s/min} = 5556\text{ s}$$
+                        $$\omega_{\text{sat}} = \frac{2\pi}{T} = \frac{2\pi}{5556} = \mathbf{1.131 \times 10^{-3}\text{ rad/s}}$$
+
+                        <p><strong>Part c) Orbital Linear Speed ($v_{\text{orbit}}$):</strong></p>
+                        $$v_{\text{orbit}} = \omega_{\text{sat}} r = (1.13089 \times 10^{-3}) \times (6.771 \times 10^6) = \mathbf{7657\text{ m/s}} \approx \mathbf{7.66\text{ km/s}}$$
+                        <p>In $\text{km/h}$:</p>
+                        $$v = 7.6572 \text{ km/s} \times 3600 \text{ s/h} = \mathbf{27566\text{ km/h}}$$
+
+                        <p><strong>Part d) Angular Displacement Swept Out in $15.0\text{ minutes}$ ($\theta_{\text{sweep}}$):</strong></p>
+                        <p>Convert time interval $\Delta t = 15.0\text{ min} \times 60 = 900\text{ s}$.</p>
+                        $$\Delta \theta = \omega_{\text{sat}} \Delta t = (1.13089 \times 10^{-3}) \times 900 = 1.0178\text{ radians}$$
+                        <p>Convert radians to degrees:</p>
+                        $$\theta_{\text{sweep}} = 1.0178 \times \left(\frac{180^\circ}{\pi}\right) = \mathbf{58.3^\circ}$$
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Four Practice Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Marking Criteria</h2>
+            <p>Attempt the four practise questions below. Apply NESA rotational equations, check the exemplar answers, and submit your score using the self-assessment drop-down options.</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-06-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Computer Hard Drive Angular Velocity</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A computer mechanical hard drive platter spins at a constant rate of $7200\text{ RPM}$. Calculate:</p>
+                    <p>a) The rotation frequency $f$ in $\text{Hz}$.<br>b) The angular velocity $\omega$ in $\text{rad/s}$.<br>c) The time period $T$ for one complete revolution in milliseconds ($\text{ms}$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-06-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-06-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-06-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Divide RPM by 60 to find $f$ in Hz. Use $\omega = 2\pi f$ for angular velocity, and $T = 1/f$ for period. Multiply seconds by 1000 to get milliseconds.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-06-easy" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Frequency ($f$):</strong></p>
+                        $$f = \frac{7200}{60} = \mathbf{120\text{ Hz}}$$
+
+                        <p><strong>b) Angular Velocity ($\omega$):</strong></p>
+                        $$\omega = 2\pi f = 2 \times \pi \times 120 = 240 \pi = \mathbf{754\text{ rad/s}}\quad (\text{to 3 sig. figs.})$$
+
+                        <p><strong>c) Time Period ($T$):</strong></p>
+                        $$T = \frac{1}{f} = \frac{1}{120} = 0.008333\text{ s} = \mathbf{8.33\text{ ms}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Converting 7200 RPM to frequency gives $f = \frac{7200}{60} = 120\text{ Hz}$. The angular velocity is $\omega = 2\pi f = 240\pi = 754\text{ rad/s}$. The period for one revolution is $T = \frac{1}{120} = 8.33 \times 10^{-3}\text{ s} = 8.33\text{ ms}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates rotation frequency $f = 120\text{ Hz}$.</li>
+                            <li><strong>2 Marks:</strong> Correctly computes angular velocity $\omega = 754\text{ rad/s}$.</li>
+                            <li><strong>3 Marks:</strong> Obtains time period $8.33\text{ ms}$ with correct SI prefix and units.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-06-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-06-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('06-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-06-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-06-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Ultracentrifuge Radial Speed Gradient</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A laboratory ultracentrifuge spins biological samples at $45000\text{ RPM}$. Test tube A is situated at radial distance $r_A = 6.00\text{ cm}$ from the central rotor axis, while test tube B is situated at $r_B = 12.0\text{ cm}$.</p>
+                    <p>a) State with reason whether test tube A or test tube B experiences the greater angular velocity $\omega$.<br>b) Calculate the angular velocity $\omega$ of the rotor in $\text{rad/s}$.<br>c) Calculate the linear tangential speeds $v_A$ and $v_B$ for both test tubes.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-06-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-06-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-06-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Both test tubes are locked on the same rigid rotor shaft, so they share the exact same angular velocity $\omega$. Use $v = \omega r$ with radii converted to metres ($0.0600\text{ m}$ and $0.120\text{ m}$).</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-06-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Angular Velocity Comparison:</strong></p>
+                        <p>Both test tubes experience the <strong>exact same angular velocity</strong> ($\omega_A = \omega_B$). Because they are co-axially mounted on the same rigid spinning rotor, they complete identical angular displacements ($\Delta \theta$) in any given time interval.</p>
+
+                        <p><strong>b) Angular Velocity Calculation ($\omega$):</strong></p>
+                        $$\omega = 45000 \text{ RPM} \times \frac{2\pi}{60} = 1500 \pi = \mathbf{4712\text{ rad/s}}\quad (\text{to 4 sig. figs.})$$
+
+                        <p><strong>c) Linear Speeds $v_A$ and $v_B$:</strong></p>
+                        <p>Convert radii to metres: $r_A = 0.0600\text{ m}$, $r_B = 0.120\text{ m}$.</p>
+                        $$v_A = \omega r_A = 4712.4 \times 0.0600 = \mathbf{283\text{ m/s}}$$
+                        $$v_B = \omega r_B = 4712.4 \times 0.120 = \mathbf{565\text{ m/s}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Because both test tubes are mounted co-axially on the same rigid rotor, their angular velocity is identical ($\omega_A = \omega_B$). Converting 45000 RPM gives $\omega = \frac{45000 \times 2\pi}{60} = 4712\text{ rad/s}$. Applying $v = \omega r$ yields $v_A = 4712 \times 0.0600 = 283\text{ m/s}$ and $v_B = 4712 \times 0.120 = 565\text{ m/s}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly states that angular velocity $\omega$ is identical for both co-axial positions.</li>
+                            <li><strong>2 Marks:</strong> Calculates rotor angular velocity $\omega = 4712\text{ rad/s}$.</li>
+                            <li><strong>3 Marks:</strong> Computes linear speed $v_A = 283\text{ m/s}$.</li>
+                            <li><strong>4 Marks:</strong> Computes linear speed $v_B = 565\text{ m/s}$ with correct SI units.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-06-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-06-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('06-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-06-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard -->
+            <div class="practise-question" id="question-06-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard): Belt-Driven Pulley System Ratio</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>An electric motor drives Pulley 1 (radius $r_1 = 8.00\text{ cm}$) at $1200\text{ RPM}$. A non-slip rubber belt connects Pulley 1 to a larger Pulley 2 (radius $r_2 = 24.0\text{ cm}$).</p>
+                    <p>a) State the conserved parameter across the non-slip drive belt.<br>b) Calculate the linear tangential speed $v_{\text{belt}}$ of the drive belt.<br>c) Calculate the angular velocity $\omega_2$ and RPM rotation rate $N_2$ of Pulley 2.<br>d) Explain why factory machinery uses pulley size variations to modify rotational speeds.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-06-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-06-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-06-hard" style="display: none;">
+                    <p><strong>Hint:</strong> Non-slip belt coupling conserves linear tangential speed ($v_1 = v_2 = v_{\text{belt}}$). Calculate $v_1 = \omega_1 r_1$, then set $\omega_2 = v_{\text{belt}} / r_2$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-06-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Conserved Parameter:</strong></p>
+                        <p>Linear tangential speed ($v_{\text{belt}}$) is conserved across the outer rims of both pulleys because the belt does not slip.</p>
+
+                        <p><strong>b) Belt Speed ($v_{\text{belt}}$):</strong></p>
+                        $$\omega_1 = 1200 \text{ RPM} \times \frac{2\pi}{60} = 40\pi = 125.66\text{ rad/s}$$
+                        $$v_{\text{belt}} = \omega_1 r_1 = 125.66 \times 0.0800 = \mathbf{10.05\text{ m/s}} \quad (\approx 10.1\text{ m/s})$$
+
+                        <p><strong>c) Angular Velocity & RPM of Pulley 2:</strong></p>
+                        $$\omega_2 = \frac{v_{\text{belt}}}{r_2} = \frac{10.053}{0.240} = \mathbf{41.89\text{ rad/s}} \quad (\approx 41.9\text{ rad/s})$$
+                        $$N_2 = \omega_2 \times \frac{60}{2\pi} = 41.888 \times 9.5493 = \mathbf{400\text{ RPM}}$$
+                        <p><em>Notice the 1:3 inverse ratio: because Pulley 2 has 3 times the radius, it rotates at 1/3 the RPM!</em></p>
+
+                        <p><strong>d) Mechanical Explanation:</strong></p>
+                        <p>Pulleys act as mechanical torque and speed transformers. Stepping down rotational speed (from $1200\text{ RPM}$ to $400\text{ RPM}$) proportionally increases output torque, allowing high-speed low-torque motors to drive heavy industrial machinery.</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Because the drive belt does not slip, linear tangential speed is conserved ($v_1 = v_2 = v_{\text{belt}}$). Pulley 1 spins at $\omega_1 = \frac{1200 \times 2\pi}{60} = 125.7\text{ rad/s}$, giving belt speed $v_{\text{belt}} = 125.7 \times 0.0800 = 10.1\text{ m/s}$. Equating rim speeds gives $\omega_2 = \frac{10.05}{0.240} = 41.9\text{ rad/s}$, corresponding to $400\text{ RPM}$. Varying pulley radius ratios allows machinery to step down motor speed and multiply output torque."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies linear tangential speed conservation across the non-slip belt.</li>
+                            <li><strong>2 Marks:</strong> Calculates correct drive belt linear speed $10.1\text{ m/s}$.</li>
+                            <li><strong>3 Marks:</strong> Computes angular velocity $\omega_2 = 41.9\text{ rad/s}$.</li>
+                            <li><strong>4 Marks:</strong> Converts angular velocity to RPM rate ($400\text{ RPM}$).</li>
+                            <li><strong>5 Marks:</strong> Provides clear mechanical explanation linking speed reduction to torque multiplication.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-06-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-06-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('06-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-06-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension -->
+            <div class="practise-question" id="question-06-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (Extension): Geostationary Orbital Radius Derivation</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A <strong>geostationary satellite</strong> orbits Earth directly above the equator such that its orbital position remains completely fixed relative to a ground station on Earth's surface.</p>
+                    <p>a) Explain why a geostationary satellite must possess an orbital period $T$ exactly equal to Earth's axial rotation period ($86164\text{ s}$).<br>b) Calculate the mandatory orbital angular velocity $\omega_{\text{geo}}$ of a geostationary satellite.<br>c) Given that orbital linear speed for a circular gravity orbit satisfies $v = \sqrt{\frac{GM}{r}}$ (where $GM_{\text{Earth}} = 3.986 \times 10^{14}\text{ m}^3\text{s}^{-2}$), combine this expression with $v = \omega r$ to derive the explicit algebraic formula for geostationary orbital radius $r_{\text{geo}}$ in terms of $G, M,$ and $\omega$.<br>d) Calculate the numerical orbital radius $r_{\text{geo}}$ in kilometres ($\text{km}$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-06-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-06-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-06-extension" style="display: none;">
+                    <p><strong>Hint:</strong> Equate the two linear velocity expressions: $\omega r = \sqrt{\frac{GM}{r}} \implies \omega^2 r^2 = \frac{GM}{r} \implies r^3 = \frac{GM}{\omega^2}$. Substitute $\omega_{\text{geo}} = \frac{2\pi}{86164}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-06-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Requirement for Geostationary Period:</strong></p>
+                        <p>To remain stationary relative to a ground location, the satellite must match Earth's axial rotation rate ($\omega_{\text{sat}} = \omega_E$). Thus, its orbital period must equal one sidereal day ($T = 86164\text{ s}$).</p>
+
+                        <p><strong>b) Angular Velocity ($\omega_{\text{geo}}$):</strong></p>
+                        $$\omega_{\text{geo}} = \frac{2\pi}{86164} = \mathbf{7.2921 \times 10^{-5}\text{ rad/s}}$$
+
+                        <p><strong>c) Algebraic Derivation of $r_{\text{geo}}$:</strong></p>
+                        <p>Equate the kinematic relation $v = \omega r$ to the orbital velocity equation $v = \sqrt{\frac{GM}{r}}$:</p>
+                        $$\omega r = \sqrt{\frac{GM}{r}}$$
+                        <p>Square both sides:</p>
+                        $$\omega^2 r^2 = \frac{GM}{r}$$
+                        <p>Multiply both sides by $r$ and divide by $\omega^2$:</p>
+                        $$r^3 = \frac{GM}{\omega^2} \implies \mathbf{r_{\text{geo}} = \sqrt[3]{\frac{GM}{\omega^2}}}$$
+
+                        <p><strong>d) Numerical Calculation of Orbital Radius ($r_{\text{geo}}$):</strong></p>
+                        $$r_{\text{geo}} = \sqrt[3]{\frac{3.986 \times 10^{14}}{(7.2921 \times 10^{-5})^2}} = \sqrt[3]{\frac{3.986 \times 10^{14}}{5.3175 \times 10^{-9}}} = \sqrt[3]{7.496 \times 10^{22}}$$
+                        $$r_{\text{geo}} = 4.2164 \times 10^7\text{ m} = \mathbf{42164\text{ km}}$$
+                        <p><em>(Subtracting Earth's radius $6371\text{ km}$ gives the famous geostationary altitude of $\approx 35793\text{ km}$ above sea level!)</em></p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"To maintain a constant position above a fixed ground location, a geostationary satellite must match Earth's axial rotation, requiring $T = 86164\text{ s}$ and $\omega = 7.292 \times 10^{-5}\text{ rad/s}$. Equating $v = \omega r$ to $v = \sqrt{\frac{GM}{r}}$ gives $\omega^2 r^2 = \frac{GM}{r}$, which rearranges to Kepler's relation $r^3 = \frac{GM}{\omega^2}$. Substituting $GM = 3.986 \times 10^{14}$ and $\omega = 7.2921 \times 10^{-5}\text{ rad/s}$ yields an orbital radius $r = 42164\text{ km}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Explains requirement for period matching ($T = 86164\text{ s}$).</li>
+                            <li><strong>2 Marks:</strong> Calculates geostationary angular velocity $\omega = 7.292 \times 10^{-5}\text{ rad/s}$.</li>
+                            <li><strong>3 Marks:</strong> Equates $v = \omega r$ to gravitational velocity formula $v = \sqrt{GM/r}$.</li>
+                            <li><strong>4 Marks:</strong> Correctly derives algebraic expression $r^3 = \frac{GM}{\omega^2}$.</li>
+                            <li><strong>5 Marks:</strong> Substitutes numerical values accurately into cube-root equation.</li>
+                            <li><strong>6 Marks:</strong> Obtains final geostationary orbital radius ($42164\text{ km}$) with correct SI units and significant figures.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-06-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-06-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('06-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-06-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="05-projectile-lab-spreadsheet.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 5: Lab & Spreadsheet Model</a>
+                <a href="07-centripetal-acceleration.html" class="btn-next">Proceed to Lesson 7: Centripetal Force & Accel &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('06-easy');
+            checkIfQuestionAnswered('06-medium');
+            checkIfQuestionAnswered('06-hard');
+            checkIfQuestionAnswered('06-extension');
+            
+            initUcmSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        /* --- Interactive Canvas UCM Simulator Code --- */
+        function initUcmSimulator() {
+            const canvas = document.getElementById('ucmCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const inRadius = document.getElementById('sim-radius');
+            const inFreq = document.getElementById('sim-freq');
+            const selVectors = document.getElementById('sim-vectors');
+
+            const dispRadius = document.getElementById('disp-radius');
+            const dispFreq = document.getElementById('disp-freq');
+
+            const outPeriod = document.getElementById('out-period');
+            const outOmega = document.getElementById('out-omega');
+            const outSpeed = document.getElementById('out-speed');
+            const outTheta = document.getElementById('out-theta');
+            const outRpm = document.getElementById('out-rpm');
+
+            let currentTheta = 0;
+            let lastTime = performance.now();
+
+            function animate(now) {
+                const dt = (now - lastTime) / 1000;
+                lastTime = now;
+
+                const r = parseFloat(inRadius.value);
+                const f = parseFloat(inFreq.value);
+                const vectorMode = selVectors.value;
+
+                dispRadius.innerText = r.toFixed(1) + ' m';
+                dispFreq.innerText = f.toFixed(2) + ' Hz';
+
+                const T = 1 / f;
+                const omega = 2 * Math.PI * f;
+                const v = omega * r;
+                const rpm = f * 60;
+
+                // Update theta
+                currentTheta += omega * dt;
+                if (currentTheta > 2 * Math.PI) {
+                    currentTheta -= 2 * Math.PI;
+                }
+
+                outPeriod.innerText = T.toFixed(2) + ' s';
+                outOmega.innerText = omega.toFixed(2) + ' rad/s';
+                outSpeed.innerText = v.toFixed(2) + ' m/s';
+                outTheta.innerText = currentTheta.toFixed(2) + ' rad';
+                outRpm.innerText = rpm.toFixed(1) + ' RPM';
+
+                // Render Canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                const centerX = canvas.width / 2;
+                const centerY = canvas.height / 2;
+                const pixelScale = 55; // 55 pixels per metre
+
+                const rPx = r * pixelScale;
+
+                // Grid background
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                // Draw Circular Orbit Path
+                ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, rPx, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Draw Central Axis Point
+                ctx.fillStyle = '#00f0ff';
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Particle Coordinates (Canvas Y is inverted)
+                const px = centerX + rPx * Math.cos(currentTheta);
+                const py = centerY - rPx * Math.sin(currentTheta);
+
+                // Draw Radius Vector line if enabled
+                if (vectorMode === 'both' || vectorMode === 'radius') {
+                    ctx.strokeStyle = '#b026ff';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(centerX, centerY);
+                    ctx.lineTo(px, py);
+                    ctx.stroke();
+
+                    // Angular arc display
+                    ctx.strokeStyle = 'rgba(255, 215, 0, 0.6)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.arc(centerX, centerY, 25, 0, -currentTheta, true);
+                    ctx.stroke();
+                }
+
+                // Draw Rotating Particle
+                ctx.fillStyle = '#00e676';
+                ctx.beginPath();
+                ctx.arc(px, py, 9, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Draw Tangential Velocity Vector Arrow if enabled
+                if (vectorMode === 'both' || vectorMode === 'velocity') {
+                    // Tangential direction is perpendicular to radius (+90 deg counter-clockwise)
+                    const vAngle = currentTheta + Math.PI / 2;
+                    const vArrowLen = Math.min(80, v * 8);
+
+                    const vxEnd = px + vArrowLen * Math.cos(-vAngle);
+                    const vyEnd = py + vArrowLen * Math.sin(-vAngle);
+
+                    ctx.strokeStyle = '#ffd700';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(px, py);
+                    ctx.lineTo(vxEnd, vyEnd);
+                    ctx.stroke();
+
+                    // Arrowhead
+                    const headLen = 8;
+                    ctx.fillStyle = '#ffd700';
+                    ctx.beginPath();
+                    ctx.arc(vxEnd, vyEnd, 4, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

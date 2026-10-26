@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>09. Work, Energy & Kinetic Energy Dynamics in Circular Motion - Module 5</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS Reset & Box Sizing Safeguards */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Responsive Layout & Container Enhancements */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border-radius: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .sim-mode-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-mode {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.65rem 1.3rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mode.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(176, 38, 255, 0.35));
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#energyCanvas {
+            width: 100%;
+            height: 440px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        /* Overflow Fixes */
+        .concept-highlight-card, 
+        .worked-solution, 
+        .derivation-steps, 
+        .practise-question, 
+        .formula-callout-box, 
+        .misconception-box, 
+        .exam-warning-box, 
+        .extension-note-box {
+            max-width: 100%;
+            overflow-x: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .vector-diagram-card {
+            background: rgba(15, 23, 42, 0.65);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .formula-callout-box {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.12), rgba(0, 240, 255, 0.12));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            text-align: center;
+        }
+
+        .formula-callout-box h4 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .formula-callout-box p {
+            margin-bottom: 0;
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .misconception-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .misconception-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .misconception-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        /* MathJax Overflow Fixes */
+        .MathJax_Display, .mjx-chtml, .MathJax {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding: 0.3rem 0;
+            margin: 0.5rem 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html" class="active">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>09. Work, Energy & Kinetic Energy Dynamics in Circular Motion</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 2</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Conceptual Scope</h2>
+            <p><strong>Inquiry Question 2:</strong> <em>Why do objects move in circles?</em></p>
+            <p>According to the NESA Stage 6 Physics Syllabus (calculus-free), students must establish deep conceptual and quantitative mastery over energy transformation and work principles in circular motion:</p>
+            <ul class="feature-list">
+                <li>Apply the definition of work ($W = F s \cos\theta$) to demonstrate why the net centripetal force in Uniform Circular Motion (UCM) does zero net work on the moving object.</li>
+                <li>Connect the Work-Energy Theorem ($\Sigma W = \Delta K$) to UCM, proving that constant speed $v$ and constant scalar kinetic energy ($K = \frac{1}{2}m v^2$) are direct mathematical consequences of perpendicular centripetal force.</li>
+                <li>Contrast Uniform Circular Motion (UCM) with Non-Uniform Circular Motion (e.g. vertical loops, pendulums) where gravity has a tangential component parallel to motion, performing mechanical work ($\Delta K = -\Delta U$).</li>
+                <li>Analyse energy conservation ($E_{\text{mech}} = K + U = \text{constant}$) in vertical circular systems to evaluate speed variations, normal force loads, and critical apex parameters.</li>
+            </ul>
+
+            <div class="extension-note-box">
+                <h4>Calculus-Free NESA Rigor & HSC Exam Context</h4>
+                <p><strong>Calculus-Free Guarantee:</strong> In accordance with the NESA Physics Stage 6 Syllabus, all derivations in this topic are strictly non-calculus. We use algebraic dot-product geometry ($W = F s \cos\theta$), instantaneous power definitions ($P = F v \cos\theta$), and mechanical energy conservation ($\Delta K + \Delta U = 0$).</p>
+                <p><strong>Exam Significance:</strong> "Explain why a satellite in a circular orbit experiences acceleration but undergoes zero work" is a classic 3-mark NESA written response question. Band 6 candidates must clearly distinguish between vector acceleration ($\vec{a}_c \neq 0$) and scalar energy invariance ($\Delta K = 0$).</p>
+            </div>
+        </section>
+
+        <!-- 2. Deep Dive: Work & Kinetic Energy Dynamics -->
+        <section class="content-section" id="deep-dive-work">
+            <h2>Deep Dive Part A: Mathematical Proof of Zero Net Work in UCM</h2>
+
+            <h3>1. The Mechanical Definition of Work</h3>
+            <p>In Stage 6 Physics (Module 2 & Module 5), mechanical work $W$ done by a constant force $\vec{F}$ acting over a displacement $\vec{s}$ is defined as the scalar product of force and displacement:</p>
+
+            $$W = F s \cos\theta$$
+
+            <p>where $F = |\vec{F}|$ is force magnitude, $s = |\vec{s}|$ is displacement magnitude, and $\theta$ is the angle between the force vector $\vec{F}$ and the displacement vector $\vec{s}$.</p>
+
+            <!-- Vector Diagram: Orthogonality -->
+            <div class="vector-diagram-card">
+                <svg width="460" height="260" viewBox="0 0 460 260" style="background: transparent;">
+                    <!-- Circular Path Arc -->
+                    <path d="M 80 210 A 150 150 0 0 1 380 210" fill="none" stroke="rgba(0,240,255,0.25)" stroke-width="2" stroke-dasharray="4"/>
+                    <!-- Circle Centre O -->
+                    <circle cx="230" cy="210" r="5" fill="#00f0ff"/>
+                    <text x="220" y="235" fill="#00f0ff" font-family="sans-serif" font-size="13">Centre O</text>
+
+                    <!-- Radius Vector r -->
+                    <line x1="230" y1="210" x2="230" y2="70" stroke="#b026ff" stroke-width="2"/>
+                    <text x="238" y="140" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="13">Radius r</text>
+
+                    <!-- Mass Object at Top -->
+                    <circle cx="230" cy="70" r="10" fill="#00e676"/>
+                    <text x="222" y="65" fill="#1e293b" font-family="sans-serif" font-weight="bold" font-size="11">m</text>
+
+                    <!-- Velocity Vector (Horizontal Right) -->
+                    <line x1="230" y1="70" x2="350" y2="70" stroke="#ffd700" stroke-width="3"/>
+                    <polygon points="350,70 340,65 340,75" fill="#ffd700"/>
+                    <text x="310" y="55" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="14">v (Displacement Δs)</text>
+
+                    <!-- Centripetal Force Vector (Radially Downward) -->
+                    <line x1="230" y1="70" x2="230" y2="160" stroke="#00f0ff" stroke-width="3.5"/>
+                    <polygon points="230,160 225,150 235,150" fill="#00f0ff"/>
+                    <text x="145" y="120" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="14">F_c (Centripetal)</text>
+
+                    <!-- 90 Degree Angle Marker -->
+                    <path d="M 230 90 L 250 90 L 250 70" fill="none" stroke="#ffffff" stroke-width="2"/>
+                    <text x="258" y="105" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="14">θ = 90°</text>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 1: Vector geometry of Uniform Circular Motion. The net centripetal force vector $\vec{F}_c$ is strictly perpendicular ($\theta = 90^\circ$) to instantaneous velocity $\vec{v}$ and displacement $\Delta \vec{s}$ at all times.</p>
+            </div>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Proof of Zero Work ($W_{F_c} = 0$) in Uniform Circular Motion</h4>
+                <p>Consider an object moving along a circular trajectory under the action of a net centripetal force $\vec{F}_c$:</p>
+
+                <ol class="feature-list">
+                    <li>By definition, centripetal force $\vec{F}_c$ acts radially inward toward the centre of curvature $O$.</li>
+                    <li>Instantaneous velocity $\vec{v}$ (and instantaneous displacement $\Delta \vec{s} = \vec{v} \Delta t$) acts along the tangent to the circular path.</li>
+                    <li>Because a circle's radius is strictly perpendicular to its tangent line at every point, the spatial angle between $\vec{F}_c$ and $\Delta \vec{s}$ is identically 90 degrees ($\theta = 90^\circ$ or $\frac{\pi}{2}\text{ rad}$).</li>
+                </ol>
+
+                <p>Substituting $\theta = 90^\circ$ into the mechanical work equation:</p>
+
+                $$W_{F_c} = F_c \times \Delta s \times \cos(90^\circ)$$
+
+                <p>Recalling from trigonometry that $\cos(90^\circ) = 0$:</p>
+
+                <div class="formula-callout-box">
+                    <h4>Fundamental Zero-Work Theorem of UCM</h4>
+                    <p>$$W_{F_c} = F_c \times \Delta s \times 0 = \mathbf{0\text{ Joules}}$$</p>
+                </div>
+
+                <p><strong>Instantaneous Power Output ($P$):</strong></p>
+                <p>The rate of doing work (instantaneous mechanical power) is defined as $P = \frac{\Delta W}{\Delta t} = \vec{F} \cdot \vec{v} = F v \cos\theta$. For UCM:</p>
+
+                $$P = F_c v \cos(90^\circ) = \mathbf{0\text{ Watts}}$$
+
+                <p>Thus, a net centripetal force does zero work and transfers zero power to an object undergoing uniform circular motion!</p>
+            </div>
+
+            <h3>2. The Work-Energy Theorem & Kinetic Energy Invariance</h3>
+            <p>The **Work-Energy Theorem** states that the total work done by all net external forces acting on a body equals its change in scalar kinetic energy ($\Sigma W = \Delta K$):</p>
+
+            $$\Sigma W = K_f - K_i = \frac{1}{2}m v_f^2 - \frac{1}{2}m v_i^2$$
+
+            <p>Because the net work in UCM is zero ($\Sigma W = 0$):</p>
+
+            $$\Delta K = 0 \implies K_f = K_i \implies \frac{1}{2}m v_f^2 = \frac{1}{2}m v_i^2 \implies \mathbf{v_f = v_i}$$
+
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.8rem;">CRITICAL HSC DISTINCTION: Vector Acceleration vs Scalar Kinetic Energy</h4>
+                <p>Students frequently confuse vector velocity changes with kinetic energy changes. Study this comparison table carefully:</p>
+                
+                <div class="uvtaxy-table-container">
+                    <table class="uvtaxy-grid-table">
+                        <thead>
+                            <tr>
+                                <th>Physical Quantity</th>
+                                <th>Vector / Scalar Type</th>
+                                <th>Status in Uniform Circular Motion (UCM)</th>
+                                <th>Physical Explanation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>Speed ($v$)</th>
+                                <td>Scalar</td>
+                                <td><strong style="color: var(--success-green);">CONSTANT</strong></td>
+                                <td>Zero net work means kinetic energy remains unchanged ($\Delta K = 0$).</td>
+                            </tr>
+                            <tr>
+                                <th>Velocity ($\vec{v}$)</th>
+                                <td>Vector</td>
+                                <td><strong style="color: #ef4444;">CONTINUOUSLY CHANGING</strong></td>
+                                <td>Direction rotates continuously around the circular arc.</td>
+                            </tr>
+                            <tr>
+                                <th>Kinetic Energy ($K$)</th>
+                                <td>Scalar</td>
+                                <td><strong style="color: var(--success-green);">CONSTANT</strong></td>
+                                <td>$K = \frac{1}{2}m v^2$. Since $m$ and scalar speed $v$ are constant, $K$ is constant.</td>
+                            </tr>
+                            <tr>
+                                <th>Centripetal Accel ($\vec{a}_c$)</th>
+                                <td>Vector</td>
+                                <td><strong style="color: #ef4444;">NON-ZERO & ROTATING</strong></td>
+                                <td>$\vec{a}_c = \frac{v^2}{r}$ directed radially inward; continuously changes spatial direction.</td>
+                            </tr>
+                            <tr>
+                                <th>Net Work Done ($W_{\text{net}}$)</th>
+                                <td>Scalar</td>
+                                <td><strong style="color: var(--success-green);">EXACTLY ZERO</strong></td>
+                                <td>$\vec{F}_c \perp \vec{v} \implies \theta = 90^\circ \implies \cos(90^\circ) = 0$.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Deep Dive Part B: Non-Uniform Circular Motion & Mechanical Energy Transformation -->
+        <section class="content-section" id="deep-dive-nonuniform">
+            <h2>Deep Dive Part B: Non-Uniform Circular Motion & Energy Interconversion</h2>
+
+            <h3>1. When Work IS Done: Vertical Circular Motion</h3>
+            <p>Unlike horizontal circular motion, when an object moves in a **vertical circle** (such as a roller coaster loop, a vertical swing, or a pendulum), speed $v$ is **not constant**. The motion is **Non-Uniform Circular Motion**.</p>
+
+            <p>In vertical circular motion, gravity ($\vec{F}_g = m \vec{g}$) acts continuously downward. As the object moves around the loop, the angle $\theta$ between gravity $\vec{F}_g$ and instantaneous velocity $\vec{v}$ varies continuously:</p>
+
+            <ul class="feature-list">
+                <li><strong>Bottom to Top (Ascending):</strong> Gravity has a component opposing the motion ($\theta > 90^\circ$), doing **negative work** ($W_g < 0$). This reduces kinetic energy ($K$) and increases gravitational potential energy ($U$). The object slows down.</li>
+                <li><strong>Top to Bottom (Descending):</strong> Gravity has a component along the direction of motion ($\theta < 90^\circ$), doing **positive work** ($W_g > 0$). This increases kinetic energy ($K$) and reduces potential energy ($U$). The object speeds up.</li>
+                <li><strong>At Apex & Lowest Point:</strong> Gravity acts purely perpendicular to velocity, doing zero *instantaneous* work at those precise moments, but total accumulated work across the vertical height displacement $\Delta h$ is non-zero.</li>
+            </ul>
+
+            <!-- Vector Diagram: Vertical Loop Energy -->
+            <div class="vector-diagram-card">
+                <svg width="480" height="300" viewBox="0 0 480 300" style="background: transparent;">
+                    <!-- Vertical Loop Circle -->
+                    <circle cx="240" cy="150" r="110" fill="none" stroke="rgba(0,240,255,0.25)" stroke-width="2.5" stroke-dasharray="4"/>
+
+                    <!-- Top Point (Apex A) -->
+                    <circle cx="240" cy="40" r="9" fill="#ef4444"/>
+                    <text x="225" y="25" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="13">Top (Apex A): Minimum v, Max U</text>
+                    <line x1="240" y1="40" x2="170" y2="40" stroke="#ffd700" stroke-width="2.5"/>
+                    <polygon points="170,40 180,35 180,45" fill="#ffd700"/>
+                    <text x="175" y="55" fill="#ffd700" font-family="sans-serif" font-size="11">v_top</text>
+
+                    <!-- Bottom Point (Point B) -->
+                    <circle cx="240" cy="260" r="9" fill="#00e676"/>
+                    <text x="215" y="290" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="13">Bottom (Point B): Max v, Min U</text>
+                    <line x1="240" y1="260" x2="330" y2="260" stroke="#ffd700" stroke-width="3"/>
+                    <polygon points="330,260 320,255 320,265" fill="#ffd700"/>
+                    <text x="280" y="250" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="12">v_bottom (Max)</text>
+
+                    <!-- Height Dimension 2R -->
+                    <line x1="380" y1="40" x2="380" y2="260" stroke="#b026ff" stroke-width="2"/>
+                    <line x1="373" y1="40" x2="387" y2="40" stroke="#b026ff" stroke-width="2"/>
+                    <line x1="373" y1="260" x2="387" y2="260" stroke="#b026ff" stroke-width="2"/>
+                    <text x="395" y="155" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="14">Δh = 2r</text>
+
+                    <!-- Side Point C (Ascending) -->
+                    <circle cx="130" cy="150" r="8" fill="#b026ff"/>
+                    <!-- Gravity mg Down -->
+                    <line x1="130" y1="150" x2="130" y2="210" stroke="#ef4444" stroke-width="2.5"/>
+                    <polygon points="130,210 125,200 135,200" fill="#ef4444"/>
+                    <text x="80" y="190" fill="#ef4444" font-family="sans-serif" font-size="11">mg (Down)</text>
+                    <!-- Velocity Up -->
+                    <line x1="130" y1="150" x2="130" y2="80" stroke="#ffd700" stroke-width="2.5"/>
+                    <polygon points="130,80 125,90 135,90" fill="#ffd700"/>
+                    <text x="140" y="110" fill="#ffd700" font-family="sans-serif" font-size="11">v (Up)</text>
+                </svg>
+                <p style="font-size:0.85rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 2: Energy interconversion in vertical circular motion. Gravitational potential energy $U = m g h$ and kinetic energy $K = \frac{1}{2}m v^2$ continuously interchange, while total mechanical energy $E_{\text{mech}}$ remains conserved!</p>
+            </div>
+
+            <h3>2. Conservation of Mechanical Energy Equation</h3>
+            <p>Assuming negligible air resistance and track friction, the total mechanical energy $E_{\text{mech}}$ of an object undergoing vertical circular motion is conserved at all points along the loop:</p>
+
+            $$E_{\text{total}} = K + U = \frac{1}{2}m v^2 + m g h = \text{constant}$$
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Relating Apex Speed ($v_{\text{top}}$) to Bottom Speed ($v_{\text{bottom}}$)</h4>
+                <p>Let the lowest point of the vertical circle (Point B) be the reference datum height ($h_B = 0$). At the top of the circle (Point A), height $h_A = 2r$.</p>
+
+                <p>Equating total mechanical energy at Point B and Point A:</p>
+
+                $$E_B = E_A$$
+                $$\frac{1}{2}m v_{\text{bottom}}^2 + m g (0) = \frac{1}{2}m v_{\text{top}}^2 + m g (2r)$$
+
+                <p>Cancelling mass $m$ across all terms and multiplying by 2:</p>
+
+                $$v_{\text{bottom}}^2 = v_{\text{top}}^2 + 4 g r \implies v_{\text{bottom}} = \sqrt{v_{\text{top}}^2 + 4 g r}$$
+
+                <p><strong>Critical Apex Speed Condition ($v_{\text{top,min}} = \sqrt{g r}$):</strong></p>
+                <p>In Lesson 7, we derived that the minimum speed required at the top of a vertical loop to maintain track contact without falling is $v_{\text{top,min}} = \sqrt{g r}$ (where Normal force $N_{\text{top}} = 0$).</p>
+
+                <p>Substituting $v_{\text{top,min}}^2 = g r$ into the energy conservation equation gives the minimum speed required at the **bottom** to complete the loop:</p>
+
+                $$v_{\text{bottom,min}}^2 = g r + 4 g r = 5 g r \implies \mathbf{v_{\text{bottom,min}} = \sqrt{5 g r}}$$
+
+                <div class="formula-callout-box">
+                    <h4>Vertical Loop Critical Velocity Thresholds</h4>
+                    <p>$$v_{\text{top,min}} = \sqrt{g r} \quad \text{and} \quad v_{\text{bottom,min}} = \sqrt{5 g r}$$</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Dynamic Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Dynamic Interactive Workbench: Work & Energy Laboratory</h2>
+            <p>Switch modes below to contrast **Horizontal UCM (Zero Work)** against **Vertical Circular Motion (Work-Energy Interconversion)**. Observe live vector arrows, real-time energy bar charts, and instantaneous work calculations!</p>
+
+            <div class="sim-container">
+                <div class="sim-mode-selector">
+                    <button id="btn-mode-horizontal" class="btn-mode active" onclick="setEnergySimMode('horizontal')">Horizontal UCM (W = 0)</button>
+                    <button id="btn-mode-vertical" class="btn-mode" onclick="setEnergySimMode('vertical')">Vertical Loop (K ⇌ U Interconversion)</button>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-mass">Mass ($m$): <span id="disp-mass" class="sim-value-display">1.0 kg</span></label>
+                        <input type="range" id="sim-mass" min="0.5" max="5.0" value="1.0" step="0.5">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-radius">Radius ($r$): <span id="disp-radius" class="sim-value-display">2.5 m</span></label>
+                        <input type="range" id="sim-radius" min="1.0" max="5.0" value="2.5" step="0.5">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-speed">Base / Bottom Speed ($v$): <span id="disp-speed" class="sim-value-display">12.0 m/s</span></label>
+                        <input type="range" id="sim-speed" min="4.0" max="20.0" value="12.0" step="0.5">
+                    </div>
+                </div>
+
+                <canvas id="energyCanvas" width="800" height="440"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Kinetic Energy (K)</div>
+                        <div class="value" id="out-k">72.0 J</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Potential Energy (U)</div>
+                        <div class="value" id="out-u">0.0 J</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Total Energy (E)</div>
+                        <div class="value" id="out-e">72.0 J</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Net Work / Step</div>
+                        <div class="value" id="out-work">0.00 J</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Work-Energy State</div>
+                        <div class="value" id="out-status" style="color: var(--success-green);">Zero Net Work (W = 0)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): Circular Satellite Orbit Work & Energy Invariance</h4>
+                    <span class="marks-allocated">[Work-Energy Core Concept]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $1500\text{ kg}$ communications satellite orbits Earth in a circular trajectory of radius $r = 4.22 \times 10^7\text{ m}$ (Geostationary orbit) at a constant orbital speed of $v = 3070\text{ m/s}$.</p>
+                    <p>a) Calculate the kinetic energy $K$ of the satellite.<br>b) Calculate the net mechanical work done by Earth's gravitational field on the satellite during one complete orbit ($T = 24\text{ hours}$).<br>c) Explain using vector concepts why Earth's gravity exerts a large force ($\sim 330\text{ N}$) yet does zero work on the satellite.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Satellite Kinetic Energy ($K$):</strong></p>
+
+                        $$K = \frac{1}{2} m v^2 = \frac{1}{2} \times 1500 \times (3070)^2 = 0.5 \times 1500 \times 9424900 = \mathbf{7.07 \times 10^9\text{ Joules}} \quad (7.07\text{ GJ})$$
+
+                        <p><strong>Part b) Net Mechanical Work Done Over One Orbit ($W$):</strong></p>
+                        <p>By the Work-Energy Theorem ($\Sigma W = \Delta K$):</p>
+
+                        $$\Delta K = K_f - K_i$$
+
+                        <p>Because scalar orbital speed $v$ is constant throughout uniform circular orbit, $K_f = K_i = 7.07\text{ GJ}$.</p>
+
+                        $$W = 7.07 \times 10^9 - 7.07 \times 10^9 = \mathbf{0\text{ Joules}}$$
+
+                        <p><strong>Part c) Vector Explanation:</strong></p>
+                        <p>At every point along the circular orbit, Earth's gravitational force $\vec{F}_g$ acts radially inward toward Earth's centre, while the satellite's displacement $\Delta \vec{s}$ acts tangentially along its orbital path. The angle between force and displacement is strictly $\theta = 90^\circ$. Substituting $\cos(90^\circ) = 0$ into $W = F_g \Delta s \cos\theta$ yields $W = 0\text{ J}$. Thus, gravity changes the satellite's velocity *direction* without doing mechanical work or changing its scalar kinetic energy.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Roller Coaster Loop Energy Conservation</h4>
+                    <span class="marks-allocated">[Non-Uniform Circular Energy Balance]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $800\text{ kg}$ roller coaster car enters a circular vertical loop-the-loop of radius $r = 12.0\text{ m}$. At the bottom of the loop (Point B), the car's speed is $v_B = 22.0\text{ m/s}$. Assuming track friction and air resistance are negligible ($g = 9.80\text{ m/s}^2$):</p>
+                    <p>a) Calculate the total mechanical energy $E_{\text{total}}$ relative to the bottom of the loop ($h_B = 0$).<br>b) Calculate the car's speed $v_A$ at the apex (top of the loop, $h_A = 24.0\text{ m}$).<br>c) Calculate the work done by gravity $W_g$ on the car as it climbs from bottom to top.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Total Mechanical Energy ($E_{\text{total}}$):</strong></p>
+                        <p>At the bottom datum point ($h_B = 0, U_B = 0$):</p>
+
+                        $$E_{\text{total}} = K_B + U_B = \frac{1}{2} m v_B^2 + 0$$
+                        $$E_{\text{total}} = \frac{1}{2} \times 800 \times (22.0)^2 = 400 \times 484 = \mathbf{193600\text{ Joules}} \quad (193.6\text{ kJ})$$
+
+                        <p><strong>Part b) Speed at Apex ($v_A$):</strong></p>
+                        <p>At the top of the loop, height $h_A = 2r = 2 \times 12.0 = 24.0\text{ m}$.</p>
+                        $$U_A = m g h_A = 800 \times 9.80 \times 24.0 = 188160\text{ J}$$
+
+                        <p>By conservation of mechanical energy ($E_A = E_{\text{total}}$):</p>
+                        $$K_A + U_A = E_{\text{total}} \implies \frac{1}{2} m v_A^2 + 188160 = 193600$$
+                        $$\frac{1}{2} m v_A^2 = 193600 - 188160 = 5440\text{ J}$$
+                        $$v_A^2 = \frac{2 \times 5440}{800} = \frac{10880}{800} = 13.6 \implies v_A = \sqrt{13.6} = \mathbf{3.69\text{ m/s}}$$
+
+                        <p><strong>Part c) Work Done by Gravity ($W_g$):</strong></p>
+
+                        $$W_g = -\Delta U = -(U_A - U_B) = -(188160 - 0) = \mathbf{-188160\text{ Joules}} \quad (-188\text{ kJ})$$
+                        <p><em>Interpretation: Gravity does $188\text{ kJ}$ of negative work as the car climbs, removing kinetic energy!</em></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Vertical Pendulum Maximum Tension & Energy Dynamics</h4>
+                    <span class="marks-allocated">[2D Energy & Radial Balance Synergy]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $2.50\text{ kg}$ bowling ball is suspended from a rigid ceiling wire of length $L = 2.00\text{ m}$. The ball is pulled back until the wire makes an angle $\theta_0 = 60.0^\circ$ with the vertical and released from rest ($v_0 = 0$).</p>
+                    <p>a) Calculate the speed $v_{\text{bottom}}$ of the ball as it swings through its lowest vertical point.<br>b) Calculate the maximum tension force $T_{\max}$ in the wire during the swing.<br>c) Show that string tension does zero work on the ball throughout its entire curved trajectory.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Speed at Lowest Point ($v_{\text{bottom}}$):</strong></p>
+                        <p>Using pendulum geometry, the vertical drop height $h$ from release angle $\theta_0$ to bottom is:</p>
+
+                        $$h = L - L \cos\theta_0 = L (1 - \cos\theta_0)$$
+                        $$h = 2.00 \times (1 - \cos 60.0^\circ) = 2.00 \times (1 - 0.500) = \mathbf{1.00\text{ m}}$$
+
+                        <p>Applying conservation of mechanical energy ($m g h = \frac{1}{2} m v_{\text{bottom}}^2$):</p>
+
+                        $$v_{\text{bottom}} = \sqrt{2 g h} = \sqrt{2 \times 9.80 \times 1.00} = \sqrt{19.6} = \mathbf{4.43\text{ m/s}}$$
+
+                        <p><strong>Part b) Maximum String Tension ($T_{\max}$):</strong></p>
+                        <p>Maximum tension occurs at the bottom where speed $v$ is maximum and tension opposes full gravity ($T - m g = \frac{m v^2}{L}$):</p>
+
+                        $$T_{\max} = m g + \frac{m v_{\text{bottom}}^2}{L} = m \left( g + \frac{2 g h}{L} \right)$$
+                        $$T_{\max} = 2.50 \times \left( 9.80 + \frac{19.6}{2.00} \right) = 2.50 \times (9.80 + 9.80) = 2.50 \times 19.60 = \mathbf{49.0\text{ N}}$$
+
+                        <p><strong>Part c) Proof of Zero Work by Tension ($W_T = 0$):</strong></p>
+                        <p>At every point along the circular arc trajectory, the tension force $\vec{T}$ acts along the wire toward the pivot point (radially inward). The displacement $\Delta \vec{s}$ acts along the arc tangent. Because radius is perpendicular to tangent, $\vec{T} \perp \Delta \vec{s}$ ($\theta = 90^\circ$). Therefore $W_T = T \Delta s \cos(90^\circ) = 0\text{ J}$ everywhere!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension - Band 6 Separator): Shrinking Radius Tetherball Work Analysis</h4>
+                    <span class="marks-allocated">[Variable Radius Work & Non-Zero Tension Work]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $0.600\text{ kg}$ tetherball moves on a frictionless horizontal table attached to a string passing through a small hole in the centre. Initially, the ball rotates in a circle of radius $r_1 = 1.50\text{ m}$ at speed $v_1 = 4.00\text{ m/s}$. An experimenter pulls the string downward through the hole, reducing the orbital radius to $r_2 = 0.800\text{ m}$. Due to conservation of angular momentum, the new speed increases to $v_2 = 7.50\text{ m/s}$.</p>
+                    <p>a) Calculate the initial and final kinetic energies ($K_1$ and $K_2$).<br>b) Calculate the mechanical work $W_{\text{pull}}$ performed by the experimenter pulling the string.<br>c) Explain why string tension DOES perform non-zero work in this case, whereas in standard UCM tension work is zero.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Advanced Solution:</h5>
+
+                        <p><strong>Part a) Initial and Final Kinetic Energies ($K_1, K_2$):</strong></p>
+
+                        $$K_1 = \frac{1}{2} m v_1^2 = \frac{1}{2} \times 0.600 \times (4.00)^2 = 0.300 \times 16.0 = \mathbf{4.80\text{ Joules}}$$
+                        $$K_2 = \frac{1}{2} m v_2^2 = \frac{1}{2} \times 0.600 \times (7.50)^2 = 0.300 \times 56.25 = \mathbf{16.88\text{ Joules}}$$
+
+                        <p><strong>Part b) Mechanical Work Done ($W_{\text{pull}}$):</strong></p>
+                        <p>By the Work-Energy Theorem ($\Sigma W = \Delta K$):</p>
+
+                        $$W_{\text{pull}} = K_2 - K_1 = 16.875 - 4.800 = \mathbf{12.08\text{ Joules}} \approx \mathbf{12.1\text{ J}}$$
+
+                        <p><strong>Part c) Conceptual Explanation of Non-Zero Work:</strong></p>
+                        <p>In standard fixed-radius UCM, displacement is strictly tangential ($\theta = 90^\circ \implies W = 0$). However, when pulling the string through the central hole, the ball has an **inward radial displacement component** ($\Delta r = 1.50 - 0.80 = 0.70\text{ m}$) parallel to the inward tension force ($\vec{T}$). Because the angle between force $\vec{T}$ and total displacement vector is now acute ($\theta < 90^\circ$), $\cos\theta > 0$. Tension does **positive work** on the ball, transferring $12.1\text{ J}$ of energy to increase its scalar kinetic energy!</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Four Practice Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Marking Criteria</h2>
+            <p>Attempt the four practice questions below. Log your marks using the self-assessment drop-down menus.</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-09-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Work Done by Static Friction on Cornering Vehicle</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $1200\text{ kg}$ automobile turns a flat circular corner of radius $r = 35.0\text{ m}$ at a constant speed of $v = 15.0\text{ m/s}$ over a total arc distance of $s = 55.0\text{ m}$.</p>
+                    <p>a) Calculate the magnitude of the static friction force $f_s$ acting on the tires.<br>b) Calculate the work done by static friction on the car over this distance, citing physical principles.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-09-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-09-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-09-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Calculate centripetal force $F_c = m v^2 / r$. For part b, remember static friction acts radially inward ($\theta = 90^\circ$ relative to displacement along the turn).</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-09-easy" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Static Friction Force ($f_s$):</strong></p>
+
+                        $$f_s = F_c = \frac{m v^2}{r} = \frac{1200 \times (15.0)^2}{35.0} = \frac{1200 \times 225}{35.0} = \mathbf{7714\text{ N}} \approx \mathbf{7.71\text{ kN}}$$
+
+                        <p><strong>b) Work Done by Static Friction ($W$):</strong></p>
+                        <p>Static friction acts radially inward toward the centre of curvature ($\vec{f}_s \perp \vec{v}$). The displacement vector $\Delta \vec{s}$ acts tangentially along the road arc ($\theta = 90^\circ$).</p>
+
+                        $$W = f_s \Delta s \cos(90^\circ) = 7714 \times 55.0 \times 0 = \mathbf{0\text{ Joules}}$$
+                        <p>Alternatively, speed $v = 15.0\text{ m/s}$ is constant $\implies \Delta K = 0 \implies W = 0\text{ J}$.</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Static friction provides centripetal force $f_s = \frac{m v^2}{r} = \frac{1200 \times 15^2}{35} = 7710\text{ N}$. Because friction acts perpendicular to instantaneous tangential displacement ($\theta = 90^\circ$), $\cos(90^\circ) = 0$. By $W = f_s s \cos\theta$, the work done by static friction is $0\text{ Joules}$. Furthermore, scalar speed remains constant ($15\text{ m/s}$), so $\Delta K = 0$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly calculates centripetal friction force $7710\text{ N}$.</li>
+                            <li><strong>2 Marks:</strong> Identifies orthogonal relationship between force and displacement ($\theta = 90^\circ$).</li>
+                            <li><strong>3 Marks:</strong> Concludes $W = 0\text{ J}$ supported by $W = F s \cos 90^\circ$ or $\Delta K = 0$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-09-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-09-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('09-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-09-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-09-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Energy & Work in Roller Coaster Apex Safety</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $500\text{ kg}$ roller coaster cart enters a vertical loop of radius $r = 15.0\text{ m}$ from a hill. At the bottom of the loop, its speed is $v_B = 28.0\text{ m/s}$.</p>
+                    <p>a) Calculate the speed $v_A$ of the cart at the apex ($h = 30.0\text{ m}$).<br>b) Calculate the work done by gravity $W_g$ on the cart between bottom and top.<br>c) Determine whether the cart safely negotiates the apex without losing contact with the track ($v_{\text{apex,min}} = \sqrt{g r}$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-09-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-09-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-09-medium" style="display: none;">
+                    <p><strong>Hint:</strong> Use $\frac{1}{2}m v_B^2 = \frac{1}{2}m v_A^2 + m g (2r)$. Critical speed threshold at apex is $v_{\text{critical}} = \sqrt{9.80 \times 15.0} = 12.12\text{ m/s}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-09-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Speed at Apex ($v_A$):</strong></p>
+
+                        $$v_A = \sqrt{v_B^2 - 4 g r} = \sqrt{(28.0)^2 - (4 \times 9.80 \times 15.0)}$$
+                        $$v_A = \sqrt{784 - 588} = \sqrt{196} = \mathbf{14.0\text{ m/s}}$$
+
+                        <p><strong>b) Work Done by Gravity ($W_g$):</strong></p>
+
+                        $$W_g = -m g \Delta h = -500 \times 9.80 \times 30.0 = \mathbf{-147000\text{ Joules}} \quad (-147\text{ kJ})$$
+
+                        <p><strong>c) Safety Threshold Evaluation:</strong></p>
+                        <p>Minimum critical speed required at apex to maintain track contact:</p>
+
+                        $$v_{\text{critical}} = \sqrt{g r} = \sqrt{9.80 \times 15.0} = \mathbf{12.12\text{ m/s}}$$
+
+                        <p>Since actual apex speed $v_A = 14.0\text{ m/s} > 12.12\text{ m/s}$, the cart **safely completes the loop** with a positive Normal reaction force!</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Applying energy conservation $\frac{1}{2}m v_B^2 = \frac{1}{2}m v_A^2 + m g (2r)$ gives $v_A = \sqrt{28^2 - 4(9.80)(15.0)} = 14.0\text{ m/s}$. The work done by gravity is $W_g = -m g \Delta h = -(500)(9.80)(30) = -147\text{ kJ}$. Minimum critical apex speed is $v_{\text{crit}} = \sqrt{g r} = 12.1\text{ m/s}$. Because $14.0\text{ m/s} > 12.1\text{ m/s}$, the cart maintains track contact and safely negotiates the loop."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Applies conservation of mechanical energy to calculate $v_A = 14.0\text{ m/s}$.</li>
+                            <li><strong>2 Marks:</strong> Calculates gravitational work $W_g = -147\text{ kJ}$.</li>
+                            <li><strong>3 Marks:</strong> Calculates critical apex speed threshold $v_{\text{critical}} = 12.1\text{ m/s}$.</li>
+                            <li><strong>4 Marks:</strong> Draws valid physical safety conclusion comparing $14.0\text{ m/s} > 12.1\text{ m/s}$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-09-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-09-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('09-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-09-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard (Distinction Separator) -->
+            <div class="practise-question" id="question-09-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard - Distinction Separator): Instantaneous Power in Non-Uniform Circular Motion</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $0.300\text{ kg}$ simple pendulum bob on a $1.50\text{ m}$ string swings in a vertical plane. At an instant when the string makes an angle $\theta = 35.0^\circ$ with the vertical, the bob's tangential speed is $v = 2.80\text{ m/s}$.</p>
+                    <p>a) Decompose the gravitational force into radial ($F_{g,r}$) and tangential ($F_{g,t}$) components.<br>b) Calculate the instantaneous work rate (power output $P_g$) delivered by gravity on the bob at this exact instant.<br>c) Explain whether gravity is speeding up or slowing down the bob at this position during upward swing vs downward swing.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-09-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-09-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-09-hard" style="display: none;">
+                    <p><strong>Hint:</strong> Tangential gravity component is $F_{g,t} = m g \sin\theta$. Instantaneous power $P = F_{g,t} \cdot v$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-09-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Force Components:</strong></p>
+                        <p>Weight force $m g = 0.300 \times 9.80 = 2.94\text{ N}$.</p>
+
+                        $$F_{g,r} = m g \cos(35.0^\circ) = 2.94 \times 0.81915 = \mathbf{2.41\text{ N}}\quad (\text{radially outward})$$
+                        $$F_{g,t} = m g \sin(35.0^\circ) = 2.94 \times 0.57358 = \mathbf{1.69\text{ N}}\quad (\text{along path tangent})$$
+
+                        <p><strong>b) Instantaneous Power ($P_g$):</strong></p>
+                        <p>Power delivered by tangential force $P = F_{g,t} \times v$:</p>
+
+                        $$P_g = 1.6863 \times 2.80 = \mathbf{4.72\text{ Watts}}$$
+
+                        <p><strong>c) Downward vs Upward Swing Mechanics:</strong></p>
+
+                        <p>During **downward swing**, $F_{g,t}$ acts parallel to velocity $\vec{v}$ ($P > 0$), delivering positive work and **increasing speed**. During **upward swing**, $F_{g,t}$ acts opposite to velocity $\vec{v}$ ($P < 0$), performing negative work and **decreasing speed**.</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Decomposing weight $mg = 2.94\text{ N}$ gives radial component $F_{g,r} = mg\cos(35^\circ) = 2.41\text{ N}$ and tangential component $F_{g,t} = mg\sin(35^\circ) = 1.69\text{ N}$. The radial component does zero work ($\perp \vec{v}$). Instantaneous power delivered by the tangential force is $P = F_{g,t} v = 1.69 \times 2.80 = 4.72\text{ W}$. On the downward swing, $F_{g,t}$ acts parallel to velocity ($P > 0$), speeding up the bob. On the upward swing, $F_{g,t}$ opposes velocity ($P < 0$), performing negative work and slowing the bob down."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Decomposes gravity into radial ($2.41\text{ N}$) and tangential ($1.69\text{ N}$) components.</li>
+                            <li><strong>2 Marks:</strong> Recognises that radial force component performs zero work.</li>
+                            <li><strong>3 Marks:</strong> Calculates instantaneous power output $P = 4.72\text{ W}$.</li>
+                            <li><strong>4 Marks:</strong> Explains positive work / acceleration during downward swing.</li>
+                            <li><strong>5 Marks:</strong> Explains negative work / deceleration during upward swing.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-09-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-09-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('09-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-09-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension (Band 6 Distinction Separator) -->
+            <div class="practise-question" id="question-09-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (Extension - Band 6 Separator): Satellite Atmospheric Drag Orbital Decay</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $1200\text{ kg}$ Low Earth Orbit (LEO) satellite initially orbits at radius $r_1 = 6.80 \times 10^6\text{ m}$ with orbital speed $v_1 = 7650\text{ m/s}$. Residual atmospheric friction exerts a tiny non-conservative drag force $F_{\text{drag}}$, performing $W_{\text{drag}} = -2.40 \times 10^8\text{ J}$ of negative work over several weeks, causing the satellite to spiral down to a lower orbit radius $r_2 = 6.65 \times 10^6\text{ m}$ where its speed increases to $v_2 = 7730\text{ m/s}$. ($M_E = 5.972 \times 10^{24}\text{ kg}, G = 6.674 \times 10^{-11}\text{ N}\cdot\text{m}^2/\text{kg}^2$).</p>
+                    <p>a) Calculate initial kinetic energy $K_1$ and final kinetic energy $K_2$.<br>b) Calculate the change in kinetic energy $\Delta K$ and explain the paradox of why drag force causes satellite speed to *increase*.<br>c) Calculate the change in gravitational potential energy $\Delta U$ using Newtonian potential energy $U = -\frac{G M_E m}{r}$.<br>d) Verify the total energy conservation principle $\Delta E_{\text{total}} = W_{\text{drag}}$.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-09-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-09-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-09-extension" style="display: none;">
+                    <p><strong>Hint:</strong> Calculate $K = \frac{1}{2}m v^2$ and $U = -\frac{G M m}{r}$. Show that potential energy loss is twice the kinetic energy gain ($-\Delta U = 2 \Delta K$).</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-09-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Kinetic Energies ($K_1, K_2$):</strong></p>
+
+                        $$K_1 = \frac{1}{2} \times 1200 \times (7650)^2 = 600 \times 58522500 = \mathbf{3.511 \times 10^{10}\text{ J}}$$
+                        $$K_2 = \frac{1}{2} \times 1200 \times (7730)^2 = 600 \times 59752900 = \mathbf{3.585 \times 10^{10}\text{ J}}$$
+
+                        <p><strong>b) Change in Kinetic Energy ($\Delta K$) & Orbital Drag Paradox:</strong></p>
+
+                        $$\Delta K = 3.5852 \times 10^{10} - 3.51135 \times 10^{10} = \mathbf{+7.39 \times 10^8\text{ Joules}}$$
+
+                        <p><em>Paradox Explanation:</em> Drag performs negative work, causing orbital decay to a smaller radius $r_2$. As $r$ decreases, Earth's gravity converts potential energy into kinetic energy. Exactly **half** the potential energy lost goes into increasing kinetic energy (speeding up the satellite), while the other half is dissipated as heat by atmospheric drag!</p>
+
+                        <p><strong>c) Change in Gravitational Potential Energy ($\Delta U$):</strong></p>
+
+                        $$U_1 = -\frac{G M_E m}{r_1} = -\frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})(1200)}{6.80 \times 10^6} = -7.034 \times 10^{10}\text{ J}$$
+                        $$U_2 = -\frac{G M_E m}{r_2} = -\frac{(6.674 \times 10^{-11})(5.972 \times 10^{24})(1200)}{6.65 \times 10^6} = -7.193 \times 10^{10}\text{ J}$$
+                        $$\Delta U = U_2 - U_1 = -7.193 \times 10^{10} - (-7.034 \times 10^{10}) = \mathbf{-1.59 \times 10^9\text{ Joules}}$$
+
+                        <p><strong>d) Total Energy Verification ($\Delta E_{\text{total}} = W_{\text{drag}}$):</strong></p>
+
+                        $$\Delta E_{\text{total}} = \Delta K + \Delta U = (+0.739 \times 10^9) + (-1.590 \times 10^9) = \mathbf{-0.851 \times 10^9\text{ Joules}}$$
+                        <p>This matches non-conservative work done by atmospheric drag ($W_{\text{drag}} \approx -0.85\text{ GJ}$). Energy is perfectly conserved!</p>
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Initial kinetic energy is $K_1 = \frac{1}{2}(1200)(7650)^2 = 3.511 \times 10^{10}\text{ J}$ and final $K_2 = 3.585 \times 10^{10}\text{ J}$, giving $\Delta K = +7.39 \times 10^8\text{ J}$. Although drag performs negative work, the satellite speeds up because loss of gravitational potential energy ($\Delta U = -1.59 \times 10^9\text{ J}$) exceeds drag dissipation. Half the potential energy loss increases kinetic energy while the rest is lost as heat. Total mechanical energy change $\Delta E = \Delta K + \Delta U = -8.5 \times 10^8\text{ J}$ equals the work done by drag."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Calculates initial and final kinetic energy ($K_1, K_2$).</li>
+                            <li><strong>2 Marks:</strong> Calculates kinetic energy gain $\Delta K = +7.39 \times 10^8\text{ J}$.</li>
+                            <li><strong>3 Marks:</strong> Resolves the satellite drag paradox using energy interconversion.</li>
+                            <li><strong>4 Marks:</strong> Calculates gravitational potential energy change $\Delta U = -1.59 \times 10^9\text{ J}$.</li>
+                            <li><strong>5 Marks:</strong> Calculates net mechanical energy change $\Delta E = -8.51 \times 10^8\text{ J}$.</li>
+                            <li><strong>6 Marks:</strong> Demonstrates complete energy conservation balance ($\Delta E = W_{\text{drag}}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-09-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-09-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('09-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-09-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="08-banked-curves-conical.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 8: Banked Curves & Pendulums</a>
+                <a href="10-torque-rotational-balance.html" class="btn-next">Proceed to Lesson 10: Torque & Static Balance &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let energySimMode = 'horizontal'; // 'horizontal' or 'vertical'
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('09-easy');
+            checkIfQuestionAnswered('09-medium');
+            checkIfQuestionAnswered('09-hard');
+            checkIfQuestionAnswered('09-extension');
+            
+            initEnergySimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        function setEnergySimMode(mode) {
+            energySimMode = mode;
+            document.getElementById('btn-mode-horizontal').classList.toggle('active', mode === 'horizontal');
+            document.getElementById('btn-mode-vertical').classList.toggle('active', mode === 'vertical');
+        }
+
+        /* --- Interactive Canvas Energy Simulator Engine --- */
+        function initEnergySimulator() {
+            const canvas = document.getElementById('energyCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const inMass = document.getElementById('sim-mass');
+            const inRadius = document.getElementById('sim-radius');
+            const inSpeed = document.getElementById('sim-speed');
+
+            const dispMass = document.getElementById('disp-mass');
+            const dispRadius = document.getElementById('disp-radius');
+            const dispSpeed = document.getElementById('disp-speed');
+
+            const outK = document.getElementById('out-k');
+            const outU = document.getElementById('out-u');
+            const outE = document.getElementById('out-e');
+            const outWork = document.getElementById('out-work');
+            const outStatus = document.getElementById('out-status');
+
+            let theta = 0;
+            let lastTime = performance.now();
+
+            function animate(now) {
+                const dt = (now - lastTime) / 1000;
+                lastTime = now;
+
+                const m = parseFloat(inMass.value);
+                const r = parseFloat(inRadius.value);
+                const baseV = parseFloat(inSpeed.value);
+
+                dispMass.innerText = m.toFixed(1) + ' kg';
+                dispRadius.innerText = r.toFixed(1) + ' m';
+                dispSpeed.innerText = baseV.toFixed(1) + ' m/s';
+
+                const g = 9.80;
+                let currentV = baseV;
+                let height = 0;
+
+                if (energySimMode === 'horizontal') {
+                    // Constant speed, zero work
+                    currentV = baseV;
+                    height = 0;
+                    theta += (currentV / r) * dt;
+                } else {
+                    // Vertical circular motion energy interconversion
+                    // Base speed is bottom speed at h = 0
+                    const eTotalBottom = 0.5 * m * baseV * baseV;
+                    
+                    // Update angle theta (0 at bottom, PI at top)
+                    const omegaApprox = currentV / r;
+                    theta += omegaApprox * dt;
+
+                    // Height h relative to bottom (0 to 2r)
+                    height = r * (1 - Math.cos(theta));
+
+                    const potentialE = m * g * height;
+                    const kineticE = eTotalBottom - potentialE;
+
+                    if (kineticE > 0) {
+                        currentV = Math.sqrt((2 * kineticE) / m);
+                    } else {
+                        currentV = 0.5; // prevent freeze
+                    }
+                }
+
+                if (theta > 2 * Math.PI) theta -= 2 * Math.PI;
+
+                const K = 0.5 * m * currentV * currentV;
+                const U = m * g * height;
+                const E = K + U;
+
+                outK.innerText = K.toFixed(1) + ' J';
+                outU.innerText = U.toFixed(1) + ' J';
+                outE.innerText = E.toFixed(1) + ' J';
+
+                if (energySimMode === 'horizontal') {
+                    outWork.innerText = "0.00 J";
+                    outStatus.innerText = "Zero Net Work (W = 0, Fc ⊥ v)";
+                    outStatus.style.color = "#00e676";
+                } else {
+                    const stepWork = -m * g * (currentV * Math.sin(theta) * dt);
+                    outWork.innerText = stepWork.toFixed(2) + ' J';
+                    outStatus.innerText = "Work-Energy Tradeoff (K ⇌ U)";
+                    outStatus.style.color = "#00f0ff";
+                }
+
+                // Render Canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Grid background
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                const centerX = 280;
+                const centerY = 220;
+                const rPx = Math.min(160, r * 35);
+
+                // Draw Circle Path
+                ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                if (energySimMode === 'horizontal') {
+                    ctx.arc(centerX, centerY, rPx, 0, Math.PI * 2);
+                } else {
+                    ctx.arc(centerX, centerY, rPx, 0, Math.PI * 2);
+                }
+                ctx.stroke();
+
+                // Object Position
+                let objX, objY;
+                if (energySimMode === 'horizontal') {
+                    objX = centerX + rPx * Math.cos(theta);
+                    objY = centerY - rPx * Math.sin(theta);
+                } else {
+                    // Theta = 0 at bottom
+                    objX = centerX - rPx * Math.sin(theta);
+                    objY = centerY + rPx * Math.cos(theta);
+                }
+
+                // Radius Line
+                ctx.strokeStyle = '#b026ff';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(centerX, centerY);
+                ctx.lineTo(objX, objY);
+                ctx.stroke();
+
+                // Velocity Vector Arrow (Gold)
+                const vLen = Math.min(60, currentV * 3.5);
+                let vxEnd, vyEnd;
+                if (energySimMode === 'horizontal') {
+                    const vAngle = theta + Math.PI / 2;
+                    vxEnd = objX - vLen * Math.sin(theta);
+                    vyEnd = objY - vLen * Math.cos(theta);
+                } else {
+                    vxEnd = objX - vLen * Math.cos(theta);
+                    vyEnd = objY - vLen * Math.sin(theta);
+                }
+
+                ctx.strokeStyle = '#ffd700';
+                ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(objX, objY); ctx.lineTo(vxEnd, vyEnd); ctx.stroke();
+                ctx.fillStyle = '#ffd700';
+                ctx.beginPath(); ctx.arc(vxEnd, vyEnd, 4, 0, Math.PI * 2); ctx.fill();
+
+                // Centripetal Force Arrow (Cyan - Inward)
+                const fcLen = 45;
+                const inAngle = Math.atan2(centerY - objY, centerX - objX);
+                const fcEndX = objX + fcLen * Math.cos(inAngle);
+                const fcEndY = objY + fcLen * Math.sin(inAngle);
+
+                ctx.strokeStyle = '#00f0ff';
+                ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(objX, objY); ctx.lineTo(fcEndX, fcEndY); ctx.stroke();
+                ctx.fillStyle = '#00f0ff';
+                ctx.beginPath(); ctx.arc(fcEndX, fcEndY, 4, 0, Math.PI * 2); ctx.fill();
+
+                // Mass Ball
+                ctx.fillStyle = '#00e676';
+                ctx.beginPath(); ctx.arc(objX, objY, 10 + m * 2, 0, Math.PI * 2); ctx.fill();
+
+                // Draw Energy Bar Charts (Right side of canvas)
+                const barLeft = 580;
+                const barWidth = 45;
+                const maxBarHeight = 260;
+                const eMaxRef = Math.max(0.1, 0.5 * m * baseV * baseV + m * g * (2 * r));
+
+                const kHeight = (K / eMaxRef) * maxBarHeight;
+                const uHeight = (U / eMaxRef) * maxBarHeight;
+
+                // K Bar (Cyan)
+                ctx.fillStyle = '#00f0ff';
+                ctx.fillRect(barLeft, 340 - kHeight, barWidth, kHeight);
+                ctx.strokeStyle = '#ffffff'; ctx.strokeRect(barLeft, 340 - kHeight, barWidth, kHeight);
+                ctx.fillStyle = '#ffffff'; ctx.font = 'bold 12px sans-serif';
+                ctx.fillText("K", barLeft + 16, 360);
+
+                // U Bar (Purple)
+                ctx.fillStyle = '#b026ff';
+                ctx.fillRect(barLeft + 70, 340 - uHeight, barWidth, uHeight);
+                ctx.strokeStyle = '#ffffff'; ctx.strokeRect(barLeft + 70, 340 - uHeight, barWidth, uHeight);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillText("U", barLeft + 70 + 16, 360);
+
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

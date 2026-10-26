@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>08. Banked Tracks & Conical Pendulums - Module 5 Advanced Mechanics</title>
+    
+    <link rel="stylesheet" href="styles.css">
+    
+    <!-- MathJax 3 Configuration MUST precede loading the MathJax library -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* CSS Reset & Box Sizing Safeguards */
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        /* Responsive Layout & Container Enhancements */
+        .uvtaxy-table-container {
+            overflow-x: auto;
+            margin: 1.8rem 0;
+            border-radius: 12px;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .uvtaxy-grid-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: rgba(10, 14, 26, 0.75);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+        }
+
+        .uvtaxy-grid-table th {
+            background: linear-gradient(90deg, rgba(176, 38, 255, 0.25), rgba(0, 240, 255, 0.25));
+            color: #ffffff;
+            padding: 1.1rem;
+            text-align: left;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--glass-border);
+            font-family: var(--font-heading);
+        }
+
+        .uvtaxy-grid-table td {
+            padding: 1rem 1.1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--text-secondary);
+            font-size: 0.98rem;
+        }
+
+        .uvtaxy-grid-table tr:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .sim-container {
+            background: rgba(10, 14, 26, 0.9);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.8rem;
+            margin: 2.5rem 0;
+            box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+            overflow: hidden;
+        }
+
+        .sim-mode-selector {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-mode {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            padding: 0.65rem 1.3rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-mode.active {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.25), rgba(176, 38, 255, 0.35));
+            border-color: var(--accent-cyan);
+            color: #ffffff;
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+        }
+
+        .sim-controls {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.2rem;
+            margin-bottom: 1.5rem;
+            background: rgba(255, 255, 255, 0.025);
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .sim-control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .sim-control-group label {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        .sim-control-group select, .sim-control-group input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-purple);
+            cursor: pointer;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            border: 1px solid var(--glass-border);
+            padding: 0.5rem;
+            border-radius: 6px;
+        }
+
+        .sim-value-display {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 700;
+        }
+
+        canvas#bankedCanvas {
+            width: 100%;
+            height: 440px;
+            background: #040711;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            display: block;
+        }
+
+        .sim-readout-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .sim-metric-card {
+            background: rgba(255, 255, 255, 0.035);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            padding: 0.9rem;
+            text-align: center;
+        }
+
+        .sim-metric-card .title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .sim-metric-card .value {
+            font-size: 1.15rem;
+            color: var(--accent-cyan);
+            font-weight: 700;
+            margin-top: 0.3rem;
+        }
+
+        /* Overflow & Responsive Container Fixes */
+        .concept-highlight-card, 
+        .worked-solution, 
+        .derivation-steps, 
+        .practise-question, 
+        .formula-callout-box, 
+        .misconception-box, 
+        .exam-warning-box, 
+        .extension-note-box,
+        .trig-breakdown-card {
+            max-width: 100%;
+            overflow-x: auto;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .concept-highlight-card {
+            background: rgba(0, 240, 255, 0.04);
+            border: 1px solid rgba(0, 240, 255, 0.2);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .trig-breakdown-card {
+            background: rgba(176, 38, 255, 0.06);
+            border: 1px solid rgba(176, 38, 255, 0.25);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .exemplar-response {
+            background: rgba(0, 230, 118, 0.05);
+            border: 1px solid rgba(0, 230, 118, 0.2);
+            border-radius: 10px;
+            padding: 1.2rem;
+            margin-top: 1rem;
+        }
+
+        .exemplar-response h6 {
+            color: var(--success-green);
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        .derivation-steps {
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .vector-diagram-card {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-x: auto;
+            max-width: 100%;
+        }
+
+        .formula-callout-box {
+            background: linear-gradient(135deg, rgba(176, 38, 255, 0.12), rgba(0, 240, 255, 0.12));
+            border: 1px solid rgba(0, 240, 255, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1.8rem 0;
+            text-align: center;
+        }
+
+        .formula-callout-box h4 {
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        .formula-callout-box p {
+            margin-bottom: 0;
+            color: var(--accent-cyan);
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .misconception-box {
+            background: rgba(239, 68, 68, 0.08);
+            border-left: 4px solid #ef4444;
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .misconception-box h4 {
+            color: #fca5a5;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .misconception-box p {
+            color: #fecaca;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        .extension-note-box {
+            background: rgba(168, 85, 247, 0.08);
+            border-left: 4px solid var(--accent-purple);
+            padding: 1.4rem 1.6rem;
+            border-radius: 0 12px 12px 0;
+            margin: 2rem 0;
+        }
+
+        .extension-note-box h4 {
+            color: #d8b4fe;
+            margin-bottom: 0.6rem;
+            font-size: 1.15rem;
+        }
+
+        .extension-note-box p {
+            color: #e9d5ff;
+            margin-bottom: 0;
+            font-size: 0.98rem;
+        }
+
+        /* MathJax Display Overflow Rules */
+        .MathJax_Display, .mjx-chtml, .MathJax {
+            max-width: 100% !important;
+            overflow-x: auto !important;
+            overflow-y: hidden !important;
+            padding: 0.3rem 0;
+            margin: 0.5rem 0 !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Universal Sidebar Navigation -->
+    <nav id="sidebar" class="navigation-bar">
+        <div class="nav-header">
+            <h2>Module 5</h2>
+            <p>Advanced Mechanics</p>
+            <div id="global-score-display">Total Marks: <span id="total-marks">0</span></div>
+        </div>
+        
+        <ul class="nav-list">
+            <li class="nav-section-title">Introduction</li>
+            <li><a href="index.html">Home & Guide</a></li>
+            
+            <li class="nav-section-title">Phase 1: Projectile Motion</li>
+            <li><a href="01-vector-fundamentals.html">1. Vector Fundamentals</a></li>
+            <li><a href="02-horizontal-vertical-motion.html">2. Motion Independence</a></li>
+            <li><a href="03-uvtaxy-kinematics.html">3. UVTAXY Kinematics</a></li>
+            <li><a href="04-angled-and-height-launches.html">4. Height & Angled Launches</a></li>
+            <li><a href="05-projectile-lab-spreadsheet.html">5. Lab & Spreadsheet Model</a></li>
+            
+            <li class="nav-section-title">Phase 2: Circular Motion & Torque</li>
+            <li><a href="06-uniform-circular-motion.html">6. Speed & Angular Velocity</a></li>
+            <li><a href="07-centripetal-acceleration.html">7. Centripetal Force & Accel</a></li>
+            <li><a href="08-banked-curves-conical.html" class="active">8. Banked Curves & Pendulums</a></li>
+            <li><a href="09-work-energy-circular.html">9. Work & Energy in UCM</a></li>
+            <li><a href="10-torque-rotational-balance.html">10. Torque & Static Balance</a></li>
+            
+            <li class="nav-section-title">Phase 3: Universal Gravitation</li>
+            <li><a href="11-newtons-law-gravitation.html">11. Inverse Square Law</a></li>
+            <li><a href="12-gravitational-field-strength.html">12. Gravitational Field (g)</a></li>
+            
+            <li class="nav-section-title">Phase 4: Orbital Motion</li>
+            <li><a href="13-orbital-velocity-period.html">13. Orbital Speed & Period</a></li>
+            <li><a href="14-satellite-types-leo-geo.html">14. Satellite Orbits (LEO/GEO)</a></li>
+            <li><a href="15-keplers-three-laws.html">15. Kepler's 3 Laws</a></li>
+            
+            <li class="nav-section-title">Phase 5: Energy & Escape Velocity</li>
+            <li><a href="16-gravitational-potential-energy.html">16. Potential Energy Wells</a></li>
+            <li><a href="17-total-orbital-energy.html">17. Total Orbital Energy</a></li>
+            <li><a href="18-escape-velocity-derivation.html">18. Escape Velocity</a></li>
+            
+            <li class="nav-section-title">Phase 6: Assessment</li>
+            <li><a href="19-module5-summary.html">19. Formula Cheat-Sheet</a></li>
+            <li><a href="20-final-assessment-mcq.html">20. Final Exam (Part 1: MCQs)</a></li>
+            <li><a href="21-final-assessment-saq.html">21. Final Exam (Part 2: SAQs)</a></li>
+            <li><a href="22-module5-certificate.html" class="highlight-link">22. Claim Certificate</a></li>
+        </ul>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main id="main-content">
+        <header class="page-header">
+            <h1>08. Banked Curves, Conical Pendulums & Vector Resolution</h1>
+            <p class="subtitle">Module 5: Advanced Mechanics — Inquiry Question 2: Why do objects move in circles?</p>
+        </header>
+
+        <!-- 1. NESA Syllabus Alignment -->
+        <section class="content-section" id="syllabus-mapping">
+            <h2>NESA Syllabus Alignment & Rigorous Core Mechanics</h2>
+            <p><strong>Inquiry Question 2:</strong> <em>Why do objects move in circles?</em></p>
+            <p>Under the NESA Stage 6 Physics Syllabus, students are required to analyse two-dimensional vector components for objects executing uniform circular motion in horizontal circles. Specifically, students must:</p>
+            <ul class="feature-list">
+                <li>Analyse the forces acting on an object undergoing uniform circular motion in horizontal circles, including:
+                    <ul>
+                        <li><strong>Frictionless banked tracks:</strong> Tilted surfaces where a horizontal component of the Normal reaction force supplies the necessary centripetal force ($N \sin\theta = \frac{m v^2}{r}$).</li>
+                        <li><strong>Conical pendulums:</strong> Suspended masses sweeping out horizontal circles where a horizontal component of string tension supplies the centripetal force ($T \sin\theta = \frac{m v^2}{r}$).</li>
+                        <li><strong>Banked aircraft:</strong> Aircraft executing level circular turns where an aerodynamic lift vector component maintains vertical equilibrium while another supplies centripetal force ($L \sin\theta = \frac{m v^2}{r}$).</li>
+                    </ul>
+                </li>
+                <li>Derive and apply the ideal design speed equation for banked curves and conical pendulums:
+                    $$\tan\theta = \frac{v^2}{g r} \implies v_{\text{design}} = \sqrt{g r \tan\theta}$$
+                </li>
+                <li><strong>Band 6 Distinction Extension:</strong> Analyse complex 2D systems combining banking angle $\theta$ and surface static friction coefficient $\mu_s$ to solve for the maximum safe speed ($v_{\max}$) before outward skidding and the minimum safe speed ($v_{\min}$) before inward slipping.</li>
+            </ul>
+
+            <div class="misconception-box">
+                <h4>Crucial NESA Exam Warning: Choice of Coordinate Axes</h4>
+                <p>When solving standard inclined plane problems (like a block sliding down a ramp), students rotate their coordinate axes parallel and perpendicular to the slope. <strong>DO NOT DO THIS FOR HORIZONTAL CIRCULAR MOTION!</strong></p>
+                <p>In horizontal circular motion (banked tracks, conical pendulums, banking jets), the circle lies strictly in the horizontal plane. Therefore, centripetal acceleration $\vec{a}_c$ points <strong>purely horizontally</strong> toward the centre of curvature ($a_x = \frac{v^2}{r}$) and vertical acceleration is zero ($a_y = 0$). Standard horizontal ($x$) and vertical ($y$) Cartesian axes must be used so that acceleration is isolated to a single axis.</p>
+            </div>
+        </section>
+
+        <!-- 2. Deep Dive Part A: Frictionless Banked Curves -->
+        <section class="content-section" id="deep-dive-banked">
+            <h2>Deep Dive Part A: Frictionless Banked Curves & Geometry of Vector Triangles</h2>
+
+            <h3>1. Physical Rationale & The Need for Banking</h3>
+            <p>On a flat, horizontal road, static tire friction ($f_s$) is the sole force supplying the inward centripetal force ($F_c = \frac{m v^2}{r}$). However, static friction is strictly limited ($f_{s,\max} = \mu_s m g$) and degrades dangerously on wet, icy, or worn roads. Civil engineers tilt (or <strong>bank</strong>) high-speed roadways, velodromes, and racetracks at an incline angle $\theta$ toward the turn centre so that the Normal reaction force from the road surface provides the required centripetal acceleration naturally without relying on tire friction.</p>
+
+            <!-- Vector Diagram: Banked Track Free Body Diagram -->
+            <div class="vector-diagram-card">
+                <svg width="520" height="320" viewBox="0 0 520 320" style="background: transparent;">
+                    <!-- Inclined Road Surface -->
+                    <polygon points="50,260 450,260 450,130" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.4)" stroke-width="2.5"/>
+                    
+                    <!-- Bank Angle Theta at Base -->
+                    <path d="M 120 260 A 70 70 0 0 0 106 242" fill="none" stroke="#ffd700" stroke-width="2.5"/>
+                    <text x="135" y="252" fill="#ffd700" font-family="sans-serif" font-size="15" font-weight="bold">θ</text>
+
+                    <!-- Car / Vehicle Mass Box -->
+                    <g transform="translate(250, 195) rotate(-18.0)">
+                        <rect x="-40" y="-22" width="80" height="44" rx="6" fill="#b026ff" stroke="#ffffff" stroke-width="2.5"/>
+                        <circle cx="-24" cy="22" r="8" fill="#1e293b" stroke="#00f0ff" stroke-width="2"/>
+                        <circle cx="24" cy="22" r="8" fill="#1e293b" stroke="#00f0ff" stroke-width="2"/>
+                        <text x="-15" y="6" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="14">Mass m</text>
+                    </g>
+
+                    <!-- Center of Mass Point -->
+                    <circle cx="250" cy="195" r="5" fill="#00e676"/>
+
+                    <!-- Weight Vector mg (Downward) -->
+                    <line x1="250" y1="195" x2="250" y2="300" stroke="#ef4444" stroke-width="3.5"/>
+                    <polygon points="250,300 244,288 256,288" fill="#ef4444"/>
+                    <text x="258" y="295" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="14">F_g = mg</text>
+
+                    <!-- Normal Force N (Perpendicular to Slope) -->
+                    <line x1="250" y1="195" x2="198" y2="35" stroke="#00f0ff" stroke-width="3.5"/>
+                    <polygon points="198,35 195,48 206,44" fill="#00f0ff"/>
+                    <text x="165" y="45" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="16">Normal (N)</text>
+
+                    <!-- Vertical Projection Line for Normal Force Component Triangle -->
+                    <line x1="250" y1="195" x2="250" y2="35" stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-dasharray="4"/>
+                    <line x1="250" y1="35" x2="198" y2="35" stroke="#00e676" stroke-width="3"/>
+                    <polygon points="198,35 208,30 208,40" fill="#00e676"/>
+
+                    <!-- Component Labels -->
+                    <text x="256" y="115" fill="#00f0ff" font-family="sans-serif" font-size="13" font-weight="bold">N_y = N cos θ</text>
+                    <text x="180" y="22" fill="#00e676" font-family="sans-serif" font-size="13" font-weight="bold">N_x = N sin θ = F_c</text>
+
+                    <!-- Theta Angle at Top Vector Triangle -->
+                    <path d="M 250 110 A 85 85 0 0 0 232 90" fill="none" stroke="#ffd700" stroke-width="2"/>
+                    <text x="238" y="125" fill="#ffd700" font-family="sans-serif" font-size="14" font-weight="bold">θ</text>
+                </svg>
+                <p style="font-size:0.88rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 1: Free-body diagram and vector decomposition for a vehicle on a frictionless banked curve. The Normal force $N$ is resolved into vertical ($N \cos\theta$) and horizontal ($N \sin\theta$) components.</p>
+            </div>
+
+            <!-- Detailed Geometric Angle Explanation Card -->
+            <div class="trig-breakdown-card">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Step-by-Step Proof: Why $N_y = N \cos\theta$ and $N_x = N \sin\theta$</h4>
+                <p>Students often wonder why $N_y$ uses $\cos\theta$ and $N_x$ uses $\sin\theta$, when standard incline problems use $g \sin\theta$ for horizontal motion. Here is the rigorous geometric derivation using complementary angles:</p>
+
+                <!-- Vector Right Triangle Explanatory SVG -->
+                <div style="text-align: center; margin: 1.2rem 0;">
+                    <svg width="340" height="220" viewBox="0 0 340 220" style="background: rgba(0,0,0,0.3); border-radius: 10px; border: 1px solid var(--glass-border);">
+                        <!-- Right Triangle for Normal Force Vector -->
+                        <polygon points="60,180 60,30 260,30" fill="rgba(0,240,255,0.08)" stroke="#00f0ff" stroke-width="2"/>
+                        
+                        <!-- Hypotenuse N -->
+                        <line x1="60" y1="180" x2="260" y2="30" stroke="#b026ff" stroke-width="3.5"/>
+                        <text x="170" y="120" fill="#b026ff" font-family="sans-serif" font-weight="bold" font-size="15">N (Hypotenuse)</text>
+
+                        <!-- Vertical Adjacent Side N_y -->
+                        <text x="5" y="110" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="14">N_y = N cos θ</text>
+                        <text x="10" y="130" fill="var(--text-muted)" font-family="sans-serif" font-size="12">(Adjacent)</text>
+
+                        <!-- Horizontal Opposite Side N_x -->
+                        <text x="120" y="20" fill="#00e676" font-family="sans-serif" font-weight="bold" font-size="14">N_x = N sin θ</text>
+                        <text x="135" y="42" fill="var(--text-muted)" font-family="sans-serif" font-size="12">(Opposite)</text>
+
+                        <!-- Angle Theta at Bottom Left Corner -->
+                        <path d="M 60 140 A 40 40 0 0 1 85 160" fill="none" stroke="#ffd700" stroke-width="2.5"/>
+                        <text x="75" y="145" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="15">θ</text>
+
+                        <!-- Right Angle Square symbol -->
+                        <rect x="60" y="30" width="16" height="16" fill="none" stroke="#ffffff" stroke-width="1.5"/>
+                    </svg>
+                </div>
+
+                <ol style="color: var(--text-secondary); line-height: 1.7;">
+                    <li><strong>Incline Geometry:</strong> The road surface is inclined at angle $\theta$ relative to the horizontal floor.</li>
+                    <li><strong>Perpendicular Normal Force:</strong> By definition, the Normal reaction force vector $\vec{N}$ acts at right angles ($90^\circ$) to the road surface.</li>
+                    <li><strong>Angle with Vertical:</strong> Since the incline is at angle $\theta$ to the horizontal, its angle with the vertical axis is $(90^\circ - \theta)$. Because the Normal force is at $90^\circ$ to the incline, the angle $\vec{N}$ makes with the <strong>vertical $y$-axis</strong> is equal to $\theta$!</li>
+                    <li><strong>Applying Right-Triangle Trigonometry (SOH-CAH-TOA):</strong>
+                        <ul>
+                            <li><strong>Vertical Component ($N_y$):</strong> This side is <em>adjacent</em> to angle $\theta$. Thus, $\cos\theta = \frac{\text{Adjacent}}{\text{Hypotenuse}} = \frac{N_y}{N} \implies \mathbf{N_y = N \cos\theta}$.</li>
+                            <li><strong>Horizontal Component ($N_x$):</strong> This side is <em>opposite</em> to angle $\theta$. Thus, $\sin\theta = \frac{\text{Opposite}}{\text{Hypotenuse}} = \frac{N_x}{N} \implies \mathbf{N_x = N \sin\theta}$.</li>
+                        </ul>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Derivation of Ideal Design Speed ($v_{\text{design}}$)</h4>
+                <p>Consider a vehicle of mass $m$ rounding a track of radius $r$ banked at angle $\theta$. Two real physical forces act on the vehicle: <strong>Gravity ($m g$)</strong> vertically downward, and <strong>Normal Force ($N$)</strong> perpendicular to the track.</p>
+
+                <p><strong>Step 1: Vertical Force Equilibrium ($\Sigma F_y = 0$)</strong></p>
+                <p>The vehicle does not accelerate vertically ($a_y = 0$). Therefore, the upward vertical component of the Normal force must exactly balance gravity:</p>
+                $$N \cos\theta - m g = 0 \implies \mathbf{N \cos\theta = m g} \quad \text{--- (Equation 1)}$$
+                $$\implies N = \frac{m g}{\cos\theta}$$
+
+                <p><strong>Step 2: Horizontal Centripetal Acceleration ($\Sigma F_x = m a_c$)</strong></p>
+                <p>The horizontal component of the Normal force points directly toward the centre of curvature, supplying 100% of the required centripetal force:</p>
+                $$\mathbf{N \sin\theta = \frac{m v^2}{r}} \quad \text{--- (Equation 2)}$$
+
+                <p><strong>Step 3: Dividing Equation 2 by Equation 1</strong></p>
+                <p>To eliminate the unknown Normal force $N$ and mass $m$, divide Eq. 2 by Eq. 1:</p>
+                $$\frac{N \sin\theta}{N \cos\theta} = \frac{\frac{m v^2}{r}}{m g}$$
+
+                <p>Cancelling $N$ and $m$ on both sides, and noting that $\frac{\sin\theta}{\cos\theta} = \tan\theta$:</p>
+
+                <div class="formula-callout-box">
+                    <h4>Banked Curve & Conical Pendulum Ideal Formula</h4>
+                    <p>$$\tan\theta = \frac{v^2}{g r} \implies v_{\text{design}} = \sqrt{g r \tan\theta}$$</p>
+                </div>
+
+                <p><strong>Core Physics Insights:</strong></p>
+                <ul class="feature-list">
+                    <li><strong>Mass Independence:</strong> Vehicle mass $m$ cancels out completely! A $500\text{ kg}$ formula car and a $20000\text{ kg}$ semi-trailer require the exact same ideal speed $v_{\text{design}}$ to round a banked corner without relying on tire friction!</li>
+                    <li><strong>No-Friction Ideal Speed:</strong> At $v = v_{\text{design}}$, there is zero lateral friction demand ($f_s = 0$). If $v > v_{\text{design}}$, the vehicle tends to slide <strong>up</strong> the slope; if $v < v_{\text{design}}$, gravity tends to pull it <strong>down</strong> the slope.</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Deep Dive Part B: Conical Pendulums & Aircraft Banking -->
+        <section class="content-section" id="deep-dive-conical">
+            <h2>Deep Dive Part B: Conical Pendulums & Aircraft Banking Dynamics</h2>
+
+            <h3>1. The Conical Pendulum System</h3>
+            <p>A <strong>conical pendulum</strong> consists of a mass bob $m$ suspended by a string of length $L$. Unlike a simple pendulum that oscillates back and forth in a vertical plane, the bob sweeps out a horizontal circle of radius $r$, while the string traces out the surface of a cone at angle $\theta$ relative to the vertical line.</p>
+
+            <!-- Vector Diagram: Conical Pendulum -->
+            <div class="vector-diagram-card">
+                <svg width="480" height="280" viewBox="0 0 480 280" style="background: transparent;">
+                    <!-- Ceiling Attachment Support -->
+                    <line x1="160" y1="30" x2="320" y2="30" stroke="#ffffff" stroke-width="4"/>
+                    <line x1="240" y1="30" x2="240" y2="250" stroke="rgba(255,255,255,0.15)" stroke-dasharray="4"/>
+
+                    <!-- Conical Orbit Ellipse Path -->
+                    <ellipse cx="240" cy="220" rx="140" ry="35" fill="rgba(0,240,255,0.05)" stroke="rgba(0,240,255,0.3)" stroke-width="2" stroke-dasharray="6"/>
+
+                    <!-- String Tension Vector T -->
+                    <line x1="240" y1="30" x2="350" y2="228" stroke="#b026ff" stroke-width="3"/>
+
+                    <!-- Angle Theta at Ceiling Pivot -->
+                    <path d="M 240 80 A 50 50 0 0 0 262 72" fill="none" stroke="#ffd700" stroke-width="2.5"/>
+                    <text x="252" y="98" fill="#ffd700" font-family="sans-serif" font-size="14" font-weight="bold">θ</text>
+
+                    <!-- Bob Circle Mass -->
+                    <circle cx="350" cy="228" r="14" fill="#00e676" stroke="#ffffff" stroke-width="2"/>
+                    <text x="345" y="233" fill="#000000" font-family="sans-serif" font-weight="bold" font-size="12">m</text>
+
+                    <!-- Tension Components Vector Triangle at Bob -->
+                    <!-- T_y (Vertical Upward) -->
+                    <line x1="350" y1="228" x2="350" y2="120" stroke="#00f0ff" stroke-width="3"/>
+                    <polygon points="350,120 345,130 355,130" fill="#00f0ff"/>
+                    <text x="358" y="160" fill="#00f0ff" font-family="sans-serif" font-size="13" font-weight="bold">T_y = T cos θ</text>
+
+                    <!-- T_x (Horizontal Inward Centripetal) -->
+                    <line x1="350" y1="228" x2="240" y2="228" stroke="#00e676" stroke-width="3"/>
+                    <polygon points="240,228 250,223 250,233" fill="#00e676"/>
+                    <text x="255" y="220" fill="#00e676" font-family="sans-serif" font-size="13" font-weight="bold">T_x = T sin θ = F_c</text>
+
+                    <!-- Weight Vector mg (Downward) -->
+                    <line x1="350" y1="228" x2="350" y2="278" stroke="#ef4444" stroke-width="3"/>
+                    <polygon points="350,278 345,268 355,268" fill="#ef4444"/>
+                    <text x="358" y="275" fill="#ef4444" font-family="sans-serif" font-size="13" font-weight="bold">F_g = mg</text>
+
+                    <!-- Radius Dimension Line -->
+                    <line x1="240" y1="245" x2="350" y2="245" stroke="#ffd700" stroke-width="1.5"/>
+                    <text x="285" y="260" fill="#ffd700" font-family="sans-serif" font-size="12" font-weight="bold">r = L sin θ</text>
+                </svg>
+                <p style="font-size:0.88rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 2: Conical pendulum system showing string tension decomposition $T_y = T \cos\theta$ balancing gravity and $T_x = T \sin\theta$ supplying centripetal acceleration.</p>
+            </div>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.8rem;">Derivation of Orbital Period ($T_{\text{period}}$) for Conical Pendulum</h4>
+                <p>Resolving String Tension $T$ into Cartesian right-triangle components:</p>
+                <ul class="feature-list">
+                    <li><strong>Vertical Equilibrium:</strong> $T \cos\theta = m g \implies T = \frac{m g}{\cos\theta}$</li>
+                    <li><strong>Horizontal Centripetal Acceleration:</strong> $T \sin\theta = F_c = m \omega^2 r$</li>
+                </ul>
+
+                <p>Substituting $T = \frac{m g}{\cos\theta}$ into the horizontal centripetal equation:</p>
+                $$\left(\frac{m g}{\cos\theta}\right) \sin\theta = m \omega^2 r$$
+                $$m g \tan\theta = m \omega^2 r \implies g \tan\theta = \omega^2 r$$
+
+                <p>From string geometry, radius $r = L \sin\theta$. Substituting $r$ into the equation:</p>
+                $$g \frac{\sin\theta}{\cos\theta} = \omega^2 (L \sin\theta)$$
+
+                <p>Cancelling $\sin\theta$ on both sides yields the angular velocity $\omega$:</p>
+                $$\frac{g}{\cos\theta} = \omega^2 L \implies \omega = \sqrt{\frac{g}{L \cos\theta}}$$
+
+                <p>Recalling that period $T_{\text{period}} = \frac{2\pi}{\omega}$:</p>
+
+                <div class="formula-callout-box">
+                    <h4>Conical Pendulum Orbital Period Equation</h4>
+                    <p>$$T_{\text{period}} = 2\pi \sqrt{\frac{L \cos\theta}{g}} = 2\pi \sqrt{\frac{h}{g}}$$</p>
+                </div>
+                <p><em>Where $h = L \cos\theta$ is the vertical height of the cone suspended below the ceiling.</em></p>
+            </div>
+
+            <h3>2. Aerodynamic Aircraft Banking & Apparent G-Force (Load Factor)</h3>
+            <p>When an airplane executes a horizontal circular turn, wings generate an aerodynamic <strong>Lift force ($\vec{L}$)</strong> directed perpendicular to the wing surface. To turn, the pilot banks the aircraft at an angle $\theta$:</p>
+
+            <div class="concept-highlight-card">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">Aircraft Banking Equations & Cockpit G-Force</h4>
+                <ul class="feature-list" style="margin-bottom: 0;">
+                    <li><strong>Vertical Lift Component:</strong> $L \cos\theta = m g$ (supports plane weight).</li>
+                    <li><strong>Horizontal Lift Component:</strong> $L \sin\theta = \frac{m v^2}{r}$ (provides turning centripetal force).</li>
+                    <li><strong>Load Factor ($n$ / Apparent G-Force):</strong> The pilot feels heavier because the total lift force $L$ increases with bank angle:
+                        $$n = \frac{L}{m g} = \frac{1}{\cos\theta}$$
+                        In a steep $60^\circ$ bank, $\cos(60^\circ) = 0.5 \implies n = \frac{1}{0.5} = \mathbf{2.0\text{ g's}}$!
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- Deep Dive Part C: Band 6 Extension - Banked Track WITH Static Friction -->
+        <section class="content-section" id="deep-dive-friction-extension">
+            <h2>Deep Dive Part C: Band 6 Extension — Banked Track WITH Static Friction ($\mu_s$)</h2>
+
+            <p>In real-world engineering, road tracks combine both a banking angle $\theta$ and surface static friction coefficient $\mu_s$. This provides a <strong>safe velocity window $[v_{\min}, v_{\max}]$</strong> within which a vehicle can round the corner without skidding outward or slipping inward.</p>
+
+            <!-- Vector Diagram: Banked Track WITH Friction (v_max case) -->
+            <div class="vector-diagram-card">
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.8rem;">Vector Resolution for Maximum Safe Speed ($v_{\max}$)</h4>
+                <svg width="520" height="320" viewBox="0 0 520 320" style="background: transparent;">
+                    <!-- Inclined Road Surface -->
+                    <polygon points="50,260 450,260 450,130" fill="rgba(0,240,255,0.06)" stroke="rgba(0,240,255,0.4)" stroke-width="2.5"/>
+                    <path d="M 120 260 A 70 70 0 0 0 106 242" fill="none" stroke="#ffd700" stroke-width="2"/>
+                    <text x="135" y="252" fill="#ffd700" font-family="sans-serif" font-size="14" font-weight="bold">θ</text>
+
+                    <!-- Car / Mass Box -->
+                    <g transform="translate(250, 195) rotate(-18.0)">
+                        <rect x="-40" y="-22" width="80" height="44" rx="6" fill="#b026ff" stroke="#ffffff" stroke-width="2.5"/>
+                        <circle cx="-24" cy="22" r="8" fill="#1e293b" stroke="#00f0ff" stroke-width="2"/>
+                        <circle cx="24" cy="22" r="8" fill="#1e293b" stroke="#00f0ff" stroke-width="2"/>
+                    </g>
+                    <circle cx="250" cy="195" r="5" fill="#00e676"/>
+
+                    <!-- Force Vector 1: Weight mg (Downward) -->
+                    <line x1="250" y1="195" x2="250" y2="300" stroke="#ef4444" stroke-width="3"/>
+                    <polygon points="250,300 245,290 255,290" fill="#ef4444"/>
+                    <text x="256" y="295" fill="#ef4444" font-family="sans-serif" font-weight="bold" font-size="13">mg</text>
+
+                    <!-- Force Vector 2: Normal N (Perpendicular to slope up-left) -->
+                    <line x1="250" y1="195" x2="198" y2="35" stroke="#00f0ff" stroke-width="3.5"/>
+                    <polygon points="198,35 195,48 206,44" fill="#00f0ff"/>
+                    <text x="175" y="40" fill="#00f0ff" font-family="sans-serif" font-weight="bold" font-size="14">N</text>
+
+                    <!-- Force Vector 3: Static Friction f_s (Pointing DOWN incline to resist sliding UP) -->
+                    <line x1="250" y1="195" x2="155" y2="226" stroke="#ffd700" stroke-width="3.5"/>
+                    <polygon points="155,226 167,220 165,231" fill="#ffd700"/>
+                    <text x="110" y="215" fill="#ffd700" font-family="sans-serif" font-weight="bold" font-size="14">f_s = μ_s N</text>
+
+                    <!-- Vector Triangles for f_s resolution -->
+                    <!-- f_s horizontal component (f_s cos theta pointing INWARD) -->
+                    <line x1="250" y1="195" x2="160" y2="195" stroke="#ffd700" stroke-width="2" stroke-dasharray="3"/>
+                    <text x="165" y="185" fill="#ffd700" font-family="sans-serif" font-size="12">f_s cos θ</text>
+
+                    <!-- f_s vertical component (f_s sin theta pointing DOWNWARD) -->
+                    <line x1="160" y1="195" x2="160" y2="226" stroke="#ffd700" stroke-width="2" stroke-dasharray="3"/>
+                    <text x="95" y="245" fill="#ffd700" font-family="sans-serif" font-size="12">f_s sin θ</text>
+                </svg>
+                <p style="font-size:0.88rem; color: var(--text-muted); margin-top: 0.8rem; text-align: center;">Figure 3: Free-body vector resolution at maximum speed ($v_{\max}$). Because the car tends to skid <strong>outward/upward</strong>, static friction $f_s$ acts <strong>downward along the incline</strong>, contributing both to inward centripetal force ($f_s \cos\theta$) and downward vertical force ($f_s \sin\theta$).</p>
+            </div>
+
+            <div class="derivation-steps">
+                <h4 style="color: var(--accent-purple); margin-bottom: 0.8rem;">1. Deriving Maximum Safe Speed ($v_{\max}$) — Preventing Outward Skidding</h4>
+                <p>When travelling at maximum speed $v_{\max}$, the vehicle tends to skid <strong>up</strong> the track slope. Therefore, static friction $f_s = \mu_s N$ acts <strong>downward along the incline</strong> to resist outward motion.</p>
+
+                <p><strong>Step-by-step vector resolution of static friction $f_s$:</strong></p>
+                <ul class="feature-list">
+                    <li>The incline is at angle $\theta$ to horizontal. Thus, the friction vector along the slope is at angle $\theta$ below the horizontal axis.</li>
+                    <li><strong>Horizontal Inward Component of Friction:</strong> $f_{s,x} = f_s \cos\theta = \mu_s N \cos\theta$ (points radially inward, aiding turning).</li>
+                    <li><strong>Vertical Downward Component of Friction:</strong> $f_{s,y} = f_s \sin\theta = \mu_s N \sin\theta$ (points vertically downward, adding to weight).</li>
+                </ul>
+
+                <p><strong>Vertical Axis Equilibrium ($\Sigma F_y = 0$):</strong></p>
+                $$N \cos\theta - f_s \sin\theta - m g = 0$$
+                $$N \cos\theta - (\mu_s N) \sin\theta = m g$$
+                $$\mathbf{N(\cos\theta - \mu_s \sin\theta) = m g} \quad \text{--- (Equation A1)}$$
+
+                <p><strong>Horizontal Axis Centripetal Force ($\Sigma F_x = F_c = \frac{m v_{\max}^2}{r}$):</strong></p>
+                $$N \sin\theta + f_s \cos\theta = \frac{m v_{\max}^2}{r}$$
+                $$N \sin\theta + (\mu_s N) \cos\theta = \frac{m v_{\max}^2}{r}$$
+                $$\mathbf{N(\sin\theta + \mu_s \cos\theta) = \frac{m v_{\max}^2}{r}} \quad \text{--- (Equation A2)}$$
+
+                <p><strong>Dividing Equation A2 by Equation A1:</strong></p>
+                $$\frac{N(\sin\theta + \mu_s \cos\theta)}{N(\cos\theta - \mu_s \sin\theta)} = \frac{\frac{m v_{\max}^2}{r}}{m g}$$
+
+                <p>Cancelling Normal force $N$ and mass $m$:</p>
+                $$\frac{\sin\theta + \mu_s \cos\theta}{\cos\theta - \mu_s \sin\theta} = \frac{v_{\max}^2}{g r}$$
+
+                <p>Dividing numerator and denominator on the left side by $\cos\theta$ gives the master $v_{\max}$ formula:</p>
+
+                <div class="formula-callout-box">
+                    <h4>Maximum Speed on Banked Track with Friction</h4>
+                    <p>$$v_{\max} = \sqrt{g r \left( \frac{\tan\theta + \mu_s}{1 - \mu_s \tan\theta} \right)}$$</p>
+                </div>
+
+                <h4 style="color: var(--accent-cyan); margin-bottom: 0.8rem; margin-top: 1.8rem;">2. Deriving Minimum Safe Speed ($v_{\min}$) — Preventing Inward Slipping</h4>
+                <p>When travelling too slowly ($v < v_{\text{design}}$), gravity tends to pull the vehicle down the slope. Static friction $f_s = \mu_s N$ acts <strong>upward along the incline</strong> to prevent inward slipping.</p>
+
+                <p>Reversing the direction of friction ($f_s \to -f_s$) in our component force equations yields:</p>
+                $$\text{Vertical: } N(\cos\theta + \mu_s \sin\theta) = m g$$
+                $$\text{Horizontal: } N(\sin\theta - \mu_s \cos\theta) = \frac{m v_{\min}^2}{r}$$
+
+                <p>Dividing equations and simplifying gives the master $v_{\min}$ formula:</p>
+
+                <div class="formula-callout-box">
+                    <h4>Minimum Speed on Banked Track with Friction</h4>
+                    <p>$$v_{\min} = \sqrt{g r \left( \frac{\tan\theta - \mu_s}{1 + \mu_s \tan\theta} \right)}$$</p>
+                </div>
+
+                <div class="extension-note-box">
+                    <h4>Physical Interpretation of Limits & Special Cases</h4>
+                    <ul class="feature-list" style="margin-bottom: 0;">
+                        <li><strong>When $\tan\theta \le \mu_s$:</strong> The numerator for $v_{\min}$ becomes zero or negative. This means $v_{\min} = 0\text{ m/s}$ — static friction is strong enough that the car can stop completely on the slope without slipping down!</li>
+                        <li><strong>When $\mu_s \tan\theta \ge 1$:</strong> The denominator for $v_{\max}$ becomes zero or negative. This means $v_{\max} \to \infty$ — the banking is so steep and sticky that the vehicle can travel at any speed without skidding outward!</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Dynamic Interactive Workbench -->
+        <section class="content-section" id="interactive-sim">
+            <h2>Dynamic Interactive Workbench: Banked Track & Conical Pendulum Simulator</h2>
+            <p>Switch modes below to experiment with banked curves and conical pendulums. Adjust speed $v$, angle $\theta$, radius $r$, and static friction $\mu_s$. Watch how the vehicle drifts <strong>up</strong> or <strong>down</strong> the track when speed deviates from $v_{\text{design}}$!</p>
+
+            <div class="sim-container">
+                <div class="sim-mode-selector">
+                    <button id="btn-mode-banked" class="btn-mode active" onclick="setSimMode('banked')">Frictionless Banked Track</button>
+                    <button id="btn-mode-friction" class="btn-mode" onclick="setSimMode('friction')">Banked Track with Friction (µs)</button>
+                    <button id="btn-mode-pendulum" class="btn-mode" onclick="setSimMode('pendulum')">Conical Pendulum</button>
+                </div>
+
+                <div class="sim-controls">
+                    <div class="sim-control-group">
+                        <label for="sim-angle">Bank / String Angle ($\theta$): <span id="disp-angle" class="sim-value-display">25.0°</span></label>
+                        <input type="range" id="sim-angle" min="5.0" max="60.0" value="25.0" step="1.0">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-radius">Radius / Length ($r$ or $L$): <span id="disp-radius" class="sim-value-display">30.0 m</span></label>
+                        <input type="range" id="sim-radius" min="10.0" max="80.0" value="30.0" step="1.0">
+                    </div>
+                    <div class="sim-control-group">
+                        <label for="sim-speed">Vehicle / Bob Speed ($v$): <span id="disp-speed" class="sim-value-display">11.7 m/s</span></label>
+                        <input type="range" id="sim-speed" min="2.0" max="35.0" value="11.7" step="0.2">
+                    </div>
+                    <div class="sim-control-group" id="group-friction" style="display: none;">
+                        <label for="sim-friction">Friction Coeff ($\mu_s$): <span id="disp-friction" class="sim-value-display">0.30</span></label>
+                        <input type="range" id="sim-friction" min="0.00" max="0.80" value="0.30" step="0.05">
+                    </div>
+                    <div class="sim-control-group" style="justify-content: flex-end;">
+                        <button class="btn-reset-sim" onclick="setDesignSpeed()" style="background: rgba(0,240,255,0.15); border-color: var(--accent-cyan); color: #fff; font-weight: bold; padding: 0.6rem 1rem; border-radius: 8px; cursor: pointer;">Set Ideal Design Speed</button>
+                    </div>
+                </div>
+
+                <canvas id="bankedCanvas" width="800" height="440"></canvas>
+
+                <div class="sim-readout-grid">
+                    <div class="sim-metric-card">
+                        <div class="title">Ideal Design Speed</div>
+                        <div class="value" id="out-vdesign">11.70 m/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Safe Range [v_min, v_max]</div>
+                        <div class="value" id="out-range">11.7 - 11.7 m/s</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Centripetal Accel (a_c)</div>
+                        <div class="value" id="out-ac">4.57 m/s²</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Normal / Tension Load</div>
+                        <div class="value" id="out-load">1.10 g</div>
+                    </div>
+                    <div class="sim-metric-card">
+                        <div class="title">Dynamic Stability</div>
+                        <div class="value" id="out-status" style="color: var(--success-green);">PERFECT BALANCE</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Four Fully Worked Examples -->
+        <section class="content-section" id="worked-examples">
+            <h2>Four Comprehensive Worked Examples</h2>
+
+            <!-- Example 1: Easy -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 1 (Easy): Velodrome Banked Corner Design Speed</h4>
+                    <span class="marks-allocated">[Core Banked Track Application]</span>
+                </div>
+                <div class="question-body">
+                    <p>An Olympic velodrome track corner has a radius of curvature $r = 28.0\text{ m}$ and is banked at an angle of $\theta = 32.0^\circ$.</p>
+                    
+                    <!-- Diagram for Worked Example 1 -->
+                    <div class="vector-diagram-card" style="margin: 1rem 0;">
+                        <svg width="360" height="180" viewBox="0 0 360 180">
+                            <polygon points="40,150 320,150 320,60" fill="rgba(0,240,255,0.08)" stroke="#00f0ff" stroke-width="2"/>
+                            <text x="70" y="142" fill="#ffd700" font-weight="bold" font-size="14">32.0°</text>
+                            <circle cx="180" cy="105" r="10" fill="#b026ff" stroke="#fff" stroke-width="2"/>
+                            <line x1="180" y1="105" x2="180" y2="160" stroke="#ef4444" stroke-width="2.5"/>
+                            <text x="188" y="150" fill="#ef4444" font-size="12">mg</text>
+                            <line x1="180" y1="105" x2="140" y2="25" stroke="#00f0ff" stroke-width="2.5"/>
+                            <text x="120" y="30" fill="#00f0ff" font-size="12">N</text>
+                        </svg>
+                    </div>
+
+                    <p>a) Calculate the ideal design speed $v_{\text{design}}$ in $\text{m/s}$ and $\text{km/h}$ for a cyclist to negotiate the corner without needing tire friction.<br>b) Calculate the Normal force exerted by the track on a $75.0\text{ kg}$ cyclist and bicycle combined at this design speed.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Ideal Design Speed ($v_{\text{design}}$):</strong></p>
+                        <p>Setting horizontal Normal component equal to centripetal force ($N \sin\theta = \frac{m v^2}{r}$) and vertical component equal to weight ($N \cos\theta = m g$):</p>
+                        $$\tan\theta = \frac{v^2}{g r} \implies v_{\text{design}} = \sqrt{g r \tan\theta}$$
+                        $$v_{\text{design}} = \sqrt{9.80 \times 28.0 \times \tan(32.0^\circ)} = \sqrt{274.4 \times 0.62487} = \sqrt{171.46} = \mathbf{13.1\text{ m/s}}$$
+
+                        <p>Converting to $\text{km/h}$:</p>
+                        $$v = 13.094 \times 3.6 = \mathbf{47.1\text{ km/h}}$$
+
+                        <p><strong>Part b) Normal Reaction Force ($N$):</strong></p>
+                        <p>From vertical force equilibrium $N \cos\theta = m g$:</p>
+                        $$N = \frac{m g}{\cos\theta} = \frac{75.0 \times 9.80}{\cos(32.0^\circ)} = \frac{735}{0.84805} = \mathbf{867\text{ N}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 2: Medium -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 2 (Medium): Conical Pendulum Period & Geometry</h4>
+                    <span class="marks-allocated">[Conical System Kinematics]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $0.400\text{ kg}$ brass bob is suspended from a string of length $L = 1.20\text{ m}$ and rotates in a horizontal circle as a conical pendulum. The string maintains a constant angle $\theta = 25.0^\circ$ to the vertical axis.</p>
+
+                    <!-- Diagram for Worked Example 2 -->
+                    <div class="vector-diagram-card" style="margin: 1rem 0;">
+                        <svg width="320" height="200" viewBox="0 0 320 200">
+                            <line x1="80" y1="20" x2="240" y2="20" stroke="#fff" stroke-width="3"/>
+                            <line x1="160" y1="20" x2="160" y2="170" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4"/>
+                            <line x1="160" y1="20" x2="235" y2="150" stroke="#b026ff" stroke-width="2.5"/>
+                            <text x="180" y="70" fill="#ffd700" font-size="13">θ = 25°</text>
+                            <circle cx="235" cy="150" r="10" fill="#00e676"/>
+                            <ellipse cx="160" cy="150" rx="75" ry="20" fill="none" stroke="#00f0ff" stroke-dasharray="3"/>
+                            <line x1="160" y1="150" x2="235" y2="150" stroke="#ffd700" stroke-width="2"/>
+                            <text x="190" y="168" fill="#ffd700" font-size="12">r</text>
+                        </svg>
+                    </div>
+
+                    <p>a) Calculate the radius $r$ of the horizontal circle.<br>b) Calculate the string tension force $T$.<br>c) Calculate the rotation period $T_{\text{period}}$ and orbital speed $v$ of the bob.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Horizontal Radius ($r$):</strong></p>
+                        <p>Using string geometry right triangle where string length $L$ is hypotenuse and radius $r$ is opposite to angle $\theta$:</p>
+                        $$r = L \sin\theta = 1.20 \times \sin(25.0^\circ) = 1.20 \times 0.42262 = \mathbf{0.507\text{ m}}$$
+
+                        <p><strong>Part b) String Tension ($T$):</strong></p>
+                        <p>From vertical force equilibrium $T \cos\theta = m g$:</p>
+                        $$T = \frac{m g}{\cos\theta} = \frac{0.400 \times 9.80}{\cos(25.0^\circ)} = \frac{3.92}{0.90631} = \mathbf{4.32\text{ N}}$$
+
+                        <p><strong>Part c) Period ($T_{\text{period}}$) and Tangential Speed ($v$):</strong></p>
+                        $$T_{\text{period}} = 2\pi \sqrt{\frac{L \cos\theta}{g}} = 2\pi \sqrt{\frac{1.20 \times \cos(25.0^\circ)}{9.80}} = 2\pi \sqrt{\frac{1.08757}{9.80}} = \mathbf{2.09\text{ s}}$$
+                        $$v = \sqrt{g r \tan\theta} = \sqrt{9.80 \times 0.50714 \times \tan(25.0^\circ)} = \sqrt{4.970 \times 0.46631} = \mathbf{1.52\text{ m/s}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 3: Hard -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 3 (Hard): Jet Fighter Banked Turn & Pilot Load Factor</h4>
+                    <span class="marks-allocated">[Aerodynamic Banking & Physiology]</span>
+                </div>
+                <div class="question-body">
+                    <p>A high-performance jet fighter flying at a constant speed of $v = 220\text{ m/s}$ ($792\text{ km/h}$) executes a level horizontal turn banked at an angle of $\theta = 65.0^\circ$.</p>
+                    <p>a) Calculate the turning radius $r$ of the aircraft trajectory.<br>b) Calculate the aerodynamic Lift force $L$ generated by the wings on an $8500\text{ kg}$ aircraft.<br>c) Calculate the load factor ($n = L / m g$) experienced by the pilot inside the cockpit.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Step-by-Step Solution:</h5>
+
+                        <p><strong>Part a) Turning Radius ($r$):</strong></p>
+                        $$\tan\theta = \frac{v^2}{g r} \implies r = \frac{v^2}{g \tan\theta}$$
+                        $$r = \frac{(220)^2}{9.80 \times \tan(65.0^\circ)} = \frac{48400}{9.80 \times 2.1445} = \frac{48400}{21.016} = \mathbf{2303\text{ m}} \approx \mathbf{2.30\text{ km}}$$
+
+                        <p><strong>Part b) Aerodynamic Lift Force ($L$):</strong></p>
+                        $$L \cos\theta = m g \implies L = \frac{m g}{\cos(65.0^\circ)} = \frac{8500 \times 9.80}{0.42262} = \frac{83300}{0.42262} = \mathbf{1.97 \times 10^5\text{ N}} \quad (197\text{ kN})$$
+
+                        <p><strong>Part c) Pilot Load Factor ($n$):</strong></p>
+                        $$n = \frac{L}{m g} = \frac{1}{\cos(65.0^\circ)} = \frac{1}{0.42262} = \mathbf{2.37\text{ g's}}$$
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example 4: Extension -->
+            <div class="practise-question">
+                <div class="question-header">
+                    <h4>Worked Example 4 (Extension - Band 6 Separator): Banked Track WITH Static Friction ($\mu_s$)</h4>
+                    <span class="marks-allocated">[Complex Vector Friction Derivation]</span>
+                </div>
+                <div class="question-body">
+                    <p>A highway curve of radius $r = 50.0\text{ m}$ is banked at an angle $\theta = 20.0^\circ$. The static coefficient of friction between tire rubber and asphalt is $\mu_s = 0.300$.</p>
+                    <p>a) Derive the general formula for the <strong>maximum speed ($v_{\max}$)</strong> before the car skids UP the track.<br>b) Derive the general formula for the <strong>minimum speed ($v_{\min}$)</strong> before the car slips DOWN the track.<br>c) Calculate $v_{\max}$ and $v_{\min}$ for this specific roadway in $\text{km/h}$.</p>
+                </div>
+                <div class="hidden-solution" style="display: block;">
+                    <div class="worked-solution">
+                        <h5>Full Band 6 Algebraic Derivation:</h5>
+
+                        <p><strong>Part a) Maximum Speed ($v_{\max}$) Derivation:</strong></p>
+                        <p>At $v_{\max}$, outward centrifugal tendency causes static friction $f_s = \mu_s N$ to point <strong>downward along the incline</strong>.</p>
+                        $$\text{Vertical: } N \cos\theta - f_s \sin\theta = m g \implies N(\cos\theta - \mu_s \sin\theta) = m g \quad \text{--- (Eq. 1)}$$
+                        $$\text{Radial: } N \sin\theta + f_s \cos\theta = \frac{m v^2}{r} \implies N(\sin\theta + \mu_s \cos\theta) = \frac{m v^2}{r} \quad \text{--- (Eq. 2)}$$
+
+                        <p>Dividing Eq. 2 by Eq. 1 and simplifying yields:</p>
+                        $$v_{\max} = \sqrt{g r \left( \frac{\tan\theta + \mu_s}{1 - \mu_s \tan\theta} \right)}$$
+
+                        <p><strong>Part b) Minimum Speed ($v_{\min}$) Derivation:</strong></p>
+                        <p>At $v_{\min}$, inward slipping tendency causes static friction $f_s = \mu_s N$ to point <strong>upward along the incline</strong>. Reversing the friction sign yields:</p>
+                        $$v_{\min} = \sqrt{g r \left( \frac{\tan\theta - \mu_s}{1 + \mu_s \tan\theta} \right)}$$
+
+                        <p><strong>Part c) Numerical Calculation:</strong></p>
+                        <p>For $\theta = 20.0^\circ$ ($\tan(20^\circ) = 0.36397$), $r = 50.0\text{ m}$, $\mu_s = 0.300$:</p>
+                        $$v_{\max} = \sqrt{9.80 \times 50.0 \times \left( \frac{0.36397 + 0.300}{1 - (0.300 \times 0.36397)} \right)} = \sqrt{490 \times \left( \frac{0.66397}{0.89081} \right)} = \mathbf{19.11\text{ m/s}} \approx \mathbf{68.8\text{ km/h}}$$
+                        $$v_{\min} = \sqrt{490 \times \left( \frac{0.36397 - 0.300}{1 + (0.300 \times 0.36397)} \right)} = \sqrt{490 \times \left( \frac{0.06397}{1.10919} \right)} = \mathbf{5.32\text{ m/s}} \approx \mathbf{19.1\text{ km/h}}$$
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. Four Practice Questions -->
+        <section class="content-section" id="practise-questions">
+            <h2>HSC-Style Practise Questions with Marking Criteria</h2>
+            <p>Complete the questions below. Questions 3 and 4 represent <strong>distinction-style HSC separator questions</strong> designed to stretch top-performing Band 6 candidates!</p>
+
+            <!-- Practise Q1: Easy -->
+            <div class="practise-question" id="question-08-easy">
+                <div class="question-header">
+                    <h4>Practise Question 1 (Easy): Conical Swing Ride String Angle</h4>
+                    <span class="marks-allocated">[3 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A fairground swing ride acts as a conical pendulum. A rider suspended from a $6.00\text{ m}$ chain rotates in a horizontal circle at a linear speed of $v = 5.20\text{ m/s}$.</p>
+                    
+                    <div class="vector-diagram-card" style="margin: 1rem 0;">
+                        <svg width="300" height="180" viewBox="0 0 300 180">
+                            <line x1="150" y1="20" x2="150" y2="160" stroke="rgba(255,255,255,0.2)" stroke-dasharray="4"/>
+                            <line x1="150" y1="20" x2="220" y2="130" stroke="#b026ff" stroke-width="2.5"/>
+                            <text x="175" y="60" fill="#ffd700" font-size="12">θ = ?</text>
+                            <circle cx="220" cy="130" r="12" fill="#00e676"/>
+                            <text x="210" y="160" fill="#00f0ff" font-size="12">v = 5.20 m/s</text>
+                            <text x="170" y="100" fill="#b026ff" font-size="12">L = 6.00 m</text>
+                        </svg>
+                    </div>
+
+                    <p>Calculate the angle $\theta$ the chain makes with the vertical axis ($g = 9.80\text{ m/s}^2$).</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-08-easy')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-08-easy')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-08-easy" style="display: none;">
+                    <p><strong>Hint:</strong> Use $\tan\theta = \frac{v^2}{g r}$ with radius $r = L \sin\theta$. Thus $\frac{\sin\theta}{\cos\theta} = \frac{v^2}{g L \sin\theta} \implies \frac{\sin^2\theta}{\cos\theta} = \frac{v^2}{g L}$. Set $x = \cos\theta$ and solve the quadratic $1 - x^2 = k x$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-08-easy" style="display: none;">
+                    <div class="worked-solution">
+                        <p>From conical pendulum relations: $T \cos\theta = m g$ and $T \sin\theta = \frac{m v^2}{r}$.</p>
+                        <p>Dividing equations gives $\tan\theta = \frac{v^2}{g r}$. Substituting horizontal radius $r = L \sin\theta$:</p>
+
+                        $$\frac{\sin\theta}{\cos\theta} = \frac{v^2}{g L \sin\theta} \implies \frac{\sin^2\theta}{\cos\theta} = \frac{v^2}{g L}$$
+                        $$\frac{1 - \cos^2\theta}{\cos\theta} = \frac{(5.20)^2}{9.80 \times 6.00} = \frac{27.04}{58.80} = 0.45986$$
+
+                        <p>Forming a quadratic equation in terms of $x = \cos\theta$:</p>
+
+                        $$x^2 + 0.45986 x - 1 = 0 \implies x = \frac{-0.45986 + \sqrt{(0.45986)^2 + 4}}{2} = 0.7967$$
+                        $$\cos\theta = 0.7967 \implies \theta = \cos^{-1}(0.7967) = \mathbf{37.2^\circ}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Resolving conical forces gives $\tan\theta = \frac{v^2}{g r}$. Substituting $r = L \sin\theta$ yields $\frac{\sin^2\theta}{\cos\theta} = \frac{v^2}{g L} = \frac{5.20^2}{9.80 \times 6.00} = 0.460$. Setting $x = \cos\theta$ yields quadratic $x^2 + 0.460x - 1 = 0$, giving $x = 0.797$. Therefore $\theta = \cos^{-1}(0.797) = 37.2^\circ$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Correctly identifies $r = L \sin\theta$ and sets up trigonometric relation.</li>
+                            <li><strong>2 Marks:</strong> Formulates quadratic equation in terms of $\cos\theta$.</li>
+                            <li><strong>3 Marks:</strong> Solves correctly for angle $\theta = 37.2^\circ$.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-08-easy">Assign yourself a mark:</label>
+                        <select id="mark-selector-08-easy" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('08-easy')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-08-easy"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q2: Medium -->
+            <div class="practise-question" id="question-08-medium">
+                <div class="question-header">
+                    <h4>Practise Question 2 (Medium): Racetrack Bank Angle Design</h4>
+                    <span class="marks-allocated">[4 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>Engineers design a circular racetrack turn of radius $r = 120\text{ m}$ for race cars travelling at $110\text{ km/h}$ ($30.56\text{ m/s}$). Calculate the ideal banking angle $\theta$ required so that cars experience zero lateral friction demand.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-08-medium')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-08-medium')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-08-medium" style="display: none;">
+                    <p><strong>Hint:</strong> First convert speed to $\text{m/s}$ ($110 / 3.6 = 30.56\text{ m/s}$). Use $\tan\theta = \frac{v^2}{g r}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-08-medium" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Step 1: Convert speed to SI units:</strong></p>
+                        $$v = \frac{110\text{ km/h}}{3.6} = 30.556\text{ m/s}$$
+
+                        <p><strong>Step 2: Apply banked curve formula:</strong></p>
+                        $$\tan\theta = \frac{v^2}{g r} = \frac{(30.556)^2}{9.80 \times 120} = \frac{933.64}{1176} = 0.79391$$
+                        $$\theta = \tan^{-1}(0.79391) = \mathbf{38.4^\circ}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"Converting speed gives $v = 110 / 3.6 = 30.56\text{ m/s}$. For zero friction demand, the horizontal normal force component supplies centripetal force: $\tan\theta = \frac{v^2}{g r} = \frac{30.56^2}{9.80 \times 120} = 0.794$. Taking the inverse tangent yields $\theta = 38.4^\circ$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Converts speed from $\text{km/h}$ to $\text{m/s}$ ($30.56\text{ m/s}$).</li>
+                            <li><strong>2 Marks:</strong> States the correct banked curve formula $\tan\theta = v^2 / g r$.</li>
+                            <li><strong>3 Marks:</strong> Evaluates $\tan\theta = 0.794$.</li>
+                            <li><strong>4 Marks:</strong> Obtains final angle $\theta = 38.4^\circ$ with correct units.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-08-medium">Assign yourself a mark:</label>
+                        <select id="mark-selector-08-medium" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('08-medium')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-08-medium"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q3: Hard (Distinction Separator) -->
+            <div class="practise-question" id="question-08-hard">
+                <div class="question-header">
+                    <h4>Practise Question 3 (Hard - Distinction Separator): Banked Track Friction Breakdown</h4>
+                    <span class="marks-allocated">[5 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A car negotiates a banked curve ($r = 60.0\text{ m}$, $\theta = 15.0^\circ$). The static coefficient of friction between tires and road is $\mu_s = 0.250$. Determine the maximum speed $v_{\max}$ in $\text{km/h}$ at which the car can round the corner without skidding up the embankment.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-08-hard')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-08-hard')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-08-hard" style="display: none;">
+                    <p><strong>Hint:</strong> When skidding up, static friction acts down the track: $v_{\max} = \sqrt{g r \left( \frac{\tan\theta + \mu_s}{1 - \mu_s \tan\theta} \right)}$. Calculate $v$ in $\text{m/s}$ then convert to $\text{km/h}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-08-hard" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>Step 1: Calculate trigonometric values:</strong></p>
+                        $$\tan(15.0^\circ) = 0.26795$$
+
+                        <p><strong>Step 2: Apply banked track friction formula:</strong></p>
+                        $$v_{\max} = \sqrt{g r \left( \frac{\tan\theta + \mu_s}{1 - \mu_s \tan\theta} \right)}$$
+                        $$v_{\max} = \sqrt{9.80 \times 60.0 \times \left( \frac{0.26795 + 0.250}{1 - (0.250 \times 0.26795)} \right)}$$
+                        $$v_{\max} = \sqrt{588 \times \left( \frac{0.51795}{0.93301} \right)} = \sqrt{588 \times 0.55514} = \mathbf{18.07\text{ m/s}}$$
+
+                        <p><strong>Step 3: Convert to $\text{km/h}$:</strong></p>
+                        $$v_{\max} = 18.067 \times 3.6 = \mathbf{65.0\text{ km/h}}$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"At maximum speed, friction acts down the incline to prevent outward skidding. Resolving radial and vertical forces yields $v_{\max} = \sqrt{g r \left(\frac{\tan\theta + \mu_s}{1 - \mu_s \tan\theta}\right)}$. Substituting $r = 60\text{ m}$, $\theta = 15^\circ$, $\mu_s = 0.25$ gives $v_{\max} = \sqrt{588 \times \frac{0.518}{0.933}} = 18.07\text{ m/s} = 65.0\text{ km/h}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Identifies that friction acts down the slope for maximum speed.</li>
+                            <li><strong>2 Marks:</strong> States or derives the correct banked friction equation.</li>
+                            <li><strong>3 Marks:</strong> Correctly calculates intermediate values ($\tan 15^\circ = 0.268$).</li>
+                            <li><strong>4 Marks:</strong> Obtains velocity in $\text{m/s}$ ($18.07\text{ m/s}$).</li>
+                            <li><strong>5 Marks:</strong> Converts accurately to $\text{km/h}$ ($65.0\text{ km/h}$).</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-08-hard">Assign yourself a mark:</label>
+                        <select id="mark-selector-08-hard" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('08-hard')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-08-hard"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Practise Q4: Extension (Band 6 Distinction Separator) -->
+            <div class="practise-question" id="question-08-extension">
+                <div class="question-header">
+                    <h4>Practise Question 4 (Extension - Band 6 Separator): Jet Fighter Banking & Structural G-Limit</h4>
+                    <span class="marks-allocated">[6 Marks]</span>
+                </div>
+                <div class="question-body">
+                    <p>A $12000\text{ kg}$ fighter jet flying at $v = 300\text{ m/s}$ ($1080\text{ km/h}$) executes a level horizontal turn. The airframe has a strict structural load factor limit of $n_{\max} = 6.00\text{ g's}$ ($L \le 6.00 m g$).</p>
+                    <p>a) Calculate the maximum allowable banking angle $\theta_{\max}$ before exceeding structural safety limits.<br>b) Calculate the minimum turning radius $r_{\min}$ achieved at this maximum bank angle.<br>c) Calculate the magnitude of the total aerodynamic Lift force $L$ on the wings during this maneuver.</p>
+                </div>
+
+                <div class="interaction-controls">
+                    <button class="btn-hint" onclick="toggleHint('hint-08-extension')">Need a hint?</button>
+                    <button class="btn-reveal" onclick="toggleSolution('solution-08-extension')">Reveal Answer & Criteria</button>
+                </div>
+
+                <div class="hidden-hint" id="hint-08-extension" style="display: none;">
+                    <p><strong>Hint:</strong> Load factor $n = \frac{1}{\cos\theta} = 6.00 \implies \cos\theta = \frac{1}{6.00}$. Then use $\tan\theta = \frac{v^2}{g r}$ to find $r_{\min}$.</p>
+                </div>
+
+                <div class="hidden-solution" id="solution-08-extension" style="display: none;">
+                    <div class="worked-solution">
+                        <p><strong>a) Maximum Banking Angle ($\theta_{\max}$):</strong></p>
+                        $$n = \frac{L}{m g} = \frac{1}{\cos\theta} = 6.00$$
+                        $$\cos\theta_{\max} = \frac{1}{6.00} = 0.16667 \implies \theta_{\max} = \cos^{-1}(0.16667) = \mathbf{80.4^\circ}$$
+
+                        <p><strong>b) Minimum Turning Radius ($r_{\min}$):</strong></p>
+                        <p>For $\theta = 80.405^\circ$, $\tan(80.405^\circ) = 5.9161$:</p>
+                        $$r_{\min} = \frac{v^2}{g \tan\theta_{\max}} = \frac{(300)^2}{9.80 \times 5.9161} = \frac{90000}{57.978} = \mathbf{1552\text{ m}} \approx \mathbf{1.55\text{ km}}$$
+
+                        <p><strong>c) Aerodynamic Lift Force ($L$):</strong></p>
+                        $$L = n \times m g = 6.00 \times 12000 \times 9.80 = \mathbf{7.06 \times 10^5\text{ N}} \quad (706\text{ kN})$$
+                    </div>
+
+                    <div class="exemplar-response">
+                        <h6>Exemplar Full-Mark Written Response:</h6>
+                        <p>"The load factor is $n = \frac{1}{\cos\theta} = 6.00$, yielding maximum bank angle $\theta_{\max} = \cos^{-1}(1/6) = 80.4^\circ$. Turning radius is $r_{\min} = \frac{v^2}{g \tan\theta} = \frac{300^2}{9.80 \times \tan(80.4^\circ)} = 1.55\text{ km}$. Total lift force is $L = 6.00 m g = 6.00 \times 12000 \times 9.80 = 706\text{ kN}$."</p>
+                    </div>
+
+                    <div class="marking-criteria">
+                        <h5>Marking Criteria:</h5>
+                        <ul>
+                            <li><strong>1 Mark:</strong> Relates load factor $n$ to $\frac{1}{\cos\theta}$.</li>
+                            <li><strong>2 Marks:</strong> Computes maximum banking angle $\theta_{\max} = 80.4^\circ$.</li>
+                            <li><strong>3 Marks:</strong> Applies $r = v^2 / (g \tan\theta)$.</li>
+                            <li><strong>4 Marks:</strong> Computes minimum radius $r_{\min} = 1.55\text{ km}$.</li>
+                            <li><strong>5 Marks:</strong> Calculates Lift force $L = 706\text{ kN}$.</li>
+                            <li><strong>6 Marks:</strong> Expresses all answers with correct SI units and 3 significant figures.</li>
+                        </ul>
+                    </div>
+
+                    <div class="self-assessment">
+                        <label for="mark-selector-08-extension">Assign yourself a mark:</label>
+                        <select id="mark-selector-08-extension" class="mark-dropdown">
+                            <option value="0">0 Marks</option>
+                            <option value="1">1 Mark</option>
+                            <option value="2">2 Marks</option>
+                            <option value="3">3 Marks</option>
+                            <option value="4">4 Marks</option>
+                            <option value="5">5 Marks</option>
+                            <option value="6">6 Marks</option>
+                        </select>
+                        <button class="btn-submit-mark" onclick="submitMark('08-extension')">Submit Mark</button>
+                        <span class="mark-feedback" id="feedback-08-extension"></span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer Navigation -->
+        <footer class="page-footer">
+            <div class="footer-nav" style="display: flex; justify-content: space-between; width: 100%;">
+                <a href="07-centripetal-acceleration.html" class="btn-next" style="background: rgba(255,255,255,0.05); border: 1px solid var(--glass-border);">&larr; Lesson 7: Centripetal Force & Accel</a>
+                <a href="09-work-energy-circular.html" class="btn-next">Proceed to Lesson 9: Work & Energy in UCM &rarr;</a>
+            </div>
+        </footer>
+    </main>
+
+    <!-- JavaScript Engine -->
+    <script>
+        let simMode = 'banked'; // 'banked', 'friction', or 'pendulum'
+
+        document.addEventListener("DOMContentLoaded", function() {
+            updateTotalMarksDisplay();
+            checkIfQuestionAnswered('08-easy');
+            checkIfQuestionAnswered('08-medium');
+            checkIfQuestionAnswered('08-hard');
+            checkIfQuestionAnswered('08-extension');
+            
+            initBankedSimulator();
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                window.MathJax.typesetPromise().catch(function(err) {
+                    console.error('MathJax initial typesetting error:', err);
+                });
+            }
+        });
+
+        function setSimMode(mode) {
+            simMode = mode;
+            document.getElementById('btn-mode-banked').classList.toggle('active', mode === 'banked');
+            document.getElementById('btn-mode-friction').classList.toggle('active', mode === 'friction');
+            document.getElementById('btn-mode-pendulum').classList.toggle('active', mode === 'pendulum');
+
+            const groupFriction = document.getElementById('group-friction');
+            if (mode === 'friction') {
+                groupFriction.style.display = 'flex';
+            } else {
+                groupFriction.style.display = 'none';
+            }
+        }
+
+        function setDesignSpeed() {
+            const angleDeg = parseFloat(document.getElementById('sim-angle').value);
+            const r = parseFloat(document.getElementById('sim-radius').value);
+            const angleRad = angleDeg * Math.PI / 180;
+            const vDesign = Math.sqrt(9.80 * r * Math.tan(angleRad));
+            document.getElementById('sim-speed').value = vDesign.toFixed(1);
+        }
+
+        /* --- Interactive Canvas Simulator Engine --- */
+        function initBankedSimulator() {
+            const canvas = document.getElementById('bankedCanvas');
+            const ctx = canvas.getContext('2d');
+
+            const inAngle = document.getElementById('sim-angle');
+            const inRadius = document.getElementById('sim-radius');
+            const inSpeed = document.getElementById('sim-speed');
+            const inFriction = document.getElementById('sim-friction');
+
+            const dispAngle = document.getElementById('disp-angle');
+            const dispRadius = document.getElementById('disp-radius');
+            const dispSpeed = document.getElementById('disp-speed');
+            const dispFriction = document.getElementById('disp-friction');
+
+            const outVdesign = document.getElementById('out-vdesign');
+            const outRange = document.getElementById('out-range');
+            const outAc = document.getElementById('out-ac');
+            const outLoad = document.getElementById('out-load');
+            const outStatus = document.getElementById('out-status');
+
+            let pendulumTheta = 0;
+            let lastTime = performance.now();
+
+            function animate(now) {
+                const dt = (now - lastTime) / 1000;
+                lastTime = now;
+
+                const thetaDeg = parseFloat(inAngle.value);
+                const r = parseFloat(inRadius.value);
+                const v = parseFloat(inSpeed.value);
+                const mu = parseFloat(inFriction.value);
+
+                const thetaRad = thetaDeg * Math.PI / 180;
+
+                dispAngle.innerText = thetaDeg.toFixed(1) + '°';
+                dispRadius.innerText = r.toFixed(1) + ' m';
+                dispSpeed.innerText = v.toFixed(1) + ' m/s';
+                dispFriction.innerText = mu.toFixed(2);
+
+                const vDesign = Math.sqrt(9.80 * r * Math.tan(thetaRad));
+                const ac = (v * v) / r;
+                const loadFactor = 1 / Math.cos(thetaRad);
+
+                outVdesign.innerText = vDesign.toFixed(2) + ' m/s';
+                outAc.innerText = ac.toFixed(2) + ' m/s²';
+                outLoad.innerText = loadFactor.toFixed(2) + ' g';
+
+                let vMax = vDesign;
+                let vMin = vDesign;
+
+                if (simMode === 'friction') {
+                    const tanT = Math.tan(thetaRad);
+                    const numMax = tanT + mu;
+                    const denMax = 1 - mu * tanT;
+                    vMax = (denMax > 0) ? Math.sqrt(9.80 * r * (numMax / denMax)) : 999;
+
+                    const numMin = tanT - mu;
+                    const denMin = 1 + mu * tanT;
+                    vMin = (numMin > 0) ? Math.sqrt(9.80 * r * (numMin / denMin)) : 0;
+
+                    outRange.innerText = `${vMin.toFixed(1)} - ${(vMax > 900 ? '∞' : vMax.toFixed(1))} m/s`;
+                } else {
+                    outRange.innerText = `${vDesign.toFixed(1)} m/s (Ideal)`;
+                }
+
+                // Dynamic Status Output
+                if (simMode === 'pendulum') {
+                    outStatus.innerText = "STABLE CONICAL ORBIT";
+                    outStatus.style.color = "#00e676";
+                } else if (simMode === 'banked') {
+                    const speedDiff = v - vDesign;
+                    if (Math.abs(speedDiff) < 0.3) {
+                        outStatus.innerText = "PERFECT BALANCE (Zero Friction)";
+                        outStatus.style.color = "#00e676";
+                    } else if (speedDiff > 0) {
+                        outStatus.innerText = "TOO FAST (Drifting UP Track)";
+                        outStatus.style.color = "#ef4444";
+                    } else {
+                        outStatus.innerText = "TOO SLOW (Slipping DOWN Track)";
+                        outStatus.style.color = "#ffd700";
+                    }
+                } else { // Friction Mode
+                    if (v >= vMin && v <= vMax) {
+                        outStatus.innerText = "STABLE (Static Friction Holds)";
+                        outStatus.style.color = "#00e676";
+                    } else if (v > vMax) {
+                        outStatus.innerText = "SKIDDING OUTWARD (Exceeds µs limit)";
+                        outStatus.style.color = "#ef4444";
+                    } else {
+                        outStatus.innerText = "SLIPPING INWARD (Below µs threshold)";
+                        outStatus.style.color = "#ffd700";
+                    }
+                }
+
+                // Render Canvas
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Grid background
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+                ctx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 40) {
+                    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 40) {
+                    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(canvas.width, y); ctx.stroke();
+                }
+
+                if (simMode === 'banked' || simMode === 'friction') {
+                    // --- Banked Track Render Mode ---
+                    const originX = 100;
+                    const originY = 360;
+                    const trackLen = 560;
+
+                    const endX = originX + trackLen * Math.cos(thetaRad);
+                    const endY = originY - trackLen * Math.sin(thetaRad);
+
+                    // Draw Banked Incline Surface
+                    ctx.fillStyle = 'rgba(0, 240, 255, 0.05)';
+                    ctx.beginPath();
+                    ctx.moveTo(originX, originY);
+                    ctx.lineTo(endX, endY);
+                    ctx.lineTo(endX, originY);
+                    ctx.closePath();
+                    ctx.fill();
+
+                    ctx.strokeStyle = '#00f0ff';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(originX, originY);
+                    ctx.lineTo(endX, endY);
+                    ctx.stroke();
+
+                    // Position along Track (0.15 to 0.85)
+                    let posFactor = 0.5 + (v - vDesign) * 0.03;
+                    if (simMode === 'friction') {
+                        if (v >= vMin && v <= vMax) {
+                            posFactor = 0.5 + ((v - vDesign) / (vMax - vMin || 1)) * 0.25;
+                        } else if (v > vMax) {
+                            posFactor = 0.85;
+                        } else {
+                            posFactor = 0.15;
+                        }
+                    }
+                    posFactor = Math.max(0.12, Math.min(0.88, posFactor));
+
+                    const carX = originX + posFactor * trackLen * Math.cos(thetaRad);
+                    const carY = originY - posFactor * trackLen * Math.sin(thetaRad);
+
+                    // Draw Vehicle Box
+                    ctx.save();
+                    ctx.translate(carX, carY);
+                    ctx.rotate(-thetaRad);
+
+                    ctx.fillStyle = (simMode === 'friction' && (v > vMax || v < vMin)) ? '#ef4444' : '#b026ff';
+                    ctx.strokeStyle = '#ffffff';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.roundRect(-26, -16, 52, 26, 6);
+                    ctx.fill();
+                    ctx.stroke();
+
+                    ctx.restore();
+
+                    // Draw Force Vectors
+                    // 1. Weight mg (Downward)
+                    ctx.strokeStyle = '#ef4444';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(carX, carY);
+                    ctx.lineTo(carX, carY + 70);
+                    ctx.stroke();
+                    ctx.fillStyle = '#ef4444';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.fillText("mg", carX + 8, carY + 65);
+
+                    // 2. Normal Force N (Perpendicular to Incline)
+                    const normLen = 70 * loadFactor;
+                    const normX = carX - normLen * Math.sin(thetaRad);
+                    const normY = carY - normLen * Math.cos(thetaRad);
+
+                    ctx.strokeStyle = '#00f0ff';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(carX, carY);
+                    ctx.lineTo(normX, normY);
+                    ctx.stroke();
+                    ctx.fillStyle = '#00f0ff';
+                    ctx.fillText("N", normX - 18, normY - 5);
+
+                    // 3. Friction Vector (if friction mode active)
+                    if (simMode === 'friction' && mu > 0) {
+                        const fLen = 45;
+                        let fX, fY;
+                        if (v > vDesign) { // Friction acts DOWN incline
+                            fX = carX - fLen * Math.cos(thetaRad);
+                            fY = carY + fLen * Math.sin(thetaRad);
+                        } else { // Friction acts UP incline
+                            fX = carX + fLen * Math.cos(thetaRad);
+                            fY = carY - fLen * Math.sin(thetaRad);
+                        }
+                        ctx.strokeStyle = '#ffd700';
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.moveTo(carX, carY);
+                        ctx.lineTo(fX, fY);
+                        ctx.stroke();
+                        ctx.fillStyle = '#ffd700';
+                        ctx.fillText("f_s", fX + 5, fY - 5);
+                    }
+
+                } else {
+                    // --- Conical Pendulum Render Mode ---
+                    const pivotX = canvas.width / 2;
+                    const pivotY = 60;
+
+                    const omega = v / r;
+                    pendulumTheta += omega * dt;
+
+                    const orbitPx = Math.min(240, r * 3.2);
+                    const pendulumLenPx = 230;
+
+                    const bobX = pivotX + orbitPx * Math.cos(pendulumTheta);
+                    const bobY = pivotY + pendulumLenPx * Math.cos(thetaRad) + (orbitPx * 0.25) * Math.sin(pendulumTheta);
+
+                    // Draw Orbit Ellipse
+                    ctx.strokeStyle = 'rgba(0, 240, 255, 0.25)';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.ellipse(pivotX, pivotY + pendulumLenPx * Math.cos(thetaRad), orbitPx, orbitPx * 0.25, 0, 0, Math.PI * 2);
+                    ctx.stroke();
+
+                    // Suspension String
+                    ctx.strokeStyle = '#b026ff';
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    ctx.moveTo(pivotX, pivotY);
+                    ctx.lineTo(bobX, bobY);
+                    ctx.stroke();
+
+                    // Pivot
+                    ctx.fillStyle = '#00f0ff';
+                    ctx.beginPath(); ctx.arc(pivotX, pivotY, 6, 0, Math.PI * 2); ctx.fill();
+
+                    // Bob
+                    ctx.fillStyle = '#00e676';
+                    ctx.beginPath(); ctx.arc(bobX, bobY, 14, 0, Math.PI * 2); ctx.fill();
+
+                    // Tension Vector
+                    const tenLen = 60;
+                    const tenX = bobX + tenLen * (pivotX - bobX) / pendulumLenPx;
+                    const tenY = bobY + tenLen * (pivotY - bobY) / pendulumLenPx;
+
+                    ctx.strokeStyle = '#ffd700';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath(); ctx.moveTo(bobX, bobY); ctx.lineTo(tenX, tenY); ctx.stroke();
+                    ctx.fillStyle = '#ffd700';
+                    ctx.font = 'bold 12px sans-serif';
+                    ctx.fillText("Tension T", tenX - 10, tenY - 8);
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        /* --- Self Marking Engine Scripts --- */
+        function toggleHint(hintId) {
+            const hintElement = document.getElementById(hintId);
+            hintElement.style.display = (hintElement.style.display === "none") ? "block" : "none";
+        }
+
+        function toggleSolution(solutionId) {
+            const solutionElement = document.getElementById(solutionId);
+            if (solutionElement.style.display === "none") {
+                solutionElement.style.display = "block";
+                if (window.MathJax && window.MathJax.typesetPromise) {
+                    MathJax.typesetPromise([solutionElement]).catch(function (err) {
+                        console.error('MathJax error:', err.message);
+                    });
+                }
+            } else {
+                solutionElement.style.display = "none";
+            }
+        }
+
+        function submitMark(questionId) {
+            const dropdown = document.getElementById('mark-selector-' + questionId);
+            const selectedMark = parseInt(dropdown.value, 10);
+            const feedbackSpan = document.getElementById('feedback-' + questionId);
+
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const previousMark = parseInt(localStorage.getItem(storageKey)) || 0;
+
+            localStorage.setItem(storageKey, selectedMark);
+
+            feedbackSpan.innerHTML = `<strong> Saved: ${selectedMark} mark(s)</strong>`;
+            feedbackSpan.style.color = "#00e676";
+
+            updateGlobalScore(previousMark, selectedMark);
+        }
+
+        function updateGlobalScore(previousMark, newMark) {
+            let totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            totalScore = totalScore - previousMark + newMark;
+            localStorage.setItem('physics_mod5_total_score', totalScore);
+            updateTotalMarksDisplay();
+        }
+
+        function updateTotalMarksDisplay() {
+            const totalScore = parseInt(localStorage.getItem('physics_mod5_total_score')) || 0;
+            const displayElement = document.getElementById('total-marks');
+            if (displayElement) {
+                displayElement.innerText = totalScore;
+            }
+        }
+
+        function checkIfQuestionAnswered(questionId) {
+            const storageKey = 'physics_mod5_q_' + questionId;
+            const savedMark = localStorage.getItem(storageKey);
+            
+            if (savedMark !== null) {
+                const dropdown = document.getElementById('mark-selector-' + questionId);
+                const feedbackSpan = document.getElementById('feedback-' + questionId);
+                
+                if (dropdown && feedbackSpan) {
+                    dropdown.value = savedMark;
+                    feedbackSpan.innerHTML = `<em> Previously saved: ${savedMark} mark(s)</em>`;
+                }
+            }
+        }
+    </script>
+</body>
+</html>
